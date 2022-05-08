@@ -3,12 +3,15 @@ package br.edu.ifms.bookflix.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 
 @Entity
@@ -18,8 +21,11 @@ public class Usuario implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private String nome;
 	
+	private String nome;
+	private String telefone;
+	
+	@JsonIgnore
 	@OneToOne(mappedBy ="usuario")	
 	private Autenticacao autenticacao;
 	
@@ -29,6 +35,7 @@ public class Usuario implements Serializable{
 	@OneToOne(mappedBy = "usuario")
 	private Aluno alunos;
 
+	@JsonIgnore
 	@OneToMany(mappedBy = "usuario")
 	private List<Avaliacao> avaliacoes = new ArrayList<Avaliacao>();
 	
@@ -36,10 +43,12 @@ public class Usuario implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Usuario(Integer id, String nome, Autenticacao autenticacao, Professor professores, Aluno alunos) {
+	public Usuario(Integer id, String nome, String telefone, Autenticacao autenticacao, Professor professores,
+			Aluno alunos) {
 		super();
 		this.id = id;
 		this.nome = nome;
+		this.telefone = telefone;
 		this.autenticacao = autenticacao;
 		this.professores = professores;
 		this.alunos = alunos;
@@ -59,6 +68,14 @@ public class Usuario implements Serializable{
 
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public String getTelefone() {
+		return telefone;
+	}
+
+	public void setTelefone(String telefone) {
+		this.telefone = telefone;
 	}
 
 	public Autenticacao getAutenticacao() {

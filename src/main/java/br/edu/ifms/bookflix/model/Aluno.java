@@ -1,11 +1,10 @@
 package br.edu.ifms.bookflix.model;
 
 import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
@@ -18,8 +17,9 @@ public class Aluno implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
-	private int ra;
 	
+	private int ra;
+	private int turma;
 	
 	@JsonIgnore
 	@OneToOne
@@ -30,11 +30,13 @@ public class Aluno implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 	
-    public Aluno(Integer id, int ra, Usuario usuario) {
+    public Aluno(Integer id, int ra, int turma, Usuario usuario) {
 		super();
 		this.id = id;
 		this.ra = ra;
+		this.turma = turma;
 		this.usuario = usuario;
+		
 	}
     
     public Integer getId() {
@@ -52,12 +54,20 @@ public class Aluno implements Serializable{
 	public void setRa(int ra) {
 		this.ra = ra;
 	}
+	
+	public int getTurma() {
+		return turma;
+	}
+
+	public void setTurma(int turma) {
+		this.turma = turma;
+	}
 
 	public Usuario getUsuario() {
 		return usuario;
 	}
 
-	public void setUsuarios(Usuario usuario) {
+	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
 	}
 

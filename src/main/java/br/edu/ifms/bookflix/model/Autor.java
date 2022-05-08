@@ -3,6 +3,7 @@ package br.edu.ifms.bookflix.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,6 +17,7 @@ public class Autor implements Serializable{
    @Id
    @GeneratedValue(strategy = GenerationType.IDENTITY)
    private Integer id;
+   
    private String nome;
    
    @ManyToMany(mappedBy = "autor")
@@ -80,7 +82,5 @@ public class Autor implements Serializable{
 			return false;
 		return true;
 	}	
-
-
 
 }

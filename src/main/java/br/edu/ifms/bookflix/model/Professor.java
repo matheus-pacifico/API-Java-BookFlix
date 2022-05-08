@@ -3,11 +3,10 @@ package br.edu.ifms.bookflix.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
-//import javax.persistence.GeneratedValue;
-//import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
@@ -36,7 +35,7 @@ public class Professor implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-    public Professor(Integer id, int siape, Usuario usuario) {
+    public Professor(Integer id, int siape, String area, Usuario usuario) {
 		super();
 		this.id = id;
 		this.siape = siape;

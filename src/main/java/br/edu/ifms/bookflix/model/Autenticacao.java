@@ -1,6 +1,7 @@
 package br.edu.ifms.bookflix.model;
 
 import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -93,9 +94,5 @@ public class Autenticacao implements Serializable{
 			return false;
 		return true;
 	}
-
-	
-	
-	
 
 }

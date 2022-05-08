@@ -3,6 +3,7 @@ package br.edu.ifms.bookflix.model;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -12,9 +13,7 @@ import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
-
 import com.fasterxml.jackson.annotation.JsonIgnore;
-
 
 @Entity
 public class Obra implements Serializable{
@@ -23,12 +22,15 @@ public class Obra implements Serializable{
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
+	
+	private String isbn;
 	private String titulo;
+	private String area;
 	private String genero;
 	private String descricao;
+	private int ano;
 	private int pagina;
-	private String isbn;
-	
+
 	@ManyToMany
 	@JoinTable(
 			name="OBRA_AUTOR",
@@ -47,60 +49,89 @@ public class Obra implements Serializable{
 	public Obra() {
 		// TODO Auto-generated constructor stub
 	}
-	
-	public Obra(Integer id, String titulo, String genero, String descricao, int pagina, String isbn, Professor professor) {
-		super();
+
+	public Obra(Integer id, String isbn, String titulo, String area, String genero, String descricao, int ano,
+			int pagina, Professor professor) {
 		this.id = id;
+		this.isbn = isbn;
 		this.titulo = titulo;
+		this.area = area;
 		this.genero = genero;
 		this.descricao = descricao;
+		this.ano = ano;
 		this.pagina = pagina;
-		this.isbn = isbn;
 		this.professor = professor;
 	}
-	
+
 	public Integer getId() {
 		return id;
 	}
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	public String getTitulo() {
-		return titulo;
-	}
-	public void setTitulo(String titulo) {
-		this.titulo = titulo;
-	}
-	public String getGenero() {
-		return genero;
-	}
-	public void setGenero(String genero) {
-		this.genero = genero;
-	}
-	public String getDescricao() {
-		return descricao;
-	}
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-	public int getPagina() {
-		return pagina;
-	}
-	public void setPagina(int pagina) {
-		this.pagina = pagina;
-	}
+
 	public String getIsbn() {
 		return isbn;
 	}
+
 	public void setIsbn(String isbn) {
 		this.isbn = isbn;
+	}
+
+	public String getTitulo() {
+		return titulo;
+	}
+
+	public void setTitulo(String titulo) {
+		this.titulo = titulo;
+	}
+	
+	public String getArea() {
+		return area;
+	}
+
+	public void setArea(String area) {
+		this.area = area;
+	}
+
+	public String getGenero() {
+		return genero;
+	}
+
+	public void setGenero(String genero) {
+		this.genero = genero;
+	}
+
+	public String getDescricao() {
+		return descricao;
+	}
+
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
+	}
+
+	public int getAno() {
+		return ano;
+	}
+
+	public void setAno(int ano) {
+		this.ano = ano;
+	}
+
+	public int getPagina() {
+		return pagina;
+	}
+
+	public void setPagina(int pagina) {
+		this.pagina = pagina;
 	}
 
 	public List<Autor> getAutor() {
 		return autor;
 	}
 
-	public void setAutores(List<Autor> autor) {
+	public void setAutor(List<Autor> autor) {
 		this.autor = autor;
 	}
 
@@ -111,7 +142,7 @@ public class Obra implements Serializable{
 	public void setProfessor(Professor professor) {
 		this.professor = professor;
 	}
-	
+
 	public List<Avaliacao> getAvaliacoes() {
 		return avaliacoes;
 	}
