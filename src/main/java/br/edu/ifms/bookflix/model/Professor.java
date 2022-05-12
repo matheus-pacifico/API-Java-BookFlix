@@ -35,7 +35,7 @@ public class Professor implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-    public Professor(Integer id, int siape, String area, Usuario usuario) {
+    public Professor(Integer id, int siape, Usuario usuario) {
 		super();
 		this.id = id;
 		this.siape = siape;

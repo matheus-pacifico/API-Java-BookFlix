@@ -44,7 +44,6 @@ public class Avaliacao implements Serializable{
 		this.obra = obra;
 	}
 
-
 	public Integer getId() {
 		return id;
 	}
