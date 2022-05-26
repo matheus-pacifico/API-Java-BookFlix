@@ -2,6 +2,7 @@ package br.edu.ifms.bookflix.service;
 
 import br.edu.ifms.bookflix.model.Professor;
 import br.edu.ifms.bookflix.repository.ProfessorRepository;
+import br.edu.ifms.bookflix.dto.ProfessorDTO;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,28 +28,28 @@ public class ProfessorService {
 		professores.saveAndFlush(professor);
 	}
 	
-	public Optional<Professor> findById(Integer id) {
-		return professores.findById(id);
+	public Professor findById(Integer id) {
+		Optional<Professor> objeto = professores.findById(id);
+		Professor objetoaux = objeto.get();
+		return objetoaux;
+	}
+	
+	public Professor insert (Professor obj) {
+		obj.setId(null);
+		return professores.save(obj);
 	}
 
-	public Professor findOne(Integer id) {
-		List<Professor> lista = professores.findAll();
-		for (Professor professor : lista) {
-			if (professor.getId()==id) {
-				return professor;
-			}
-		}
-		return null;
+	public Professor update(Professor objeto) {
+		Professor novoObjeto = findById(objeto.getId());
+		updateData(novoObjeto, objeto);
+		return professores.save(novoObjeto);
 	}
 	
-	public Professor findBySiape(int siape) {		
-		List<Professor> lista = professores.findAll();
-		for (Professor professor : lista) {
-			if (professor.getSiape() == siape) {
-				return professor;
-			}
-		}
-		return null;
+	public Professor fromDTO(ProfessorDTO objetoDTO) {
+		return new Professor(objetoDTO.getId(), objetoDTO.getSiape(), null);
 	}
 	
+	private void updateData(Professor novoObjeto, Professor objeto) {
+		novoObjeto.setSiape(objeto.getSiape());
+	}
 }
