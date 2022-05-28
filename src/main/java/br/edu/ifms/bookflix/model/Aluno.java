@@ -18,7 +18,7 @@ public class Aluno implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	private int ra;
+	private String ra;
 	private int turma;
 	
 	@JsonIgnore
@@ -30,13 +30,12 @@ public class Aluno implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 	
-    public Aluno(Integer id, int ra, int turma, Usuario usuario) {
+    public Aluno(Integer id, String ra, int turma, Usuario usuario) {
 		super();
 		this.id = id;
 		this.ra = ra;
 		this.turma = turma;
-		this.usuario = usuario;
-		
+		this.usuario = usuario;	
 	}
     
     public Integer getId() {
@@ -47,11 +46,11 @@ public class Aluno implements Serializable{
 		this.id = id;
 	}
 
-	public int getRa() {
+	public String getRa() {
 		return ra;
 	}
 
-	public void setRa(int ra) {
+	public void setRa(String ra) {
 		this.ra = ra;
 	}
 	
@@ -75,7 +74,7 @@ public class Aluno implements Serializable{
 	public int hashCode() {
 		final int prime = 31;
 		int result = 1;
-		result = prime * result + ((usuario == null) ? 0 : usuario.hashCode());
+		result = prime * result + ((id == null) ? 0 : id.hashCode());
 		return result;
 	}
 
@@ -88,10 +87,10 @@ public class Aluno implements Serializable{
 		if (getClass() != obj.getClass())
 			return false;
 		Aluno other = (Aluno) obj;
-		if (usuario == null) {
-			if (other.usuario != null)
+		if (id == null) {
+			if (other.id != null)
 				return false;
-		} else if (!usuario.equals(other.usuario))
+		} else if (!id.equals(other.id))
 			return false;
 		return true;
 	}

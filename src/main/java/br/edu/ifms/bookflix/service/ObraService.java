@@ -1,118 +1,129 @@
 package br.edu.ifms.bookflix.service;
 
 import br.edu.ifms.bookflix.model.Obra;
+//import br.edu.ifms.bookflix.model.Autor;
+/*import br.edu.ifms.bookflix.model.Avaliacao;
+import br.edu.ifms.bookflix.model.Professor;*/
+
 import br.edu.ifms.bookflix.repository.ObraRepository;
-import br.edu.ifms.bookflix.model.Autor;
-import br.edu.ifms.bookflix.model.Avaliacao;
-import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.repository.AutorRepository;
+
+//import br.edu.ifms.bookflix.service.AutorService;
+
+import br.edu.ifms.bookflix.dto.ObraDTO;
+import br.edu.ifms.bookflix.dto.ObraNewDTO;
+
+import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
+import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ObraService {
 
 	@Autowired
-	private ObraRepository obras;
+	private ObraRepository obrasRepository;
+	@Autowired
+	private AutorRepository autoresRepository;
+	
+	public Obra find(Integer id) {
+		Optional<Obra> objeto = obrasRepository.findById(id); 
+		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
+				 "Obra não encontrada! Id: " + id + ", Tipo: " + Obra.class.getName()));		
+	}
+	
+	@Transactional
+	public Obra insert (Obra objeto) {
+		objeto.setId(null);
+		obrasRepository.save(objeto);
+		autoresRepository.saveAll(objeto.getAutor());
+		return objeto;	
+	}
+	
+	public Obra update(Obra objeto) {
+		Obra novoObjeto = find(objeto.getId());
+		updateData(objeto, novoObjeto);
+		return obrasRepository.save(novoObjeto);
+	}
+	
+	public void delete(Integer id) {
+		find(id);
+		try {
+			obrasRepository.deleteById(id);	
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
+	}
 	
 	public List<Obra> findAll() {
-		return obras.findAll();
+		return obrasRepository.findAll();
 	}
 	
 	public void deleteById(Integer id) {
-		obras.deleteById(id);
+		obrasRepository.deleteById(id);
 	}
 	
 	public void save(Obra obra) {
-		obras.saveAndFlush(obra);
+		obrasRepository.saveAndFlush(obra);
 	}
 	
 	public Optional<Obra> findById(Integer id) {
-		return obras.findById(id);
+		return obrasRepository.findById(id);
 	}
 	
-	public Obra findOne(Integer id) {
-		List<Obra> lista = obras.findAll();
+	public Obra fromDTO(ObraDTO objetoDTO) {
+		return new Obra(objetoDTO.getId(), objetoDTO.getIsbn(), objetoDTO.getTitulo(), 
+			objetoDTO.getArea(), objetoDTO.getGenero(), objetoDTO.getDescricao(), 
+			objetoDTO.getAno(), objetoDTO.getPagina(), objetoDTO.getProfessor());
+	}
+	
+	public Obra fromNewDTO(ObraNewDTO objetoNewDTO) {
+		return new Obra(null, objetoNewDTO.getIsbn(), objetoNewDTO.getTitulo(), 
+				objetoNewDTO.getArea(), objetoNewDTO.getGenero(), objetoNewDTO.getDescricao(), 
+				objetoNewDTO.getAno(), objetoNewDTO.getPagina(), null);
+	}
+	
+	private void updateData(Obra objeto, Obra novoObjeto) {
+		novoObjeto.setIsbn(objeto.getIsbn());
+		novoObjeto.setTitulo(objeto.getTitulo());
+		novoObjeto.setArea(objeto.getArea());
+		novoObjeto.setGenero(objeto.getGenero());
+		novoObjeto.setDescricao(objeto.getDescricao());
+		novoObjeto.setAno(objeto.getAno());
+		novoObjeto.setPagina(objeto.getPagina());
+		novoObjeto.setProfessor(objeto.getProfessor());
+	}
+	
+	public List<Obra> findByTitulo(String titulo) {
+		List<Obra> lista = obrasRepository.findAll();
+		List<Obra> obrasEncontradas = new ArrayList<>();
 		for (Obra obra : lista) {
-			if (obra.getId() == id) {
-				return obra;
+			if (obra.getTitulo().contains(titulo)) {
+				obrasEncontradas.add(obra);
 			}
 		}
+		if (!obrasEncontradas.isEmpty()) return obrasEncontradas;
 		return null;
 	}
 	
 	public Obra findByIsbn(String isbn) {
-		List<Obra> lista = obras.findAll();
+		List<Obra> lista = obrasRepository.findAll();
 		for (Obra obra : lista) {
-			if (obra.getIsbn() == isbn) {
+			if (obra.getIsbn().compareTo(isbn) == 0) {
 				return obra;
 			}
 		}
 		return null;
 	}
-	
-	public List<String> findByTitulo(String titulo) {
-		List<Obra> lista = obras.findAll();
-		List<String> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
-			if (obra.getTitulo().contains(titulo)) {
-				obrasEncontradas.add(obra.getTitulo());
-			}
-		}
-		return obrasEncontradas;
-	}
-	
-	public List<String> ListarObrasByArea(String area) {
-		List<Obra> lista = obras.findAll();
-		List<String> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
-			if (obra.getArea().contains(area)) {
-				obrasEncontradas.add(obra.getTitulo());
-			}
-		}
-		return obrasEncontradas;
-	}
-	
-	public List<String> ListarObrasByGenero(String genero) {
-		List<Obra> lista = obras.findAll();
-		List<String> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
-			if (obra.getArea().contains(genero)) {
-				obrasEncontradas.add(obra.getTitulo());
-			}
-		}
-		return obrasEncontradas;
-	}
-	
-	public List<String> ListarObrasByAno(int ano) {
-		List<Obra> lista = obras.findAll();
-		List<String> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
-			if (obra.getAno() == ano) {
-				obrasEncontradas.add(obra.getTitulo());
-			}
-		}
-		return obrasEncontradas;
-	}
-	
-	public List<Autor> obraAutor(Integer id){
-		List<Autor> autores = obras.findById(id).get().getAutor();
-		return autores;
-	}
-	
-	public List<Avaliacao> obraAvaliacao(Integer id){
-		List<Avaliacao> avaliacoes = obras.findById(id).get().getAvaliacoes();
-		return avaliacoes;
-	}
-	
-	public Professor obraProfessor(Integer id){
-		Professor professor = obras.findById(id).get().getProfessor();
-		return professor;
-	}
-	
 	
 }

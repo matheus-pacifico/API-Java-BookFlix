@@ -23,35 +23,33 @@ public class Usuario implements Serializable{
 	private Integer id;
 	
 	private String nome;
-	private String telefone;
 	
 	@JsonIgnore
 	@OneToOne(mappedBy ="usuario")	
 	private Autenticacao autenticacao;
 	
 	@OneToOne(mappedBy = "usuario")
-	private Professor professores;
+	private Professor professor;
 	
 	@OneToOne(mappedBy = "usuario")
-	private Aluno alunos;
+	private Aluno aluno;
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "usuario")
 	private List<Avaliacao> avaliacoes = new ArrayList<Avaliacao>();
 	
 	public Usuario() {
-		// TODO Auto-generated constructor stub
+		
 	}
 
-	public Usuario(Integer id, String nome, String telefone, Autenticacao autenticacao, Professor professores,
-			Aluno alunos) {
+	public Usuario(Integer id, String nome, Autenticacao autenticacao, Professor professor,
+			Aluno aluno) {
 		super();
 		this.id = id;
 		this.nome = nome;
-		this.telefone = telefone;
 		this.autenticacao = autenticacao;
-		this.professores = professores;
-		this.alunos = alunos;
+		this.professor = professor;
+		this.aluno = aluno;
 	}
 
 	public Integer getId() {
@@ -70,14 +68,6 @@ public class Usuario implements Serializable{
 		this.nome = nome;
 	}
 
-	public String getTelefone() {
-		return telefone;
-	}
-
-	public void setTelefone(String telefone) {
-		this.telefone = telefone;
-	}
-
 	public Autenticacao getAutenticacao() {
 		return autenticacao;
 	}
@@ -86,20 +76,20 @@ public class Usuario implements Serializable{
 		this.autenticacao = autenticacao;
 	}
 
-	public Aluno getAlunos() {
-		return alunos;
+	public Aluno getAluno() {
+		return aluno;
 	}
 
-	public void setAlunos(Aluno alunos) {
-		this.alunos = alunos;
+	public void setAluno(Aluno aluno) {
+		this.aluno = aluno;
 	}
 
-	public Professor getProfessores() {
-		return professores;
+	public Professor getProfessor() {
+		return professor;
 	}
 
-	public void setProfessores(Professor professores) {
-		this.professores = professores;
+	public void setProfessor(Professor professor) {
+		this.professor = professor;
 	}
 
 	public List<Avaliacao> getAvaliacoes() {

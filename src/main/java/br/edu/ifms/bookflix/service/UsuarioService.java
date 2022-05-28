@@ -1,7 +1,9 @@
 package br.edu.ifms.bookflix.service;
 
+import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Usuario;
 import br.edu.ifms.bookflix.repository.UsuarioRepository;
+import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
@@ -13,32 +15,28 @@ import org.springframework.stereotype.Service;
 public class UsuarioService {
 
 	@Autowired
-	private UsuarioRepository usuarios;
+	private UsuarioRepository usuariosRepository;
 	
 	public List<Usuario> findAll() {
-		return usuarios.findAll();
+		return usuariosRepository.findAll();
 	}
 	
 	public void deleteById(Integer id) {
-		usuarios.deleteById(id);
+		usuariosRepository.deleteById(id);
 	}
 	
 	public void save(Usuario usuario) {
-		usuarios.saveAndFlush(usuario);
+		usuariosRepository.saveAndFlush(usuario);
 	}
 	
 	public Optional<Usuario> findById(Integer id) {
-		return usuarios.findById(id);
+		return usuariosRepository.findById(id);
 	}
 	
-	public Usuario findOne(Integer id) {
-		List<Usuario> lista = usuarios.findAll();
-		for (Usuario usuario : lista) {
-			if (usuario.getId() == id) {
-				return usuario;
-			}
-		}
-		return null;
+	public Usuario find(Integer id) {
+		Optional<Usuario> objeto = usuariosRepository.findById(id); 
+		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
+				 "Usuario não encontrado! Id: " + id + ", Tipo: " + Usuario.class.getName()));		
 	}
 	
 }
