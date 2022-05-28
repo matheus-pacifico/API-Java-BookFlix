@@ -11,7 +11,7 @@ public class AvaliacaoNewDTO implements Serializable{
 	private int nota;
 	private Usuario usuario;
 	private Obra obra;
-	
+			
 	public AvaliacaoNewDTO() {
 		// TODO Auto-generated constructor stub
 	}
@@ -47,5 +47,5 @@ public class AvaliacaoNewDTO implements Serializable{
 	public void setObra(Obra obra) {
 		this.obra = obra;
 	}
-
+	
 }

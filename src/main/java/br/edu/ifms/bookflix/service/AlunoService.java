@@ -54,7 +54,7 @@ public class AlunoService {
 		return alunosTurma;
 	}
 	
-	public Aluno findByRa(int ra) {		
+	public Aluno findByRa(String ra) {		
 		List<Aluno> lista = alunos.findAll();
 		for (Aluno aluno : lista) {
 			if (aluno.getRa() == ra) {

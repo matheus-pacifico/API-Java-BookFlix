@@ -1,6 +1,5 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Usuario;
 import br.edu.ifms.bookflix.repository.UsuarioRepository;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;

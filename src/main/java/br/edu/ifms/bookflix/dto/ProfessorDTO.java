@@ -6,11 +6,11 @@ import br.edu.ifms.bookflix.model.Usuario;
 import java.io.Serializable;
 import javax.validation.constraints.NotEmpty;
 
-public class ProfessorDTO implements Serializable{
+public class ProfessorDTO implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	@NotEmpty(message="Preenchimento obrigatório")
+	@NotEmpty
 	private int siape;
 	private Usuario usuario;
 				

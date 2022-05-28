@@ -9,29 +9,29 @@ import javax.validation.constraints.NotEmpty;
 public class ObraDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	@NotEmpty(message="Preenchimento obrigatório")
+	@NotEmpty(message="Preenchimento obrigatï¿½rio")
 	private String isbn;
 	private String titulo;
 	private String area;
 	private String genero;
-	private String descricao;
-	private int ano;
-	private int pagina;
+	private String autor;
+	private String nomeArquivo;
+	private String caminhoArquivo;
 	private Professor professor;
 		
 	public ObraDTO() {
 		// TODO Auto-generated constructor stub
 	}
-	
+
 	public ObraDTO(Obra objeto) {
 		this.id = objeto.getId();
-		this.isbn = objeto.getIsbn();
+		this.isbn = objeto.getArea();
 		this.titulo = objeto.getTitulo();
 		this.area = objeto.getArea();
 		this.genero = objeto.getGenero();
-		this.descricao = objeto.getDescricao();
-		this.ano = objeto.getAno();
-		this.pagina = objeto.getPagina();
+		this.autor = objeto.getAutor();
+		this.nomeArquivo = objeto.getNomeArquivo();
+		this.caminhoArquivo = objeto.getCaminhoArquivo();
 		this.professor = objeto.getProfessor();
 	}
 
@@ -75,28 +75,28 @@ public class ObraDTO implements Serializable{
 		this.genero = genero;
 	}
 
-	public String getDescricao() {
-		return descricao;
+	public String getAutor() {
+		return autor;
 	}
 
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
+	public void setAutor(String autor) {
+		this.autor = autor;
 	}
 
-	public int getAno() {
-		return ano;
+	public String getNomeArquivo() {
+		return nomeArquivo;
 	}
 
-	public void setAno(int ano) {
-		this.ano = ano;
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
 	}
 
-	public int getPagina() {
-		return pagina;
+	public String getCaminhoArquivo() {
+		return caminhoArquivo;
 	}
 
-	public void setPagina(int pagina) {
-		this.pagina = pagina;
+	public void setCaminhoArquivo(String caminhoArquivo) {
+		this.caminhoArquivo = caminhoArquivo;
 	}
 
 	public Professor getProfessor() {
@@ -107,5 +107,4 @@ public class ObraDTO implements Serializable{
 		this.professor = professor;
 	}		
 	
-		
 }

@@ -1,14 +1,8 @@
 package br.edu.ifms.bookflix.service;
 
 import br.edu.ifms.bookflix.model.Obra;
-//import br.edu.ifms.bookflix.model.Autor;
-/*import br.edu.ifms.bookflix.model.Avaliacao;
-import br.edu.ifms.bookflix.model.Professor;*/
 
 import br.edu.ifms.bookflix.repository.ObraRepository;
-import br.edu.ifms.bookflix.repository.AutorRepository;
-
-//import br.edu.ifms.bookflix.service.AutorService;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
 import br.edu.ifms.bookflix.dto.ObraNewDTO;
@@ -22,9 +16,6 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -33,8 +24,6 @@ public class ObraService {
 
 	@Autowired
 	private ObraRepository obrasRepository;
-	@Autowired
-	private AutorRepository autoresRepository;
 	
 	public Obra find(Integer id) {
 		Optional<Obra> objeto = obrasRepository.findById(id); 
@@ -46,7 +35,6 @@ public class ObraService {
 	public Obra insert (Obra objeto) {
 		objeto.setId(null);
 		obrasRepository.save(objeto);
-		autoresRepository.saveAll(objeto.getAutor());
 		return objeto;	
 	}
 	
@@ -56,6 +44,7 @@ public class ObraService {
 		return obrasRepository.save(novoObjeto);
 	}
 	
+	@Transactional
 	public void delete(Integer id) {
 		find(id);
 		try {
@@ -69,6 +58,7 @@ public class ObraService {
 		return obrasRepository.findAll();
 	}
 	
+	@Transactional
 	public void deleteById(Integer id) {
 		obrasRepository.deleteById(id);
 	}
@@ -83,14 +73,14 @@ public class ObraService {
 	
 	public Obra fromDTO(ObraDTO objetoDTO) {
 		return new Obra(objetoDTO.getId(), objetoDTO.getIsbn(), objetoDTO.getTitulo(), 
-			objetoDTO.getArea(), objetoDTO.getGenero(), objetoDTO.getDescricao(), 
-			objetoDTO.getAno(), objetoDTO.getPagina(), objetoDTO.getProfessor());
+			objetoDTO.getArea(), objetoDTO.getGenero(), objetoDTO.getAutor(), 
+			objetoDTO.getNomeArquivo(), objetoDTO.getCaminhoArquivo(), objetoDTO.getProfessor());
 	}
 	
 	public Obra fromNewDTO(ObraNewDTO objetoNewDTO) {
 		return new Obra(null, objetoNewDTO.getIsbn(), objetoNewDTO.getTitulo(), 
-				objetoNewDTO.getArea(), objetoNewDTO.getGenero(), objetoNewDTO.getDescricao(), 
-				objetoNewDTO.getAno(), objetoNewDTO.getPagina(), null);
+				objetoNewDTO.getArea(), objetoNewDTO.getGenero(), objetoNewDTO.getAutor(), 
+				objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), null);
 	}
 	
 	private void updateData(Obra objeto, Obra novoObjeto) {
@@ -98,9 +88,9 @@ public class ObraService {
 		novoObjeto.setTitulo(objeto.getTitulo());
 		novoObjeto.setArea(objeto.getArea());
 		novoObjeto.setGenero(objeto.getGenero());
-		novoObjeto.setDescricao(objeto.getDescricao());
-		novoObjeto.setAno(objeto.getAno());
-		novoObjeto.setPagina(objeto.getPagina());
+		novoObjeto.setAutor(objeto.getAutor());
+		novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
+		novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
 		novoObjeto.setProfessor(objeto.getProfessor());
 	}
 	
@@ -123,6 +113,18 @@ public class ObraService {
 				return obra;
 			}
 		}
+		return null;
+	}
+	
+	public List<Obra> findByAutor(String autor) {
+		List<Obra> lista = obrasRepository.findAll();
+		List<Obra> obrasEncontradas = new ArrayList<>();
+		for (Obra obra : lista) {
+			if (obra.getAutor().contains(autor)) {
+				obrasEncontradas.add(obra);
+			}
+		}
+		if (!obrasEncontradas.isEmpty()) return obrasEncontradas;
 		return null;
 	}
 	

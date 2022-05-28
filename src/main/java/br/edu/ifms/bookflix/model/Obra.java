@@ -9,8 +9,6 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -27,16 +25,10 @@ public class Obra implements Serializable{
 	private String titulo;
 	private String area;
 	private String genero;
-	private String descricao;
-	private int ano;
-	private int pagina;
+	private String autor;
+	private String nomeArquivo;
+	private String caminhoArquivo;
 
-	@ManyToMany
-	@JoinTable(
-			name="OBRA_AUTOR",
-			joinColumns = @JoinColumn(name="obra_id"),
-			inverseJoinColumns = @JoinColumn(name="autor_id"))
-	private List<Autor> autor = new ArrayList<Autor>();
 	
 	@JsonIgnore
 	@ManyToOne
@@ -50,16 +42,17 @@ public class Obra implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Obra(Integer id, String isbn, String titulo, String area, String genero, String descricao, int ano,
-			int pagina, Professor professor) {
+	public Obra(Integer id, String isbn, String titulo, String area, String genero, String autor, String nomeArquivo,
+			String caminhoArquivo, Professor professor) {
+		super();
 		this.id = id;
 		this.isbn = isbn;
 		this.titulo = titulo;
 		this.area = area;
 		this.genero = genero;
-		this.descricao = descricao;
-		this.ano = ano;
-		this.pagina = pagina;
+		this.autor = autor;
+		this.nomeArquivo = nomeArquivo;
+		this.caminhoArquivo = caminhoArquivo;
 		this.professor = professor;
 	}
 
@@ -103,36 +96,28 @@ public class Obra implements Serializable{
 		this.genero = genero;
 	}
 
-	public String getDescricao() {
-		return descricao;
-	}
-
-	public void setDescricao(String descricao) {
-		this.descricao = descricao;
-	}
-
-	public int getAno() {
-		return ano;
-	}
-
-	public void setAno(int ano) {
-		this.ano = ano;
-	}
-
-	public int getPagina() {
-		return pagina;
-	}
-
-	public void setPagina(int pagina) {
-		this.pagina = pagina;
-	}
-
-	public List<Autor> getAutor() {
+	public String getAutor() {
 		return autor;
 	}
 
-	public void setAutor(List<Autor> autor) {
+	public void setAutor(String autor) {
 		this.autor = autor;
+	}
+
+	public String getNomeArquivo() {
+		return nomeArquivo;
+	}
+
+	public void setNomeArquivo(String nomeArquivo) {
+		this.nomeArquivo = nomeArquivo;
+	}
+
+	public String getCaminhoArquivo() {
+		return caminhoArquivo;
+	}
+
+	public void setCaminhoArquivo(String caminhoArquivo) {
+		this.caminhoArquivo = caminhoArquivo;
 	}
 
 	public Professor getProfessor() {
