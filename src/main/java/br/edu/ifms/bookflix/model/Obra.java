@@ -26,10 +26,9 @@ public class Obra implements Serializable{
 	private String area;
 	private String genero;
 	private String autor;
-	private String nomeArquivo;
-	private String caminhoArquivo;
+	private String nome_arquivo;
+	private String caminho_arquivo;
 
-	
 	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="professor_id")
@@ -42,8 +41,8 @@ public class Obra implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Obra(Integer id, String isbn, String titulo, String area, String genero, String autor, String nomeArquivo,
-			String caminhoArquivo, Professor professor) {
+	public Obra(Integer id, String isbn, String titulo, String area, String genero, String autor, String nome_arquivo,
+			String caminho_arquivo, Professor professor) {
 		super();
 		this.id = id;
 		this.isbn = isbn;
@@ -51,8 +50,8 @@ public class Obra implements Serializable{
 		this.area = area;
 		this.genero = genero;
 		this.autor = autor;
-		this.nomeArquivo = nomeArquivo;
-		this.caminhoArquivo = caminhoArquivo;
+		this.nome_arquivo = nome_arquivo;
+		this.caminho_arquivo = caminho_arquivo;
 		this.professor = professor;
 	}
 
@@ -105,19 +104,19 @@ public class Obra implements Serializable{
 	}
 
 	public String getNomeArquivo() {
-		return nomeArquivo;
+		return nome_arquivo;
 	}
 
-	public void setNomeArquivo(String nomeArquivo) {
-		this.nomeArquivo = nomeArquivo;
+	public void setNomeArquivo(String nome_arquivo) {
+		this.nome_arquivo = nome_arquivo;
 	}
 
 	public String getCaminhoArquivo() {
-		return caminhoArquivo;
+		return caminho_arquivo;
 	}
 
-	public void setCaminhoArquivo(String caminhoArquivo) {
-		this.caminhoArquivo = caminhoArquivo;
+	public void setCaminhoArquivo(String caminho_arquivo) {
+		this.caminho_arquivo = caminho_arquivo;
 	}
 
 	public Professor getProfessor() {

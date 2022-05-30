@@ -11,7 +11,7 @@ public class ProfessorDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	@NotEmpty
-	private int siape;
+	private String siape;
 	private Usuario usuario;
 				
 	public ProfessorDTO() {
@@ -31,11 +31,11 @@ public class ProfessorDTO implements Serializable {
 		this.id = id;
 	}
 
-	public int getSiape() {
+	public String getSiape() {
 		return siape;
 	}
 
-	public void setSiape(int siape) {
+	public void setSiape(String siape) {
 		this.siape = siape;
 	}
 

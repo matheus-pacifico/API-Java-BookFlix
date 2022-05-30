@@ -15,8 +15,8 @@ public class ObraDTO implements Serializable{
 	private String area;
 	private String genero;
 	private String autor;
-	private String nomeArquivo;
-	private String caminhoArquivo;
+	private String nome_arquivo;
+	private String caminho_arquivo;
 	private Professor professor;
 		
 	public ObraDTO() {
@@ -30,8 +30,8 @@ public class ObraDTO implements Serializable{
 		this.area = objeto.getArea();
 		this.genero = objeto.getGenero();
 		this.autor = objeto.getAutor();
-		this.nomeArquivo = objeto.getNomeArquivo();
-		this.caminhoArquivo = objeto.getCaminhoArquivo();
+		this.nome_arquivo = objeto.getNomeArquivo();
+		this.caminho_arquivo = objeto.getCaminhoArquivo();
 		this.professor = objeto.getProfessor();
 	}
 
@@ -84,19 +84,19 @@ public class ObraDTO implements Serializable{
 	}
 
 	public String getNomeArquivo() {
-		return nomeArquivo;
+		return nome_arquivo;
 	}
 
-	public void setNomeArquivo(String nomeArquivo) {
-		this.nomeArquivo = nomeArquivo;
+	public void setNomeArquivo(String nome_arquivo) {
+		this.nome_arquivo = nome_arquivo;
 	}
 
 	public String getCaminhoArquivo() {
-		return caminhoArquivo;
+		return caminho_arquivo;
 	}
 
-	public void setCaminhoArquivo(String caminhoArquivo) {
-		this.caminhoArquivo = caminhoArquivo;
+	public void setCaminhoArquivo(String caminho_arquivo) {
+		this.caminho_arquivo = caminho_arquivo;
 	}
 
 	public Professor getProfessor() {

@@ -21,7 +21,7 @@ public class Professor implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	private int siape;
+	private String siape;
 	
 	@JsonIgnore
 	@OneToOne
@@ -35,7 +35,7 @@ public class Professor implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Professor(Integer id, int siape, Usuario usuario) {
+	public Professor(Integer id, String siape, Usuario usuario) {
 		super();
 		this.id = id;
 		this.siape = siape;
@@ -50,11 +50,11 @@ public class Professor implements Serializable{
 		this.id = id;
 	}
 
-	public int getSiape() {
+	public String getSiape() {
 		return siape;
 	}
 
-	public void setSiape(int siape) {
+	public void setSiape(String siape) {
 		this.siape = siape;
 	}
 
