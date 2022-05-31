@@ -5,7 +5,6 @@ import br.edu.ifms.bookflix.model.Autenticacao;
 import br.edu.ifms.bookflix.repository.AutenticacaoRepository;
 
 import br.edu.ifms.bookflix.dto.AutenticacaoDTO;
-import br.edu.ifms.bookflix.dto.AutenticacaoNewDTO;
 
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
@@ -44,6 +43,7 @@ public class AutenticacaoService {
 		return autenticacoesRepository.save(novoObjeto);
 	}
 	
+	@Transactional
 	public void delete(Integer id) {
 		find(id);
 		try {
@@ -59,8 +59,8 @@ public class AutenticacaoService {
 			objetoDTO.getUsuario());
 	}
 	
-	public Autenticacao fromNewDTO(AutenticacaoNewDTO objetoNewDTO) {
-		return new Autenticacao(null, objetoNewDTO.getEmail(), objetoNewDTO.getSenha(), null);
+	public Autenticacao fromNewDTO(AutenticacaoDTO objetoNewDTO) {
+		return new Autenticacao(null, objetoNewDTO.getEmail(), objetoNewDTO.getSenha(), objetoNewDTO.getUsuario());
 	}
 	
 	private void updateData(Autenticacao objeto, Autenticacao novoObjeto) {
@@ -73,6 +73,7 @@ public class AutenticacaoService {
 		return autenticacoesRepository.findAll();
 	}
 	
+	@Transactional
 	public void deleteById(Integer id) {
 		autenticacoesRepository.deleteById(id);
 	}

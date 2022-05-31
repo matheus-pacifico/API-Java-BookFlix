@@ -28,7 +28,7 @@ public class ProfessorController {
 	@Autowired
 	private ProfessorService professorServices;
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Professor> find(@PathVariable Integer id) {		
 		Professor objeto = professorServices.find(id);
 		return ResponseEntity.ok().body(objeto);
@@ -36,7 +36,7 @@ public class ProfessorController {
 		
 	@RequestMapping(method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody ProfessorDTO objetoDTO) {
-		Professor objeto = professorServices.fromDTO(objetoDTO);
+		Professor objeto = professorServices.fromNewDTO(objetoDTO);
 		objeto = professorServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 			.path("/{id}").buildAndExpand(objeto.getId()).toUri();
@@ -57,7 +57,13 @@ public class ProfessorController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value="/deletarporid/{id}", method = RequestMethod.DELETE)
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
+		professorServices.deleteById(id);
+		return ResponseEntity.noContent().build();
+	}
+	
+	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<ProfessorDTO>> findAll() {		
 		List<Professor> lista = professorServices.findAll();
 		List<ProfessorDTO> listaDTO = lista.stream().map(objeto -> new ProfessorDTO(objeto)).collect(Collectors.toList());

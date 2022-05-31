@@ -5,7 +5,6 @@ import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.repository.ObraRepository;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
-import br.edu.ifms.bookflix.dto.ObraNewDTO;
 
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
@@ -77,7 +76,7 @@ public class ObraService {
 			objetoDTO.getNomeArquivo(), objetoDTO.getCaminhoArquivo(), objetoDTO.getProfessor());
 	}
 	
-	public Obra fromNewDTO(ObraNewDTO objetoNewDTO) {
+	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
 		return new Obra(null, objetoNewDTO.getIsbn(), objetoNewDTO.getTitulo(), 
 				objetoNewDTO.getArea(), objetoNewDTO.getGenero(), objetoNewDTO.getAutor(), 
 				objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), null);
@@ -92,6 +91,7 @@ public class ObraService {
 		novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
 		novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
 		novoObjeto.setProfessor(objeto.getProfessor());
+		novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
 	public List<Obra> findByTitulo(String titulo) {

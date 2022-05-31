@@ -5,7 +5,6 @@ import br.edu.ifms.bookflix.model.Avaliacao;
 import br.edu.ifms.bookflix.service.AvaliacaoService;
 
 import br.edu.ifms.bookflix.dto.AvaliacaoDTO;
-import br.edu.ifms.bookflix.dto.AvaliacaoNewDTO;
 
 import java.net.URI;
 import java.util.List;
@@ -35,7 +34,7 @@ public class AvaliacaoController {
 	}
 	
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody AvaliacaoNewDTO objetoNewDTO) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody AvaliacaoDTO objetoNewDTO) {
 		Avaliacao objeto = avaliacaoServices.fromNewDTO(objetoNewDTO);
 		objeto = avaliacaoServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -50,8 +49,7 @@ public class AvaliacaoController {
 		objeto = avaliacaoServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
-	
-	
+		
 	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto,@PathVariable Integer id){
 		avaliacaoServices.delete(id);
@@ -64,14 +62,11 @@ public class AvaliacaoController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<AvaliacaoDTO>> findAll() {		
 		List<Avaliacao> lista = avaliacaoServices.findAll();
 		List<AvaliacaoDTO> listaDTO = lista.stream().map(objeto -> new AvaliacaoDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}	
-	
-	
-	
 
 }

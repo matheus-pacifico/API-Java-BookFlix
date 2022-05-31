@@ -5,7 +5,6 @@ import br.edu.ifms.bookflix.model.Avaliacao;
 import br.edu.ifms.bookflix.repository.AvaliacaoRepository;
 
 import br.edu.ifms.bookflix.dto.AvaliacaoDTO;
-import br.edu.ifms.bookflix.dto.AvaliacaoNewDTO;
 
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
@@ -43,6 +42,7 @@ public class AvaliacaoService {
 		return avaliacoesRepository.save(novoObjeto);
 	}
 	
+	@Transactional
 	public void delete(Integer id) {
 		find(id);
 		try {
@@ -58,8 +58,8 @@ public class AvaliacaoService {
 				objetoDTO.getUsuario(), objetoDTO.getObra());
 	}
 	
-	public Avaliacao fromNewDTO(AvaliacaoNewDTO objetoNewDTO) {
-		return new Avaliacao(null, objetoNewDTO.getComentario(), objetoNewDTO.getNota(), null, objetoNewDTO.getObra());
+	public Avaliacao fromNewDTO(AvaliacaoDTO objetoNewDTO) {
+		return new Avaliacao(null, objetoNewDTO.getComentario(), objetoNewDTO.getNota(), objetoNewDTO.getUsuario(), objetoNewDTO.getObra());
 	}
 	
 	private void updateData(Avaliacao novoObjeto, Avaliacao objeto) {
@@ -73,6 +73,7 @@ public class AvaliacaoService {
 		return avaliacoesRepository.findAll();
 	}
 	
+	@Transactional
 	public void deleteById(Integer id) {
 		avaliacoesRepository.deleteById(id);
 	}

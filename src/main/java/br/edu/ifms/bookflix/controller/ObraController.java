@@ -5,7 +5,6 @@ import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.service.ObraService;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
-import br.edu.ifms.bookflix.dto.ObraNewDTO;
 
 import java.net.URI;
 import java.util.List;
@@ -28,14 +27,14 @@ public class ObraController {
 	@Autowired
 	private ObraService obraServices;
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Obra> find(@PathVariable Integer id) {		
 		Obra objeto = obraServices.find(id);
 		return ResponseEntity.ok().body(objeto);
 	}
 
 	@RequestMapping(method=RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody ObraNewDTO objetoNewDTO) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody ObraDTO objetoNewDTO) {
 		Obra objeto = obraServices.fromNewDTO(objetoNewDTO);
 		objeto = obraServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -64,7 +63,7 @@ public class ObraController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(method = RequestMethod.GET)
+	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<ObraDTO>> findAll() {		
 		List<Obra> lista = obraServices.findAll();
 		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());

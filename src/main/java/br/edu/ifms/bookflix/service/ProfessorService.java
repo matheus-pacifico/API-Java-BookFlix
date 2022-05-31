@@ -1,17 +1,22 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Professor;
+
 import br.edu.ifms.bookflix.repository.ProfessorRepository;
-import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
+
 import br.edu.ifms.bookflix.dto.ProfessorDTO;
 
-//import java.util.ArrayList;
+import br.edu.ifms.bookflix.model.Obra;
+import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
+import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
+
 import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ProfessorService {
@@ -29,6 +34,7 @@ public class ProfessorService {
 				 "Professor não encontrado! Id: " + id + ", Tipo: " + Professor.class.getName()));		
 	}
 	
+	@Transactional
 	public void deleteById(Integer id) {
 		professoresRepository.deleteById(id);
 	}
@@ -41,23 +47,44 @@ public class ProfessorService {
 		return professoresRepository.findById(id);
 	}
 	
-	public Professor insert (Professor obj) {
-		obj.setId(null);
-		return professoresRepository.save(obj);
+	@Transactional
+	public Professor insert (Professor objeto) {
+		objeto.setId(null);
+		return professoresRepository.save(objeto);
+	}
+	
+	@Transactional
+	public void delete(Integer id) {
+		find(id);
+		try {
+			professoresRepository.deleteById(id);	
+		}
+		catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
 	}
 
 	public Professor update(Professor objeto) {
 		Professor novoObjeto = find(objeto.getId());
-		updateData(novoObjeto, objeto);
+		updateData(objeto, novoObjeto);
 		return professoresRepository.save(novoObjeto);
 	}
 	
-	public Professor fromDTO(ProfessorDTO objetoDTO) {
-		return new Professor(objetoDTO.getId(), objetoDTO.getSiape(), null);
+	private void updateData(Professor objeto, Professor novoObjeto) {
+		novoObjeto.setSiape(objeto.getSiape());
 	}
 	
-	private void updateData(Professor novoObjeto, Professor objeto) {
-		novoObjeto.setSiape(objeto.getSiape());
+	public Professor fromDTO(ProfessorDTO objetoDTO) {
+		Professor professorAuxiliar = new Professor();
+		professorAuxiliar.setId(objetoDTO.getId());
+		professorAuxiliar.setSiape(objetoDTO.getSiape());
+		professorAuxiliar.setUsuario(objetoDTO.getUsuario());
+		professorAuxiliar.setObras(objetoDTO.getObras());
+		return professorAuxiliar;
+	}
+	
+	public Professor fromNewDTO(ProfessorDTO objetoDTO) {
+		return new Professor(null, objetoDTO.getSiape(), objetoDTO.getUsuario());
 	}
 	
 	public List<Obra> ListarObrasPostadasPeloProfessor(Integer id){
