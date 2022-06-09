@@ -98,34 +98,33 @@ public class ObraService {
 		List<Obra> lista = obrasRepository.findAll();
 		List<Obra> obrasEncontradas = new ArrayList<>();
 		for (Obra obra : lista) {
-			if (obra.getTitulo().contains(titulo)) {
+			if (obra.getTitulo().toUpperCase().contains(titulo.toUpperCase())) {
 				obrasEncontradas.add(obra);
 			}
 		}
-		if (!obrasEncontradas.isEmpty()) return obrasEncontradas;
-		return null;
+		return obrasEncontradas;
 	}
 	
-	public Obra findByIsbn(String isbn) {
+	public List<Obra> findByIsbn(String isbn) {
 		List<Obra> lista = obrasRepository.findAll();
+		List<Obra> obrasEncontradas = new ArrayList<>();
 		for (Obra obra : lista) {
-			if (obra.getIsbn().compareTo(isbn) == 0) {
-				return obra;
+			if (obra.getIsbn().toUpperCase().contains(isbn.toUpperCase())) {
+				obrasEncontradas.add(obra);
 			}
 		}
-		return null;
+		return obrasEncontradas;
 	}
 	
 	public List<Obra> findByAutor(String autor) {
 		List<Obra> lista = obrasRepository.findAll();
 		List<Obra> obrasEncontradas = new ArrayList<>();
 		for (Obra obra : lista) {
-			if (obra.getAutor().contains(autor)) {
+			if (obra.getAutor().toUpperCase().contains(autor.toUpperCase())) {
 				obrasEncontradas.add(obra);
 			}
 		}
-		if (!obrasEncontradas.isEmpty()) return obrasEncontradas;
-		return null;
+		return obrasEncontradas;
 	}
 	
 }

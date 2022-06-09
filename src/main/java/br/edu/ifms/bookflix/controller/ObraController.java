@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -50,7 +51,6 @@ public class ObraController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	
 	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@RequestBody Obra objeto,@PathVariable Integer id){
 		obraServices.delete(id);
@@ -66,6 +66,27 @@ public class ObraController {
 	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<ObraDTO>> findAll() {		
 		List<Obra> lista = obraServices.findAll();
+		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaDTO);
+	}
+	
+	@RequestMapping(value = "/mostrar/titulo", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByTitle(@RequestParam(value = "titulo") String titulo) {		
+		List<Obra> lista = obraServices.findByTitulo(titulo);
+		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaDTO);
+	}
+	
+	@RequestMapping(value = "/mostrar/autor", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByAutor(@RequestParam(value = "autor") String autor) {		
+		List<Obra> lista = obraServices.findByAutor(autor);
+		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaDTO);
+	}
+	
+	@RequestMapping(value = "/mostrar/isbn", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByIsbn(@RequestParam(value = "isbn") String isbn) {		
+		List<Obra> lista = obraServices.findByIsbn(isbn);
 		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}
