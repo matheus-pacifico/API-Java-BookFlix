@@ -2,22 +2,26 @@ package br.edu.ifms.bookflix.dto;
 
 import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.model.Avaliacao;
 
 import java.io.Serializable;
+import java.util.List;
+
 import javax.validation.constraints.NotEmpty;
 
 public class ObraDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	@NotEmpty(message="Preenchimento obrigat�rio")
-	private String isbn;
+	private String ifsn;
 	private String titulo;
 	private String area;
-	private String genero;
+	private String descricao;
 	private String autor;
 	private String nome_arquivo;
 	private String caminho_arquivo;
 	private Professor professor;
+	private List<Avaliacao> avaliacoes;
 		
 	public ObraDTO() {
 		// TODO Auto-generated constructor stub
@@ -25,14 +29,15 @@ public class ObraDTO implements Serializable{
 
 	public ObraDTO(Obra objeto) {
 		this.id = objeto.getId();
-		this.isbn = objeto.getArea();
+		this.ifsn = objeto.getIfsn();
 		this.titulo = objeto.getTitulo();
 		this.area = objeto.getArea();
-		this.genero = objeto.getGenero();
+		this.descricao = objeto.getDescricao();
 		this.autor = objeto.getAutor();
 		this.nome_arquivo = objeto.getNomeArquivo();
 		this.caminho_arquivo = objeto.getCaminhoArquivo();
 		this.professor = objeto.getProfessor();
+		this.avaliacoes = objeto.getAvaliacoes();
 	}
 
 	public Integer getId() {
@@ -43,12 +48,12 @@ public class ObraDTO implements Serializable{
 		this.id = id;
 	}
 
-	public String getIsbn() {
-		return isbn;
+	public String getIfsn() {
+		return ifsn;
 	}
 
-	public void setIsbn(String isbn) {
-		this.isbn = isbn;
+	public void setIfsn(String ifsn) {
+		this.ifsn = ifsn;
 	}
 
 	public String getTitulo() {
@@ -67,12 +72,12 @@ public class ObraDTO implements Serializable{
 		this.area = area;
 	}
 
-	public String getGenero() {
-		return genero;
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void setGenero(String genero) {
-		this.genero = genero;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public String getAutor() {
@@ -105,6 +110,14 @@ public class ObraDTO implements Serializable{
 
 	public void setProfessor(Professor professor) {
 		this.professor = professor;
+	}
+
+	public List<Avaliacao> getAvaliacoes() {
+		return avaliacoes;
+	}
+
+	public void setAvaliacoes(List<Avaliacao> avaliacoes) {
+		this.avaliacoes = avaliacoes;
 	}		
 	
 }

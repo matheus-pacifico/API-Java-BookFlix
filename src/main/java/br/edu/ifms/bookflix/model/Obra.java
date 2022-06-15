@@ -21,10 +21,10 @@ public class Obra implements Serializable{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Integer id;
 	
-	private String isbn;
+	private String ifsn;
 	private String titulo;
 	private String area;
-	private String genero;
+	private String descricao;
 	private String autor;
 	private String nome_arquivo;
 	private String caminho_arquivo;
@@ -41,14 +41,14 @@ public class Obra implements Serializable{
 		// TODO Auto-generated constructor stub
 	}
 
-	public Obra(Integer id, String isbn, String titulo, String area, String genero, String autor, String nome_arquivo,
+	public Obra(Integer id, String ifsn, String titulo, String area, String descricao, String autor, String nome_arquivo,
 			String caminho_arquivo, Professor professor) {
 		super();
 		this.id = id;
-		this.isbn = isbn;
+		this.ifsn = ifsn;
 		this.titulo = titulo;
 		this.area = area;
-		this.genero = genero;
+		this.descricao = descricao;
 		this.autor = autor;
 		this.nome_arquivo = nome_arquivo;
 		this.caminho_arquivo = caminho_arquivo;
@@ -63,12 +63,12 @@ public class Obra implements Serializable{
 		this.id = id;
 	}
 
-	public String getIsbn() {
-		return isbn;
+	public String getIfsn() {
+		return ifsn;
 	}
 
-	public void setIsbn(String isbn) {
-		this.isbn = isbn;
+	public void setIfsn(String ifsn) {
+		this.ifsn = ifsn;
 	}
 
 	public String getTitulo() {
@@ -87,12 +87,12 @@ public class Obra implements Serializable{
 		this.area = area;
 	}
 
-	public String getGenero() {
-		return genero;
+	public String getDescricao() {
+		return descricao;
 	}
 
-	public void setGenero(String genero) {
-		this.genero = genero;
+	public void setDescricao(String descricao) {
+		this.descricao = descricao;
 	}
 
 	public String getAutor() {

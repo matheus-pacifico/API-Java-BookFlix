@@ -10,8 +10,11 @@ import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -54,7 +57,7 @@ public class ObraService {
 	}
 	
 	public List<Obra> findAll() {
-		return obrasRepository.findAll();
+		return allObrasFound();
 	}
 	
 	@Transactional
@@ -71,33 +74,41 @@ public class ObraService {
 	}
 	
 	public Obra fromDTO(ObraDTO objetoDTO) {
-		return new Obra(objetoDTO.getId(), objetoDTO.getIsbn(), objetoDTO.getTitulo(), 
-			objetoDTO.getArea(), objetoDTO.getGenero(), objetoDTO.getAutor(), 
-			objetoDTO.getNomeArquivo(), objetoDTO.getCaminhoArquivo(), objetoDTO.getProfessor());
+		Obra obraAuxiliar = new Obra();
+		obraAuxiliar.setId(objetoDTO.getId());
+		obraAuxiliar.setIfsn(objetoDTO.getIfsn());
+		obraAuxiliar.setTitulo(objetoDTO.getTitulo());
+		obraAuxiliar.setArea(objetoDTO.getArea());
+		obraAuxiliar.setDescricao(objetoDTO.getDescricao());
+		obraAuxiliar.setAutor(objetoDTO.getAutor());
+		obraAuxiliar.setNomeArquivo(objetoDTO.getNomeArquivo());
+		obraAuxiliar.setCaminhoArquivo(objetoDTO.getCaminhoArquivo());
+		obraAuxiliar.setProfessor(objetoDTO.getProfessor());
+		obraAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());
+		return obraAuxiliar;
 	}
 	
 	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
-		return new Obra(null, objetoNewDTO.getIsbn(), objetoNewDTO.getTitulo(), 
-				objetoNewDTO.getArea(), objetoNewDTO.getGenero(), objetoNewDTO.getAutor(), 
-				objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), null);
+		return new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
+				objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), objetoNewDTO.getAutor(), 
+				objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
 	}
 	
 	private void updateData(Obra objeto, Obra novoObjeto) {
-		novoObjeto.setIsbn(objeto.getIsbn());
-		novoObjeto.setTitulo(objeto.getTitulo());
-		novoObjeto.setArea(objeto.getArea());
-		novoObjeto.setGenero(objeto.getGenero());
-		novoObjeto.setAutor(objeto.getAutor());
-		novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
-		novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
-		novoObjeto.setProfessor(objeto.getProfessor());
-		novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
+        	novoObjeto.setIfsn(objeto.getIfsn());
+        	novoObjeto.setTitulo(objeto.getTitulo());
+        	novoObjeto.setArea(objeto.getArea());
+        	novoObjeto.setDescricao(objeto.getDescricao());
+        	novoObjeto.setAutor(objeto.getAutor());
+        	novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
+        	novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
+        	novoObjeto.setProfessor(objeto.getProfessor());
+        	novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
 	public List<Obra> findByTitulo(String titulo) {
-		List<Obra> lista = obrasRepository.findAll();
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
+		for (Obra obra : allObrasFound()) {
 			if (obra.getTitulo().toUpperCase().contains(titulo.toUpperCase())) {
 				obrasEncontradas.add(obra);
 			}
@@ -105,11 +116,10 @@ public class ObraService {
 		return obrasEncontradas;
 	}
 	
-	public List<Obra> findByIsbn(String isbn) {
-		List<Obra> lista = obrasRepository.findAll();
+	public List<Obra> findByIfsn(String ifsn) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
-			if (obra.getIsbn().toUpperCase().contains(isbn.toUpperCase())) {
+		for (Obra obra : allObrasFound()) {
+			if (obra.getIfsn().toUpperCase().contains(ifsn.toUpperCase())) {
 				obrasEncontradas.add(obra);
 			}
 		}
@@ -117,14 +127,47 @@ public class ObraService {
 	}
 	
 	public List<Obra> findByAutor(String autor) {
-		List<Obra> lista = obrasRepository.findAll();
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : lista) {
+		for (Obra obra : allObrasFound()) {
 			if (obra.getAutor().toUpperCase().contains(autor.toUpperCase())) {
 				obrasEncontradas.add(obra);
 			}
 		}
 		return obrasEncontradas;
+	}
+	
+	public List<Obra> findByTudo(String tudo) {
+		List<Obra> obrasEncontradas = Stream.concat(
+				findByTitulo(tudo).stream(),
+				findByAutor(tudo).stream())
+				.collect(Collectors.toList());
+		
+		obrasEncontradas =  Stream.concat(obrasEncontradas.stream(),
+				findByIfsn(tudo).stream())
+				.collect(Collectors.toList());
+		
+		obrasEncontradas = removeRepeatedObras(obrasEncontradas);
+		
+		return obrasEncontradas;
+	}
+	
+	private List<Obra> removeRepeatedObras(List<Obra> obrasEncontradas) {
+		HashSet<Obra> obrasNaoRepetidas = new HashSet<>();
+		List<Obra> obrasUnicas = new ArrayList<>();
+		
+		for (Obra obra : obrasEncontradas) {
+			obrasNaoRepetidas.add(obra);
+		}
+		
+		for (Obra obra : obrasNaoRepetidas) {
+			obrasUnicas.add(obra);
+		}
+		
+		return obrasUnicas;
+	}
+
+	public List<Obra> allObrasFound(){
+		return obrasRepository.findAll();
 	}
 	
 }

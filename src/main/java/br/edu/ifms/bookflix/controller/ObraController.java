@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -52,7 +51,7 @@ public class ObraController {
 	}
 	
 	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
-	public ResponseEntity<Void> delete(@RequestBody Obra objeto,@PathVariable Integer id){
+	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable Integer id){
 		obraServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -70,23 +69,30 @@ public class ObraController {
 		return ResponseEntity.ok().body(listaDTO);
 	}
 	
-	@RequestMapping(value = "/mostrar/titulo", method = RequestMethod.GET)
-	public ResponseEntity<List<ObraDTO>> findByTitle(@RequestParam(value = "titulo") String titulo) {		
+	@RequestMapping(value = "/mostrar/titulo/{titulo}", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByTitle(@PathVariable String titulo) {		
 		List<Obra> lista = obraServices.findByTitulo(titulo);
 		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}
 	
-	@RequestMapping(value = "/mostrar/autor", method = RequestMethod.GET)
-	public ResponseEntity<List<ObraDTO>> findByAutor(@RequestParam(value = "autor") String autor) {		
+	@RequestMapping(value = "/mostrar/autor/{autor}", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByAuthor(@PathVariable String autor) {		
 		List<Obra> lista = obraServices.findByAutor(autor);
 		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}
 	
-	@RequestMapping(value = "/mostrar/isbn", method = RequestMethod.GET)
-	public ResponseEntity<List<ObraDTO>> findByIsbn(@RequestParam(value = "isbn") String isbn) {		
-		List<Obra> lista = obraServices.findByIsbn(isbn);
+	@RequestMapping(value = "/mostrar/ifsn/{ifsn}", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByIfsn(@PathVariable String ifsn) {		
+		List<Obra> lista = obraServices.findByIfsn(ifsn);
+		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaDTO);
+	}
+	
+	@RequestMapping(value = "/mostrar/free/{free}", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> findByAll(@PathVariable String free) {
+		List<Obra> lista = obraServices.findByTudo(free);
 		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}
