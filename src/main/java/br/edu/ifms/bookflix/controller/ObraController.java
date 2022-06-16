@@ -97,4 +97,11 @@ public class ObraController {
 		return ResponseEntity.ok().body(listaDTO);
 	}
 	
+	@RequestMapping(value = "/mostrar/area/{area}", method = RequestMethod.GET)
+	public ResponseEntity<List<ObraDTO>> listByArea(@PathVariable String area) {
+		List<Obra> lista = obraServices.listByArea(area);
+		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
+		return ResponseEntity.ok().body(listaDTO);
+	}
+	
 }

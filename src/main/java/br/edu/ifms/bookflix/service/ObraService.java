@@ -134,6 +134,16 @@ public class ObraService {
 		return obrasEncontradas;
 	}
 	
+	public List<Obra> listByArea(String area){
+		List<Obra> obrasEncontradas = new ArrayList<>();
+		for (Obra obra : allObrasFound()) {
+			if (obra.getArea().compareToIgnoreCase(area) == 0) {
+				obrasEncontradas.add(obra);
+			}
+		}
+		return obrasEncontradas;
+	}
+	
 	public List<Obra> findByTudo(String pesquisa) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
 		
