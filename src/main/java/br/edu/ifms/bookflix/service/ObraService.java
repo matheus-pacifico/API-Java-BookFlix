@@ -13,8 +13,6 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -136,16 +134,13 @@ public class ObraService {
 		return obrasEncontradas;
 	}
 	
-	public List<Obra> findByTudo(String tudo) {
-		List<Obra> obrasEncontradas = Stream.concat(
-				findByTitulo(tudo).stream(),
-				findByAutor(tudo).stream())
-				.collect(Collectors.toList());
+	public List<Obra> findByTudo(String pesquisa) {
+		List<Obra> obrasEncontradas = new ArrayList<>();
 		
-		obrasEncontradas =  Stream.concat(obrasEncontradas.stream(),
-				findByIfsn(tudo).stream())
-				.collect(Collectors.toList());
-		
+		obrasEncontradas.addAll(findByTitulo(pesquisa));
+		obrasEncontradas.addAll(findByAutor(pesquisa));
+		obrasEncontradas.addAll(findByIfsn(pesquisa));
+				
 		obrasEncontradas = removeRepeatedObras(obrasEncontradas);
 		
 		return obrasEncontradas;
@@ -155,18 +150,14 @@ public class ObraService {
 		HashSet<Obra> obrasNaoRepetidas = new HashSet<>();
 		List<Obra> obrasUnicas = new ArrayList<>();
 		
-		for (Obra obra : obrasEncontradas) {
-			obrasNaoRepetidas.add(obra);
-		}
+		obrasNaoRepetidas.addAll(obrasEncontradas);
 		
-		for (Obra obra : obrasNaoRepetidas) {
-			obrasUnicas.add(obra);
-		}
+		obrasUnicas.addAll(obrasNaoRepetidas);
 		
 		return obrasUnicas;
 	}
 
-	public List<Obra> allObrasFound(){
+	private List<Obra> allObrasFound(){
 		return obrasRepository.findAll();
 	}
 	
