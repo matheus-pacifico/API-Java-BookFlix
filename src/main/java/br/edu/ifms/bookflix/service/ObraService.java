@@ -88,59 +88,51 @@ public class ObraService {
 	
 	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
 		return new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
-				objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), objetoNewDTO.getAutor(), 
-				objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
+			objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), objetoNewDTO.getAutor(), 
+			objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
 	}
 	
 	private void updateData(Obra objeto, Obra novoObjeto) {
-        	novoObjeto.setIfsn(objeto.getIfsn());
-        	novoObjeto.setTitulo(objeto.getTitulo());
-        	novoObjeto.setArea(objeto.getArea());
-        	novoObjeto.setDescricao(objeto.getDescricao());
-        	novoObjeto.setAutor(objeto.getAutor());
-        	novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
-        	novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
-        	novoObjeto.setProfessor(objeto.getProfessor());
-        	novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
+        novoObjeto.setIfsn(objeto.getIfsn());
+        novoObjeto.setTitulo(objeto.getTitulo());
+        novoObjeto.setArea(objeto.getArea());
+        novoObjeto.setDescricao(objeto.getDescricao());
+        novoObjeto.setAutor(objeto.getAutor());
+        novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
+        novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
+        novoObjeto.setProfessor(objeto.getProfessor());
+        novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
 	public List<Obra> findByTitulo(String titulo) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : allObrasFound()) {
-			if (obra.getTitulo().toUpperCase().contains(titulo.toUpperCase())) {
-				obrasEncontradas.add(obra);
-			}
-		}
+        allObrasFound().stream()
+            .filter(obra -> (isFound(obra.getTitulo(), titulo)))
+            .forEach(obra -> obrasEncontradas.add(obra));
 		return obrasEncontradas;
 	}
 	
 	public List<Obra> findByIfsn(String ifsn) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : allObrasFound()) {
-			if (obra.getIfsn().toUpperCase().contains(ifsn.toUpperCase())) {
-				obrasEncontradas.add(obra);
-			}
-		}
+		allObrasFound().stream()
+			.filter(obra -> (isFound(obra.getIfsn(), ifsn)))
+        	.forEach(obra -> obrasEncontradas.add(obra));
 		return obrasEncontradas;
 	}
 	
 	public List<Obra> findByAutor(String autor) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : allObrasFound()) {
-			if (obra.getAutor().toUpperCase().contains(autor.toUpperCase())) {
-				obrasEncontradas.add(obra);
-			}
-		}
+		allObrasFound().stream()
+			.filter(obra -> (isFound(obra.getAutor(), autor)))
+			.forEach(obra -> obrasEncontradas.add(obra));
 		return obrasEncontradas;
 	}
 	
-	public List<Obra> listByArea(String area){
+	public List<Obra> listByArea(String area) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		for (Obra obra : allObrasFound()) {
-			if (obra.getArea().compareToIgnoreCase(area) == 0) {
-				obrasEncontradas.add(obra);
-			}
-		}
+		allObrasFound().stream()
+			.filter(obra -> (isFound(obra.getArea(), area)))
+        	.forEach(obra -> obrasEncontradas.add(obra));
 		return obrasEncontradas;
 	}
 	
@@ -171,4 +163,8 @@ public class ObraService {
 		return obrasRepository.findAll();
 	}
 	
+    private boolean isFound(String comparacao, String busca) {
+        return (comparacao.toUpperCase().contains(busca.toUpperCase()));      
+    }
+
 }
