@@ -7,7 +7,7 @@ import br.edu.ifms.bookflix.model.Obra;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 public class ProfessorDTO implements Serializable {
 

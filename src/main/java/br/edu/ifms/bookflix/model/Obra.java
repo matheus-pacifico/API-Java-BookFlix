@@ -4,13 +4,13 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
@@ -25,7 +25,6 @@ public class Obra implements Serializable{
 	private String titulo;
 	private String area;
 	private String descricao;
-	private String autor;
 	private String nome_arquivo;
 	private String caminho_arquivo;
 
@@ -37,11 +36,14 @@ public class Obra implements Serializable{
 	@OneToMany(mappedBy = "obra")
 	private List<Avaliacao> avaliacoes = new ArrayList<Avaliacao>();
 	
+	@OneToMany(mappedBy = "obra")
+	private List<Autor> autores = new ArrayList<Autor>();
+	
 	public Obra() {
 		// TODO Auto-generated constructor stub
 	}
 
-	public Obra(Integer id, String ifsn, String titulo, String area, String descricao, String autor, String nome_arquivo,
+	public Obra(Integer id, String ifsn, String titulo, String area, String descricao, String nome_arquivo,
 			String caminho_arquivo, Professor professor) {
 		super();
 		this.id = id;
@@ -49,7 +51,6 @@ public class Obra implements Serializable{
 		this.titulo = titulo;
 		this.area = area;
 		this.descricao = descricao;
-		this.autor = autor;
 		this.nome_arquivo = nome_arquivo;
 		this.caminho_arquivo = caminho_arquivo;
 		this.professor = professor;
@@ -95,14 +96,6 @@ public class Obra implements Serializable{
 		this.descricao = descricao;
 	}
 
-	public String getAutor() {
-		return autor;
-	}
-
-	public void setAutor(String autor) {
-		this.autor = autor;
-	}
-
 	public String getNomeArquivo() {
 		return nome_arquivo;
 	}
@@ -133,6 +126,14 @@ public class Obra implements Serializable{
 
 	public void setAvaliacoes(List<Avaliacao> avaliacoes) {
 		this.avaliacoes = avaliacoes;
+	}
+
+	public List<Autor> getAutores() {
+		return autores;
+	}
+
+	public void setAutores(List<Autor> autores) {
+		this.autores = autores;
 	}
 
 	@Override

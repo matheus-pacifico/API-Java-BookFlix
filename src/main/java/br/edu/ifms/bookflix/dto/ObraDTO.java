@@ -2,12 +2,13 @@ package br.edu.ifms.bookflix.dto;
 
 import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.model.Autor;
 import br.edu.ifms.bookflix.model.Avaliacao;
 
 import java.io.Serializable;
 import java.util.List;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 public class ObraDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
@@ -17,11 +18,11 @@ public class ObraDTO implements Serializable{
 	private String titulo;
 	private String area;
 	private String descricao;
-	private String autor;
 	private String nome_arquivo;
 	private String caminho_arquivo;
 	private Professor professor;
 	private List<Avaliacao> avaliacoes;
+	private List<Autor> autores;
 		
 	public ObraDTO() {
 		// TODO Auto-generated constructor stub
@@ -33,7 +34,7 @@ public class ObraDTO implements Serializable{
 		this.titulo = objeto.getTitulo();
 		this.area = objeto.getArea();
 		this.descricao = objeto.getDescricao();
-		this.autor = objeto.getAutor();
+		this.autores = objeto.getAutores();
 		this.nome_arquivo = objeto.getNomeArquivo();
 		this.caminho_arquivo = objeto.getCaminhoArquivo();
 		this.professor = objeto.getProfessor();
@@ -80,14 +81,6 @@ public class ObraDTO implements Serializable{
 		this.descricao = descricao;
 	}
 
-	public String getAutor() {
-		return autor;
-	}
-
-	public void setAutor(String autor) {
-		this.autor = autor;
-	}
-
 	public String getNomeArquivo() {
 		return nome_arquivo;
 	}
@@ -118,6 +111,14 @@ public class ObraDTO implements Serializable{
 
 	public void setAvaliacoes(List<Avaliacao> avaliacoes) {
 		this.avaliacoes = avaliacoes;
+	}
+
+	public List<Autor> getAutores() {
+		return autores;
+	}
+
+	public void setAutores(List<Autor> autores) {
+		this.autores = autores;
 	}		
 	
 }

@@ -6,7 +6,7 @@ import br.edu.ifms.bookflix.model.Usuario;
 
 import java.io.Serializable;
 
-import javax.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotEmpty;
 
 public class AlunoDTO implements Serializable {
 

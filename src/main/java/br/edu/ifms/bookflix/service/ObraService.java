@@ -78,17 +78,17 @@ public class ObraService {
 		obraAuxiliar.setTitulo(objetoDTO.getTitulo());
 		obraAuxiliar.setArea(objetoDTO.getArea());
 		obraAuxiliar.setDescricao(objetoDTO.getDescricao());
-		obraAuxiliar.setAutor(objetoDTO.getAutor());
 		obraAuxiliar.setNomeArquivo(objetoDTO.getNomeArquivo());
 		obraAuxiliar.setCaminhoArquivo(objetoDTO.getCaminhoArquivo());
 		obraAuxiliar.setProfessor(objetoDTO.getProfessor());
+		obraAuxiliar.setAutores(objetoDTO.getAutores());
 		obraAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());
 		return obraAuxiliar;
 	}
 	
 	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
 		return new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
-			objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), objetoNewDTO.getAutor(), 
+			objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), 
 			objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
 	}
 	
@@ -97,10 +97,10 @@ public class ObraService {
         novoObjeto.setTitulo(objeto.getTitulo());
         novoObjeto.setArea(objeto.getArea());
         novoObjeto.setDescricao(objeto.getDescricao());
-        novoObjeto.setAutor(objeto.getAutor());
         novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
         novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
         novoObjeto.setProfessor(objeto.getProfessor());
+        novoObjeto.setAutores(objeto.getAutores());
         novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
@@ -123,7 +123,7 @@ public class ObraService {
 	public List<Obra> findByAutor(String autor) {
 		List<Obra> obrasEncontradas = new ArrayList<>();
 		allObrasFound().stream()
-			.filter(obra -> (isFound(obra.getAutor(), autor)))
+			.filter(obra -> (isFound(obra.getAutores().stream().toString(), autor)))
 			.forEach(obra -> obrasEncontradas.add(obra));
 		return obrasEncontradas;
 	}
