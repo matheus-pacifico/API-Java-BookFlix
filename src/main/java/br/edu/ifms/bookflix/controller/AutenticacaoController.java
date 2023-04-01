@@ -29,7 +29,7 @@ public class AutenticacaoController {
 	
 	@RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Autenticacao> find(@PathVariable Integer id) {		
-		Autenticacao objeto = autenticacaoServices.find(id);
+		Autenticacao objeto = autenticacaoServices.autenticacaoSemObra(autenticacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 
@@ -64,7 +64,7 @@ public class AutenticacaoController {
 	
 	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<AutenticacaoDTO>> findAll() {		
-		List<Autenticacao> lista = autenticacaoServices.findAll();
+		List<Autenticacao> lista = autenticacaoServices.listaAutenticacoesSemObras(autenticacaoServices.findAll());
 		List<AutenticacaoDTO> listaDTO = lista.stream().map(objeto -> new AutenticacaoDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}

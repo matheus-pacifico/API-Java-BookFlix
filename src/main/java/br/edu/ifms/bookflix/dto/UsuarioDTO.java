@@ -1,7 +1,6 @@
 package br.edu.ifms.bookflix.dto;
 
 import br.edu.ifms.bookflix.model.Usuario;
-import br.edu.ifms.bookflix.model.Autenticacao;
 import br.edu.ifms.bookflix.model.Professor;
 import br.edu.ifms.bookflix.model.Aluno;
 import br.edu.ifms.bookflix.model.Avaliacao;
@@ -13,7 +12,6 @@ public class UsuarioDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String nome;
-	private Autenticacao autenticacao;
 	private Professor professor;
 	private Aluno aluno;
 	private List<Avaliacao> avaliacoes;
@@ -25,7 +23,6 @@ public class UsuarioDTO implements Serializable{
 	public UsuarioDTO(Usuario objeto) {
 		this.id = objeto.getId();
 		this.nome = objeto.getNome();
-		this.autenticacao = objeto.getAutenticacao();
 		this.professor = objeto.getProfessor();
 		this.aluno = objeto.getAluno();
 		this.avaliacoes = objeto.getAvaliacoes();
@@ -45,14 +42,6 @@ public class UsuarioDTO implements Serializable{
 
 	public void setNome(String nome) {
 		this.nome = nome;
-	}
-
-	public Autenticacao getAutenticacao() {
-		return autenticacao;
-	}
-
-	public void setAutenticacao(Autenticacao autenticacao) {
-		this.autenticacao = autenticacao;
 	}
 
 	public Professor getProfessor() {

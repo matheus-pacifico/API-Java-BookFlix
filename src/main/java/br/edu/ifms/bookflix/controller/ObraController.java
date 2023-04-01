@@ -29,7 +29,7 @@ public class ObraController {
 	
 	@RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Obra> find(@PathVariable Integer id) {		
-		Obra objeto = obraServices.find(id);
+		Obra objeto = obraServices.obraSemDadosDoUsuarioExcetoNome(obraServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 

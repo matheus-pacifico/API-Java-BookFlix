@@ -21,7 +21,6 @@ public class Avaliacao implements Serializable{
 	private String comentario;
 	private int nota;
 	
-	@JsonIgnore
 	@ManyToOne
 	@JoinColumn(name="usuario_id")
 	private Usuario usuario;

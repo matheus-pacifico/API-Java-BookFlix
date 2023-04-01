@@ -27,9 +27,9 @@ public class AvaliacaoController {
 	@Autowired
 	private AvaliacaoService avaliacaoServices;
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Avaliacao> find(@PathVariable Integer id) {		
-		Avaliacao objeto = avaliacaoServices.find(id);
+		Avaliacao objeto = avaliacaoServices.avaliacaoSemDadosDoUsuarioExcetoNome(avaliacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	

@@ -9,6 +9,7 @@ import br.edu.ifms.bookflix.dto.AutorDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -81,6 +82,20 @@ public class AutorService {
 	
 	public Optional<Autor> findById(Integer id) {
 		return autoresRepository.findById(id);
+	}
+	
+	public Autor autorSemAvaliacoesDaObra(Autor autor) {
+		autor.getObra().setAvaliacoes(null);
+		return autor;
+	}
+	
+	public List<Autor> listaAutoresSemAvaliacoesDaObra(List<Autor> autores) {
+		List<Autor> autorSemAvaliacoes = new ArrayList<>();
+		autores.forEach(a -> autorSemAvaliacoesDaObra(a));
+		
+		autorSemAvaliacoes.addAll(autores);
+		
+		return autorSemAvaliacoes;
 	}
 
 }

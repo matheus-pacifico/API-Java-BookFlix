@@ -27,9 +27,9 @@ public class AutorController {
 	@Autowired
 	private AutorService autorServices;
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.GET)
+	@RequestMapping(value="mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Autor> find(@PathVariable Integer id) {		
-		Autor objeto = autorServices.find(id);
+		Autor objeto = autorServices.autorSemAvaliacoesDaObra(autorServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
@@ -64,7 +64,7 @@ public class AutorController {
 	
 	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<AutorDTO>> findAll() {		
-		List<Autor> lista = autorServices.findAll();
+		List<Autor> lista = autorServices.listaAutoresSemAvaliacoesDaObra(autorServices.findAll());
 		List<AutorDTO> listaDTO = lista.stream().map(objeto -> new AutorDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}	

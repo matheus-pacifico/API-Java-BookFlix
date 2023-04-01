@@ -28,7 +28,7 @@ public class ObraService {
 	public Obra find(Integer id) {
 		Optional<Obra> objeto = obrasRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Obra não encontrada! Id: " + id + ", Tipo: " + Obra.class.getName()));		
+				 "Obra não encontrada! Id: " + id /*+ ", Tipo: " + Obra.class.getName()*/));		
 	}
 	
 	@Transactional
@@ -160,11 +160,31 @@ public class ObraService {
 	}
 
 	private List<Obra> allObrasFound(){
-		return obrasRepository.findAll();
+		return listaObrasSemDadosDoUsuarioExcetoNome(obrasRepository.findAll());
 	}
 	
     private boolean isFound(String comparacao, String busca) {
         return (comparacao.toUpperCase().contains(busca.toUpperCase()));      
     }
+	
+	public Obra obraSemDadosDoUsuarioExcetoNome(Obra obra) {
+		obra.getAvaliacoes().forEach(a -> {
+			a.getUsuario().setAutenticacao(null);
+			a.getUsuario().setProfessor(null);
+			a.getUsuario().setAluno(null);
+			a.getUsuario().setAvaliacoes(null);
+			a.getUsuario().setId(null);
+		});
+		return obra;
+	}
+	
+	public List<Obra> listaObrasSemDadosDoUsuarioExcetoNome(List<Obra> obras) {
+		List<Obra> obrasSemDadosExcetoNome = new ArrayList<>();
+		obras.forEach(o -> obraSemDadosDoUsuarioExcetoNome(o));
+		
+		obrasSemDadosExcetoNome.addAll(obras);
+		
+		return obrasSemDadosExcetoNome;
+	}
 
 }

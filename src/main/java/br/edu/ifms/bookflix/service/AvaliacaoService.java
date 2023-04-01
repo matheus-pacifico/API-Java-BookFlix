@@ -9,6 +9,7 @@ import br.edu.ifms.bookflix.dto.AvaliacaoDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,9 +25,9 @@ public class AvaliacaoService {
 	private AvaliacaoRepository avaliacoesRepository;
 	
 	public Avaliacao find(Integer id) {
-		Optional<Avaliacao> objeto = avaliacoesRepository.findById(id); 
+		Optional<Avaliacao> objeto = avaliacoesRepository.findById(id);
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Objeto não encontrado! Id: " + id + ", Tipo: " + Avaliacao.class.getName()));		
+				 "Objeto não encontrado! Id: " + id /*+ ", Tipo: " + Avaliacao.class.getName()*/));		
 	}
 	
 	@Transactional
@@ -70,7 +71,7 @@ public class AvaliacaoService {
 	}
 	
 	public List<Avaliacao> findAll() {
-		return avaliacoesRepository.findAll();
+		return listaAvaliacoesSemDadosDoUsuarioExcetoNome(avaliacoesRepository.findAll());
 	}
 	
 	@Transactional
@@ -84,6 +85,24 @@ public class AvaliacaoService {
 	
 	public Optional<Avaliacao> findById(Integer id) {
 		return avaliacoesRepository.findById(id);
+	}
+	
+	public Avaliacao avaliacaoSemDadosDoUsuarioExcetoNome(Avaliacao avaliacao) {
+		avaliacao.getUsuario().setAutenticacao(null);
+		avaliacao.getUsuario().setProfessor(null);
+		avaliacao.getUsuario().setAluno(null);
+		avaliacao.getUsuario().setAvaliacoes(null);
+		avaliacao.getUsuario().setId(null);
+		return avaliacao;
+	}
+	
+	public List<Avaliacao> listaAvaliacoesSemDadosDoUsuarioExcetoNome(List<Avaliacao> avaliacoes) {
+		List<Avaliacao> avaliacoesSemDadosExcetoNome = new ArrayList<>();
+		avaliacoes.forEach(a -> avaliacaoSemDadosDoUsuarioExcetoNome(a));
+		
+		avaliacoesSemDadosExcetoNome.addAll(avaliacoes);
+		
+		return avaliacoesSemDadosExcetoNome;
 	}
 	
 }

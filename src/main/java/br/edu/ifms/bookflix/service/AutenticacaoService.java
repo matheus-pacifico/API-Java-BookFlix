@@ -9,6 +9,7 @@ import br.edu.ifms.bookflix.dto.AutenticacaoDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -84,6 +85,20 @@ public class AutenticacaoService {
 	
 	public Optional<Autenticacao> findById(Integer id) {
 		return autenticacoesRepository.findById(id);
+	}
+	
+	public Autenticacao autenticacaoSemObra(Autenticacao autenticacao) {
+		if(autenticacao.getUsuario().getProfessor() != null) autenticacao.getUsuario().getProfessor().setObras(null);
+		return autenticacao;
+	}
+	
+	public List<Autenticacao> listaAutenticacoesSemObras(List<Autenticacao> autenticacoes) {
+		List<Autenticacao> autenticacoesSemObra = new ArrayList<>();
+		autenticacoes.forEach(a -> autenticacaoSemObra(a));
+		
+		autenticacoesSemObra.addAll(autenticacoes);
+		
+		return autenticacoesSemObra;
 	}
 	
 }

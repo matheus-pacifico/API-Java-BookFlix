@@ -74,7 +74,6 @@ public class UsuarioService {
 		Usuario usuarioAuxiliar = new Usuario();
 		usuarioAuxiliar.setId(objetoDTO.getId());
 		usuarioAuxiliar.setNome(objetoDTO.getNome());
-		usuarioAuxiliar.setAutenticacao(objetoDTO.getAutenticacao());
 		usuarioAuxiliar.setProfessor(objetoDTO.getProfessor());
 		usuarioAuxiliar.setAluno(objetoDTO.getAluno());
 		usuarioAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());
@@ -82,7 +81,7 @@ public class UsuarioService {
 	}
 	
 	public Usuario fromNewDTO(UsuarioDTO objetoDTO) {
-		return new Usuario(null , objetoDTO.getNome(), objetoDTO.getAutenticacao(), null, null);
+		return new Usuario(null , objetoDTO.getNome(), null, null, null);
 	}
 	
 	public Usuario find(Integer id) {
