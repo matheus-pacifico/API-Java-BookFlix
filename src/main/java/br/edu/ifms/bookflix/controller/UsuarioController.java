@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.stream.Collectors;
   
 import jakarta.validation.Valid;
-  
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.http.ResponseEntity; 
 import org.springframework.web.bind.annotation.PathVariable; 
@@ -30,7 +29,7 @@ public class UsuarioController {
   
    @RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
    public ResponseEntity<Usuario> find(@PathVariable Integer id) { 
-	   Usuario objeto = usuarioServices.find(id); 
+	   Usuario objeto = usuarioServices.usuarioSemAvaliacaoDasObras(usuarioServices.find(id)); 
 	   return ResponseEntity.ok().body(objeto); 
    }
    
@@ -65,10 +64,10 @@ public class UsuarioController {
 	
 	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
 	public ResponseEntity<List<UsuarioDTO>> findAll() {		
-		List<Usuario> lista = usuarioServices.findAll();
+		List<Usuario> lista = usuarioServices.listaUsuariosSemAvaliacoesDasObras(usuarioServices.findAll());
 		List<UsuarioDTO> listaDTO = lista.stream().map(objeto -> new UsuarioDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}
-  
+	
 }
  

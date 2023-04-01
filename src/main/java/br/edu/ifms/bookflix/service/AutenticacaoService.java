@@ -89,6 +89,7 @@ public class AutenticacaoService {
 	
 	public Autenticacao autenticacaoSemObra(Autenticacao autenticacao) {
 		if(autenticacao.getUsuario().getProfessor() != null) autenticacao.getUsuario().getProfessor().setObras(null);
+		
 		return autenticacao;
 	}
 	

@@ -8,6 +8,7 @@ import br.edu.ifms.bookflix.dto.UsuarioDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -88,6 +89,21 @@ public class UsuarioService {
 		Optional<Usuario> objeto = usuariosRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Usuario não encontrado! Id: " + id + ", Tipo: " + Usuario.class.getName()));		
+	}
+	
+	public Usuario usuarioSemAvaliacaoDasObras(Usuario usuario) {
+		if(usuario.getProfessor() != null) usuario.getProfessor().getObras().forEach(o -> o.setAvaliacoes(null));
+		
+		return usuario;
+	}
+	
+	public List<Usuario> listaUsuariosSemAvaliacoesDasObras(List<Usuario> usuarios) {
+		List<Usuario> usuariosSemAvaliacoes= new ArrayList<>();
+		usuarios.forEach(u -> usuarioSemAvaliacaoDasObras(u));
+		
+		usuariosSemAvaliacoes.addAll(usuarios);
+		
+		return usuariosSemAvaliacoes;
 	}
 	
 }
