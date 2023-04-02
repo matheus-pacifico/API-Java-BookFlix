@@ -11,6 +11,7 @@ import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -23,21 +24,10 @@ public class AlunoService {
 	@Autowired
 	private AlunoRepository alunosRepository;
 	
-	public List<Aluno> findAll() {
-		return alunosRepository.findAll();
-	}
-	
-	@Transactional
-	public void deleteById(Integer id) {
-		alunosRepository.deleteById(id);
-	}
-	
-	public void save(Aluno aluno) {
-		alunosRepository.saveAndFlush(aluno);
-	}
-	
-	public Optional<Aluno> findById(Integer id) {
-		return alunosRepository.findById(id);
+	public Aluno find(Integer id) {
+		Optional<Aluno> objeto = alunosRepository.findById(id); 
+		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
+				 "Aluno não encontrado! Id: " + id + ", Tipo: " + Aluno.class.getName()));		
 	}
 	
 	@Transactional
@@ -63,12 +53,6 @@ public class AlunoService {
 		}
 	}
 	
-	private void updateData(Aluno objeto, Aluno novoObjeto) {
-		novoObjeto.setRa(objeto.getRa());
-		novoObjeto.setTurma(objeto.getTurma());
-		novoObjeto.setUsuario(objeto.getUsuario());
-	}
-	
 	public Aluno fromDTO(AlunoDTO objetoDTO) {
 		Aluno alunoAuxiliar = new Aluno();
 		alunoAuxiliar.setId(objetoDTO.getId());
@@ -82,31 +66,44 @@ public class AlunoService {
 		return new Aluno(null, objetoDTO.getRa(), objetoDTO.getTurma(), objetoDTO.getUsuario());
 	}
 	
-	public Aluno find(Integer id) {
-		Optional<Aluno> objeto = alunosRepository.findById(id); 
-		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Aluno não encontrado! Id: " + id + ", Tipo: " + Aluno.class.getName()));		
+	private void updateData(Aluno objeto, Aluno novoObjeto) {
+		novoObjeto.setRa(objeto.getRa());
+		novoObjeto.setTurma(objeto.getTurma());
+		novoObjeto.setUsuario(objeto.getUsuario());
+	}
+	
+	public List<Aluno> findAll() {
+		return alunosRepository.findAll();
+	}
+	
+	@Transactional
+	public void deleteById(Integer id) {
+		alunosRepository.deleteById(id);
+	}
+	
+	public void save(Aluno aluno) {
+		alunosRepository.saveAndFlush(aluno);
+	}
+	
+	public Optional<Aluno> findById(Integer id) {
+		return alunosRepository.findById(id);
 	}
 	
 	public List<Aluno> findAlunosByTurma(int turma) {
 		List<Aluno> lista = alunosRepository.findAll();
 		List<Aluno> alunosEncontrados = new ArrayList<>();
-		for (Aluno aluno: lista) {
-			if (aluno.getTurma() == turma) {
-				alunosEncontrados.add(aluno);
-			}
-		}
+		
+		alunosEncontrados.addAll(lista.stream().filter(t -> t.getTurma() == turma)
+				.collect(Collectors.toList()));
+	
 		return alunosEncontrados;
 	}
 	
-	public Aluno findByRa(String ra) {		
-		List<Aluno> lista = alunosRepository.findAll();
-		for (Aluno aluno : lista) {
-			if (aluno.getRa() == ra) {
-				return aluno;
-			}
-		}
-		return null;
+	public Optional<Aluno> findByRa(String ra) {
+		Optional<Aluno> alunoEncontrado = alunosRepository.findAll().stream()
+				.filter(a -> a.getRa().compareTo(ra) == 0).findFirst();
+		
+		return alunoEncontrado;
 	}
 	
 }

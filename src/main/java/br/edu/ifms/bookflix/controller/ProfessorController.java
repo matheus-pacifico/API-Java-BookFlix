@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/professor")
+@RequestMapping(value = "/api/v1/professor")
 public class ProfessorController {
 	
 	@Autowired
@@ -35,11 +35,11 @@ public class ProfessorController {
 	}
 		
 	@RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody ProfessorDTO objetoDTO) {
-		Professor objeto = professorServices.fromNewDTO(objetoDTO);
+	public ResponseEntity<Void> insert(@Valid @RequestBody ProfessorDTO objetoNewDTO) {
+		Professor objeto = professorServices.fromNewDTO(objetoNewDTO);
 		objeto = professorServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-			.path("/{id}").buildAndExpand(objeto.getId()).toUri();
+				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	

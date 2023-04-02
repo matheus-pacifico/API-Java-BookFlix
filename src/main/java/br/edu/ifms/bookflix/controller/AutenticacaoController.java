@@ -21,28 +21,28 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/autenticacao")
+@RequestMapping(value = "/api/v1/autenticacao")
 public class AutenticacaoController {
 	
 	@Autowired
 	private AutenticacaoService autenticacaoServices;
 	
-	@RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Autenticacao> find(@PathVariable Integer id) {		
 		Autenticacao objeto = autenticacaoServices.autenticacaoSemObra(autenticacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(value = "/adicionar", method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody AutenticacaoDTO objetoNewDTO) {
 		Autenticacao objeto = autenticacaoServices.fromNewDTO(objetoNewDTO);
 		objeto = autenticacaoServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-			.path("/{id}").buildAndExpand(objeto.getId()).toUri();
+				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody AutenticacaoDTO objetoDTO, @PathVariable Integer id) {
 		Autenticacao objeto = autenticacaoServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,13 +50,13 @@ public class AutenticacaoController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
+	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable Integer id){
 		autenticacaoServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value="/deletarporid/{id}", method= RequestMethod.DELETE)
+	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
 		autenticacaoServices.delete(id);
 		return ResponseEntity.noContent().build();

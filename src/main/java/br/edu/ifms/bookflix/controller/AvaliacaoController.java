@@ -21,19 +21,19 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/avaliacao")
+@RequestMapping(value = "api/v1/avaliacao")
 public class AvaliacaoController {
 	
 	@Autowired
 	private AvaliacaoService avaliacaoServices;
 	
-	@RequestMapping(value="mostrar/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Avaliacao> find(@PathVariable Integer id) {		
 		Avaliacao objeto = avaliacaoServices.avaliacaoSemDadosDoUsuarioExcetoNome(avaliacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(value = "/adicionar", method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody AvaliacaoDTO objetoNewDTO) {
 		Avaliacao objeto = avaliacaoServices.fromNewDTO(objetoNewDTO);
 		objeto = avaliacaoServices.insert(objeto);
@@ -42,7 +42,7 @@ public class AvaliacaoController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody AvaliacaoDTO objetoDTO, @PathVariable Integer id) {
 		Avaliacao objeto = avaliacaoServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,13 +50,13 @@ public class AvaliacaoController {
 		return ResponseEntity.noContent().build();
 	}
 		
-	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
+	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto,@PathVariable Integer id){
 		avaliacaoServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value="/deletarporid/{id}", method= RequestMethod.DELETE)
+	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
 		avaliacaoServices.delete(id);
 		return ResponseEntity.noContent().build();

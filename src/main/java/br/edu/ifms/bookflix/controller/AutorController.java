@@ -21,28 +21,28 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
-@RequestMapping(value = "/autor")
+@RequestMapping(value = "/api/v1/autor")
 public class AutorController {
 	
 	@Autowired
 	private AutorService autorServices;
 	
-	@RequestMapping(value="mostrar/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = "/mostrar/{id}", method = RequestMethod.GET)
 	public ResponseEntity<Autor> find(@PathVariable Integer id) {		
 		Autor objeto = autorServices.autorSemAvaliacoesDaObra(autorServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
-	@RequestMapping(method=RequestMethod.POST)
+	@RequestMapping(value = "/adicionar", method = RequestMethod.POST)
 	public ResponseEntity<Void> insert(@Valid @RequestBody AutorDTO objetoNewDTO) {
 		Autor objeto = autorServices.fromNewDTO(objetoNewDTO);
 		objeto = autorServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-			.path("/{id}").buildAndExpand(objeto.getId()).toUri();
+				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value="/{id}", method=RequestMethod.PUT)
+	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
 	public ResponseEntity<Void> update(@Valid @RequestBody AutorDTO objetoDTO, @PathVariable Integer id) {
 		Autor objeto = autorServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,13 +50,13 @@ public class AutorController {
 		return ResponseEntity.noContent().build();
 	}
 		
-	@RequestMapping(value="/{id}", method= RequestMethod.DELETE)
+	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> delete(@RequestBody Autor objeto, @PathVariable Integer id){
 		autorServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value="/deletarporid/{id}", method= RequestMethod.DELETE)
+	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
 		autorServices.delete(id);
 		return ResponseEntity.noContent().build();

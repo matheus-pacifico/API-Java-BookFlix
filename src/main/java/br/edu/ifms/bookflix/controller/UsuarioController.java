@@ -21,7 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
   
 @RestController
-@RequestMapping(value = "/usuario")
+@RequestMapping(value = "/api/v1/usuario")
 public class UsuarioController {
   
    @Autowired
@@ -34,11 +34,11 @@ public class UsuarioController {
    }
    
    @RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody UsuarioDTO objetoDTO) {
-		Usuario objeto = usuarioServices.fromNewDTO(objetoDTO);
+	public ResponseEntity<Void> insert(@Valid @RequestBody UsuarioDTO objetoNewDTO) {
+		Usuario objeto = usuarioServices.fromNewDTO(objetoNewDTO);
 		objeto = usuarioServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
-			.path("/{id}").buildAndExpand(objeto.getId()).toUri();
+				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	

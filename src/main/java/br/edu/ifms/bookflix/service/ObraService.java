@@ -28,7 +28,7 @@ public class ObraService {
 	public Obra find(Integer id) {
 		Optional<Obra> objeto = obrasRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Obra não encontrada! Id: " + id /*+ ", Tipo: " + Obra.class.getName()*/));		
+				 "Obra não encontrada! Id: " + id));		
 	}
 	
 	@Transactional
@@ -159,7 +159,7 @@ public class ObraService {
 		return obrasUnicas;
 	}
 
-	private List<Obra> allObrasFound(){
+	private List<Obra> allObrasFound() {
 		return listaObrasApenasComNomeDoUsuarioESemObraDoProfessor(obrasRepository.findAll());
 	}
 	
