@@ -27,7 +27,7 @@ public class AutorService {
 	public Autor find(Integer id) {
 		Optional<Autor> objeto = autoresRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Objeto não encontrado! Id: " + id + ", Tipo: " + Autor.class.getName()));		
+				 "Autor não encontrado! Id: " + id));		
 	}
 	
 	@Transactional
@@ -84,14 +84,14 @@ public class AutorService {
 		return autoresRepository.findById(id);
 	}
 	
-	public Autor autorSemAvaliacoesDaObra(Autor autor) {
+	public Autor autorWithoutAvaliacoesDaObra(Autor autor) {
 		autor.getObra().setAvaliacoes(null);
 		return autor;
 	}
 	
-	public List<Autor> listaAutoresSemAvaliacoesDaObra(List<Autor> autores) {
+	public List<Autor> autoresListWithoutAvaliacoesDaObra(List<Autor> autores) {
 		List<Autor> autorSemAvaliacoes = new ArrayList<>();
-		autores.forEach(a -> autorSemAvaliacoesDaObra(a));
+		autores.forEach(a -> autorWithoutAvaliacoesDaObra(a));
 		
 		autorSemAvaliacoes.addAll(autores);
 		

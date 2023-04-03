@@ -88,18 +88,18 @@ public class UsuarioService {
 	public Usuario find(Integer id) {
 		Optional<Usuario> objeto = usuariosRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Usuario não encontrado! Id: " + id + ", Tipo: " + Usuario.class.getName()));		
+				 "Usuário não encontrado! Id: " + id));		
 	}
 	
-	public Usuario usuarioSemAvaliacaoDasObras(Usuario usuario) {
+	public Usuario usuarioWithoutAvaliacaoDasObras(Usuario usuario) {
 		if(usuario.getProfessor() != null) usuario.getProfessor().getObras().forEach(o -> o.setAvaliacoes(null));
 		
 		return usuario;
 	}
 	
-	public List<Usuario> listaUsuariosSemAvaliacoesDasObras(List<Usuario> usuarios) {
+	public List<Usuario> usuariosListWithoutAvaliacoesDasObras(List<Usuario> usuarios) {
 		List<Usuario> usuariosSemAvaliacoes= new ArrayList<>();
-		usuarios.forEach(u -> usuarioSemAvaliacaoDasObras(u));
+		usuarios.forEach(u -> usuarioWithoutAvaliacaoDasObras(u));
 		
 		usuariosSemAvaliacoes.addAll(usuarios);
 		

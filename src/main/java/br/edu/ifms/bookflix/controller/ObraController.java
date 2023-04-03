@@ -33,7 +33,7 @@ public class ObraController {
 	
 	@GetMapping(value = "/mostrar/{id}")
 	public ResponseEntity<Obra> find(@PathVariable Integer id) {		
-		Obra objeto = obraServices.obrasApenasComNomeDoUsuarioESemObraDoProfessor(obraServices.find(id));
+		Obra objeto = obraServices.obraJustWithUsersNameWithoutObrasProfessor(obraServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 

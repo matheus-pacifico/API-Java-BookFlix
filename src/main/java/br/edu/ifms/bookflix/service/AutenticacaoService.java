@@ -27,7 +27,7 @@ public class AutenticacaoService {
 	public Autenticacao find(Integer id) {
 		Optional<Autenticacao> objeto = autenticacoesRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Objeto não encontrado! Id: " + id + ", Tipo: " + Autenticacao.class.getName()));		
+				 "Autenticação não encontrada! Id: " + id));		
 	}
 	
 	@Transactional
@@ -71,7 +71,7 @@ public class AutenticacaoService {
 	}
 	
 	public List<Autenticacao> findAll() {
-		return autenticacoesRepository.findAll();
+		return autenticacoesListWithoutObras(autenticacoesRepository.findAll());
 	}
 	
 	@Transactional
@@ -87,15 +87,15 @@ public class AutenticacaoService {
 		return autenticacoesRepository.findById(id);
 	}
 	
-	public Autenticacao autenticacaoSemObra(Autenticacao autenticacao) {
+	public Autenticacao autenticacaoWithoutObra(Autenticacao autenticacao) {
 		if(autenticacao.getUsuario().getProfessor() != null) autenticacao.getUsuario().getProfessor().setObras(null);
 		
 		return autenticacao;
 	}
 	
-	public List<Autenticacao> listaAutenticacoesSemObras(List<Autenticacao> autenticacoes) {
+	public List<Autenticacao> autenticacoesListWithoutObras(List<Autenticacao> autenticacoes) {
 		List<Autenticacao> autenticacoesSemObra = new ArrayList<>();
-		autenticacoes.forEach(a -> autenticacaoSemObra(a));
+		autenticacoes.forEach(a -> autenticacaoWithoutObra(a));
 		
 		autenticacoesSemObra.addAll(autenticacoes);
 		

@@ -160,14 +160,14 @@ public class ObraService {
 	}
 
 	private List<Obra> allObrasFound() {
-		return listaObrasApenasComNomeDoUsuarioESemObraDoProfessor(obrasRepository.findAll());
+		return obrasListJustWithUsersNameWithoutObrasProfessor(obrasRepository.findAll());
 	}
 	
     private boolean isFound(String comparacao, String busca) {
         return (comparacao.toUpperCase().contains(busca.toUpperCase()));      
     }
 	
-	public Obra obrasApenasComNomeDoUsuarioESemObraDoProfessor(Obra obra) {
+	public Obra obraJustWithUsersNameWithoutObrasProfessor(Obra obra) {
 		obra.getAvaliacoes().forEach(a -> {
 			a.getUsuario().setAutenticacao(null);
 			a.getUsuario().setProfessor(null);
@@ -180,9 +180,9 @@ public class ObraService {
 		return obra;
 	}
 	
-	public List<Obra> listaObrasApenasComNomeDoUsuarioESemObraDoProfessor(List<Obra> obras) {
+	public List<Obra> obrasListJustWithUsersNameWithoutObrasProfessor(List<Obra> obras) {
 		List<Obra> obrasSemDadosExcetoNome = new ArrayList<>();
-		obras.forEach(o -> obrasApenasComNomeDoUsuarioESemObraDoProfessor(o));
+		obras.forEach(o -> obraJustWithUsersNameWithoutObrasProfessor(o));
 		
 		obrasSemDadosExcetoNome.addAll(obras);
 		

@@ -27,7 +27,7 @@ public class AlunoService {
 	public Aluno find(Integer id) {
 		Optional<Aluno> objeto = alunosRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Aluno não encontrado! Id: " + id + ", Tipo: " + Aluno.class.getName()));		
+				 "Aluno não encontrado! Id: " + id));		
 	}
 	
 	@Transactional

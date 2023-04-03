@@ -27,7 +27,7 @@ public class AvaliacaoService {
 	public Avaliacao find(Integer id) {
 		Optional<Avaliacao> objeto = avaliacoesRepository.findById(id);
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Objeto não encontrado! Id: " + id /*+ ", Tipo: " + Avaliacao.class.getName()*/));		
+				 "Avaliação não encontrada! Id: " + id));		
 	}
 	
 	@Transactional
@@ -52,6 +52,23 @@ public class AvaliacaoService {
 		catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}
+	}
+	
+	public List<Avaliacao> findAll() {
+		return avaliacoesListWithoutUsuariosDataExceptName(avaliacoesRepository.findAll());
+	}
+	
+	@Transactional
+	public void deleteById(Integer id) {
+		avaliacoesRepository.deleteById(id);
+	}
+	
+	public void save(Avaliacao avaliacao) {
+		avaliacoesRepository.saveAndFlush(avaliacao);
+	}
+	
+	public Optional<Avaliacao> findById(Integer id) {
+		return avaliacoesRepository.findById(id);
 	}	
 	
 	public Avaliacao fromDTO(AvaliacaoDTO objetoDTO) {
@@ -70,24 +87,7 @@ public class AvaliacaoService {
 		novoObjeto.setObra(objeto.getObra());
 	}
 	
-	public List<Avaliacao> findAll() {
-		return listaAvaliacoesSemDadosDoUsuarioExcetoNome(avaliacoesRepository.findAll());
-	}
-	
-	@Transactional
-	public void deleteById(Integer id) {
-		avaliacoesRepository.deleteById(id);
-	}
-	
-	public void save(Avaliacao avaliacao) {
-		avaliacoesRepository.saveAndFlush(avaliacao);
-	}
-	
-	public Optional<Avaliacao> findById(Integer id) {
-		return avaliacoesRepository.findById(id);
-	}
-	
-	public Avaliacao avaliacaoSemDadosDoUsuarioExcetoNome(Avaliacao avaliacao) {
+	public Avaliacao avaliacaoWithoutUsuariosDataExceptName(Avaliacao avaliacao) {
 		avaliacao.getUsuario().setAutenticacao(null);
 		avaliacao.getUsuario().setProfessor(null);
 		avaliacao.getUsuario().setAluno(null);
@@ -96,9 +96,9 @@ public class AvaliacaoService {
 		return avaliacao;
 	}
 	
-	public List<Avaliacao> listaAvaliacoesSemDadosDoUsuarioExcetoNome(List<Avaliacao> avaliacoes) {
+	public List<Avaliacao> avaliacoesListWithoutUsuariosDataExceptName(List<Avaliacao> avaliacoes) {
 		List<Avaliacao> avaliacoesSemDadosExcetoNome = new ArrayList<>();
-		avaliacoes.forEach(a -> avaliacaoSemDadosDoUsuarioExcetoNome(a));
+		avaliacoes.forEach(a -> avaliacaoWithoutUsuariosDataExceptName(a));
 		
 		avaliacoesSemDadosExcetoNome.addAll(avaliacoes);
 		

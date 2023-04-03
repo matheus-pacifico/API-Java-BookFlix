@@ -33,7 +33,7 @@ public class UsuarioController {
   
     @GetMapping(value = "/mostrar/{id}")
     public ResponseEntity<Usuario> find(@PathVariable Integer id) { 
-    	Usuario objeto = usuarioServices.usuarioSemAvaliacaoDasObras(usuarioServices.find(id)); 
+    	Usuario objeto = usuarioServices.usuarioWithoutAvaliacaoDasObras(usuarioServices.find(id)); 
     	return ResponseEntity.ok().body(objeto); 
     }
    
@@ -68,7 +68,7 @@ public class UsuarioController {
 	
 	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<UsuarioDTO>> findAll() {		
-		List<Usuario> lista = usuarioServices.listaUsuariosSemAvaliacoesDasObras(usuarioServices.findAll());
+		List<Usuario> lista = usuarioServices.usuariosListWithoutAvaliacoesDasObras(usuarioServices.findAll());
 		List<UsuarioDTO> listaDTO = lista.stream().map(objeto -> new UsuarioDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}

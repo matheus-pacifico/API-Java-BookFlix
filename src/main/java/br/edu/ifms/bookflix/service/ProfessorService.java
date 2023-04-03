@@ -24,14 +24,37 @@ public class ProfessorService {
 	@Autowired
 	private ProfessorRepository professoresRepository;
 	
-	public List<Professor> findAll() {
-		return professoresRepository.findAll();
-	}
-	
 	public Professor find(Integer id) {
 		Optional<Professor> objeto = professoresRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Professor não encontrado! Id: " + id + ", Tipo: " + Professor.class.getName()));		
+				 "Professor não encontrado! Id: " + id));		
+	}
+	
+	@Transactional
+	public Professor insert (Professor objeto) {
+		objeto.setId(null);
+		return professoresRepository.save(objeto);
+	}
+
+	public Professor update(Professor objeto) {
+		Professor novoObjeto = find(objeto.getId());
+		updateData(objeto, novoObjeto);
+		return professoresRepository.save(novoObjeto);
+	}
+	
+	@Transactional
+	public void delete(Integer id) {
+		find(id);
+		try {
+			professoresRepository.deleteById(id);	
+		}
+		catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
+	}
+	
+	public List<Professor> findAll() {
+		return professoresRepository.findAll();
 	}
 	
 	@Transactional
@@ -47,33 +70,6 @@ public class ProfessorService {
 		return professoresRepository.findById(id);
 	}
 	
-	@Transactional
-	public Professor insert (Professor objeto) {
-		objeto.setId(null);
-		return professoresRepository.save(objeto);
-	}
-	
-	@Transactional
-	public void delete(Integer id) {
-		find(id);
-		try {
-			professoresRepository.deleteById(id);	
-		}
-		catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
-		}
-	}
-
-	public Professor update(Professor objeto) {
-		Professor novoObjeto = find(objeto.getId());
-		updateData(objeto, novoObjeto);
-		return professoresRepository.save(novoObjeto);
-	}
-	
-	private void updateData(Professor objeto, Professor novoObjeto) {
-		novoObjeto.setSiape(objeto.getSiape());
-	}
-	
 	public Professor fromDTO(ProfessorDTO objetoDTO) {
 		Professor professorAuxiliar = new Professor();
 		professorAuxiliar.setId(objetoDTO.getId());
@@ -87,7 +83,11 @@ public class ProfessorService {
 		return new Professor(null, objetoDTO.getSiape(), objetoDTO.getUsuario());
 	}
 	
-	public List<Obra> ListarObrasPostadasPeloProfessor(Integer id){
+	private void updateData(Professor objeto, Professor novoObjeto) {
+		novoObjeto.setSiape(objeto.getSiape());
+	}
+	
+	public List<Obra> listObrasPostedByProfessor(Integer id){
 		Professor professor = find(id);
 		return professor.getObras();
 	}

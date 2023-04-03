@@ -33,7 +33,7 @@ public class AutorController {
 	
     @GetMapping(value = "/mostrar/{id}")
 	public ResponseEntity<Autor> find(@PathVariable Integer id) {		
-		Autor objeto = autorServices.autorSemAvaliacoesDaObra(autorServices.find(id));
+		Autor objeto = autorServices.autorWithoutAvaliacoesDaObra(autorServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
@@ -68,7 +68,7 @@ public class AutorController {
 	
 	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<AutorDTO>> findAll() {		
-		List<Autor> lista = autorServices.listaAutoresSemAvaliacoesDaObra(autorServices.findAll());
+		List<Autor> lista = autorServices.autoresListWithoutAvaliacoesDaObra(autorServices.findAll());
 		List<AutorDTO> listaDTO = lista.stream().map(objeto -> new AutorDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}	

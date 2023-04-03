@@ -33,7 +33,7 @@ public class AvaliacaoController {
 	
     @GetMapping(value = "/mostrar/{id}")
 	public ResponseEntity<Avaliacao> find(@PathVariable Integer id) {		
-		Avaliacao objeto = avaliacaoServices.avaliacaoSemDadosDoUsuarioExcetoNome(avaliacaoServices.find(id));
+		Avaliacao objeto = avaliacaoServices.avaliacaoWithoutUsuariosDataExceptName(avaliacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
