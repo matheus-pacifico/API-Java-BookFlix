@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
   
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired; 
-import org.springframework.http.ResponseEntity; 
-import org.springframework.web.bind.annotation.PathVariable; 
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody; 
 import org.springframework.web.bind.annotation.RequestMapping; 
-import org.springframework.web.bind.annotation.RequestMethod; 
 import org.springframework.web.bind.annotation.RestController; 
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
   
@@ -24,17 +28,17 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 @RequestMapping(value = "/api/v1/usuario")
 public class UsuarioController {
   
-   @Autowired
-   private UsuarioService usuarioServices;
+    @Autowired
+    private UsuarioService usuarioServices;
   
-   @RequestMapping(value="/mostrar/{id}", method = RequestMethod.GET)
-   public ResponseEntity<Usuario> find(@PathVariable Integer id) { 
-	   Usuario objeto = usuarioServices.usuarioSemAvaliacaoDasObras(usuarioServices.find(id)); 
-	   return ResponseEntity.ok().body(objeto); 
-   }
+    @GetMapping(value = "/mostrar/{id}")
+    public ResponseEntity<Usuario> find(@PathVariable Integer id) { 
+    	Usuario objeto = usuarioServices.usuarioSemAvaliacaoDasObras(usuarioServices.find(id)); 
+    	return ResponseEntity.ok().body(objeto); 
+    }
    
-   @RequestMapping(method = RequestMethod.POST)
-	public ResponseEntity<Void> insert(@Valid @RequestBody UsuarioDTO objetoNewDTO) {
+    @PostMapping(value = "/adicionar")
+    public ResponseEntity<Void> insert(@Valid @RequestBody UsuarioDTO objetoNewDTO) {
 		Usuario objeto = usuarioServices.fromNewDTO(objetoNewDTO);
 		objeto = usuarioServices.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -42,7 +46,7 @@ public class UsuarioController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.PUT)
+	@PutMapping(value = "/atualizar/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody UsuarioDTO objetoDTO, @PathVariable Integer id) {
 		Usuario objeto = usuarioServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,19 +54,19 @@ public class UsuarioController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value="/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> delete(@RequestBody Usuario objeto, @PathVariable Integer id){
+	@DeleteMapping(value = "/remover/{id}")
+	public ResponseEntity<Void> delete(@RequestBody Usuario objeto, @PathVariable Integer id) {
 		usuarioServices.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value="/deletarporid/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
+	@DeleteMapping(value = "/deletar/{id}")
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
 		usuarioServices.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
+	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<UsuarioDTO>> findAll() {		
 		List<Usuario> lista = usuarioServices.listaUsuariosSemAvaliacoesDasObras(usuarioServices.findAll());
 		List<UsuarioDTO> listaDTO = lista.stream().map(objeto -> new UsuarioDTO(objeto)).collect(Collectors.toList());

@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,13 +31,13 @@ public class AvaliacaoController {
 	@Autowired
 	private AvaliacaoService avaliacaoServices;
 	
-	@RequestMapping(value = "/mostrar/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/mostrar/{id}")
 	public ResponseEntity<Avaliacao> find(@PathVariable Integer id) {		
 		Avaliacao objeto = avaliacaoServices.avaliacaoSemDadosDoUsuarioExcetoNome(avaliacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
-	@RequestMapping(value = "/adicionar", method = RequestMethod.POST)
+    @PostMapping(value = "/adicionar")
 	public ResponseEntity<Void> insert(@Valid @RequestBody AvaliacaoDTO objetoNewDTO) {
 		Avaliacao objeto = avaliacaoServices.fromNewDTO(objetoNewDTO);
 		objeto = avaliacaoServices.insert(objeto);
@@ -42,7 +46,7 @@ public class AvaliacaoController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
+	@PutMapping(value = "/atualizar/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody AvaliacaoDTO objetoDTO, @PathVariable Integer id) {
 		Avaliacao objeto = avaliacaoServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,19 +54,19 @@ public class AvaliacaoController {
 		return ResponseEntity.noContent().build();
 	}
 		
-	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto,@PathVariable Integer id){
+	@DeleteMapping(value = "/remover/{id}")
+	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto,@PathVariable Integer id) {
 		avaliacaoServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
+	@DeleteMapping(value = "/deletar/{id}")
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
 		avaliacaoServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
+	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<AvaliacaoDTO>> findAll() {		
 		List<Avaliacao> lista = avaliacaoServices.findAll();
 		List<AvaliacaoDTO> listaDTO = lista.stream().map(objeto -> new AvaliacaoDTO(objeto)).collect(Collectors.toList());

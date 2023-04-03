@@ -1,25 +1,29 @@
 package br.edu.ifms.bookflix.controller;
-  
+
 import br.edu.ifms.bookflix.model.Aluno;
 
 import br.edu.ifms.bookflix.dto.AlunoDTO;
 
 import br.edu.ifms.bookflix.service.AlunoService;
-
-import java.net.URI; 
-import java.util.List; 
+  
+import java.net.URI;
+import java.util.List;
 import java.util.stream.Collectors;
-  
+
 import jakarta.validation.Valid;
-import org.springframework.beans.factory.annotation.Autowired; 
-import org.springframework.http.ResponseEntity; 
-import org.springframework.web.bind.annotation.PathVariable; 
-import org.springframework.web.bind.annotation.RequestBody; 
-import org.springframework.web.bind.annotation.RequestMapping; 
-import org.springframework.web.bind.annotation.RequestMethod; 
-import org.springframework.web.bind.annotation.RestController; 
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
-  
+
 @RestController
 @RequestMapping(value = "/api/v1/aluno")
 public class AlunoController {
@@ -27,13 +31,13 @@ public class AlunoController {
     @Autowired
     private AlunoService alunoServices;
   
-    @RequestMapping(value = "/mostrar/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/mostrar/{id}")
     public ResponseEntity<Aluno> find(@PathVariable Integer id) { 
 	    Aluno objeto = alunoServices.find(id); 
 	    return ResponseEntity.ok().body(objeto); 
     }
    
-    @RequestMapping(value = "/adicionar", method = RequestMethod.POST)
+    @PostMapping(value = "/adicionar")
     public ResponseEntity<Void> insert(@Valid @RequestBody AlunoDTO objetoNewDTO) {
 	    Aluno objeto = alunoServices.fromNewDTO(objetoNewDTO);
 	    objeto = alunoServices.insert(objeto);
@@ -42,7 +46,7 @@ public class AlunoController {
 	    return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
+	@PutMapping(value = "/atualizar/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody AlunoDTO objetoDTO, @PathVariable Integer id) {
 		Aluno objeto = alunoServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,19 +54,19 @@ public class AlunoController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> delete(@RequestBody Aluno objeto, @PathVariable Integer id){
+	@DeleteMapping(value = "/remover/{id}")
+	public ResponseEntity<Void> delete(@RequestBody Aluno objeto, @PathVariable Integer id) {
 		alunoServices.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
+	@DeleteMapping(value = "/deletar/{id}")
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
 		alunoServices.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
+	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<AlunoDTO>> findAll() {		
 		List<Aluno> lista = alunoServices.findAll();
 		List<AlunoDTO> listaDTO = lista.stream().map(objeto -> new AlunoDTO(objeto)).collect(Collectors.toList());

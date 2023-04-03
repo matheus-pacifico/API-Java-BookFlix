@@ -11,12 +11,16 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -27,13 +31,13 @@ public class AutenticacaoController {
 	@Autowired
 	private AutenticacaoService autenticacaoServices;
 	
-	@RequestMapping(value = "/mostrar/{id}", method = RequestMethod.GET)
+    @GetMapping(value = "/mostrar/{id}")
 	public ResponseEntity<Autenticacao> find(@PathVariable Integer id) {		
 		Autenticacao objeto = autenticacaoServices.autenticacaoSemObra(autenticacaoServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 
-	@RequestMapping(value = "/adicionar", method = RequestMethod.POST)
+    @PostMapping(value = "/adicionar")
 	public ResponseEntity<Void> insert(@Valid @RequestBody AutenticacaoDTO objetoNewDTO) {
 		Autenticacao objeto = autenticacaoServices.fromNewDTO(objetoNewDTO);
 		objeto = autenticacaoServices.insert(objeto);
@@ -42,7 +46,7 @@ public class AutenticacaoController {
 		return ResponseEntity.created(uri).build();
 	}
 	
-	@RequestMapping(value = "/atualizar/{id}", method = RequestMethod.PUT)
+	@PutMapping(value = "/atualizar/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody AutenticacaoDTO objetoDTO, @PathVariable Integer id) {
 		Autenticacao objeto = autenticacaoServices.fromDTO(objetoDTO);
 		objeto.setId(id);
@@ -50,19 +54,19 @@ public class AutenticacaoController {
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/remover/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable Integer id){
+	@DeleteMapping(value = "/remover/{id}")
+	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable Integer id) {
 		autenticacaoServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/deletar/{id}", method = RequestMethod.DELETE)
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id){
+	@DeleteMapping(value = "/deletar/{id}")
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
 		autenticacaoServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
-	@RequestMapping(value = "/mostrar", method = RequestMethod.GET)
+	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<AutenticacaoDTO>> findAll() {		
 		List<Autenticacao> lista = autenticacaoServices.listaAutenticacoesSemObras(autenticacaoServices.findAll());
 		List<AutenticacaoDTO> listaDTO = lista.stream().map(objeto -> new AutenticacaoDTO(objeto)).collect(Collectors.toList());
