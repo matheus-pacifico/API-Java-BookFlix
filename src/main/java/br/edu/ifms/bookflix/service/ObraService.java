@@ -1,7 +1,10 @@
 package br.edu.ifms.bookflix.service;
 
+import br.edu.ifms.bookflix.model.Autor;
+import br.edu.ifms.bookflix.model.Avaliacao;
 import br.edu.ifms.bookflix.model.Obra;
-
+import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.model.Usuario;
 import br.edu.ifms.bookflix.repository.ObraRepository;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
@@ -13,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -70,7 +74,7 @@ public class ObraService {
 	public Optional<Obra> findById(Integer id) {
 		return obrasRepository.findById(id);
 	}
-	
+
 	public Obra fromDTO(ObraDTO objetoDTO) {
 		Obra obraAuxiliar = new Obra();
 		obraAuxiliar.setId(objetoDTO.getId());
@@ -87,9 +91,11 @@ public class ObraService {
 	}
 	
 	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
-		return new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
+		Obra obra = new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
 			objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), 
 			objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
+		obra.setAutores(objetoNewDTO.getAutores());
+		return obra;
 	}
 	
 	private void updateData(Obra objeto, Obra novoObjeto) {
@@ -104,89 +110,107 @@ public class ObraService {
         novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
+	public Obra obraWithoutSomeDetails(Obra objeto) {
+		Obra obraAuxiliar = objeto;
+		obraAuxiliar.setId(null);
+		obraAuxiliar.setIfsn(objeto.getIfsn());
+		obraAuxiliar.setTitulo(objeto.getTitulo());
+		obraAuxiliar.setArea(objeto.getArea());
+		obraAuxiliar.setDescricao(objeto.getDescricao());
+        obraAuxiliar.setProfessor(professorOnlyWithNameAndSiape(objeto.getProfessor()));
+		obraAuxiliar.setAutores(listOfAutoresOnlyWithName(objeto.getAutores()));
+		obraAuxiliar.setAvaliacoes(listOfAvaliacoesOnlyWithUsersNameWithoutObra(objeto.getAvaliacoes()));
+		return obraAuxiliar;
+	}
+
+	private List<Obra> listOfObrasWithoutSomeDetails(List<Obra> obras){
+		return obras.stream().map(o -> obraWithoutSomeDetails(o))
+				.collect(Collectors.toList());
+	}
+	
 	public List<Obra> findByTitulo(String titulo) {
-		List<Obra> obrasEncontradas = new ArrayList<>();
-        allObrasFound().stream()
+		return listOfObrasWithoutSomeDetails(allObrasFound().stream()
             .filter(obra -> (isFound(obra.getTitulo(), titulo)))
-            .forEach(obra -> obrasEncontradas.add(obra));
-		return obrasEncontradas;
+			.collect(Collectors.toList()));
 	}
 	
 	public List<Obra> findByIfsn(String ifsn) {
-		List<Obra> obrasEncontradas = new ArrayList<>();
-		allObrasFound().stream()
+		return listOfObrasWithoutSomeDetails(allObrasFound().stream()
 			.filter(obra -> (isFound(obra.getIfsn(), ifsn)))
-        	.forEach(obra -> obrasEncontradas.add(obra));
-		return obrasEncontradas;
+			.collect(Collectors.toList()));
 	}
 	
 	public List<Obra> findByAutor(String autor) {
+		HashSet<Obra> obras = new HashSet<>();
 		List<Obra> obrasEncontradas = new ArrayList<>();
-		allObrasFound().stream()
-			.filter(obra -> (isFound(obra.getAutores().stream().toString(), autor)))
-			.forEach(obra -> obrasEncontradas.add(obra));
-		return obrasEncontradas;
+		
+		allObrasFound().forEach(obra -> obra.getAutores().stream()
+				.filter(a -> (isFound(a.getNome(), autor)))
+				.forEach(o -> obras.add(obra)));
+		
+		obrasEncontradas.addAll(obras);
+		
+		return listOfObrasWithoutSomeDetails(obrasEncontradas);
 	}
 	
 	public List<Obra> listByArea(String area) {
-		List<Obra> obrasEncontradas = new ArrayList<>();
-		allObrasFound().stream()
+		return listOfObrasWithoutSomeDetails(allObrasFound().stream()
 			.filter(obra -> (isFound(obra.getArea(), area)))
-        	.forEach(obra -> obrasEncontradas.add(obra));
-		return obrasEncontradas;
+			.collect(Collectors.toList()));
 	}
 	
 	public List<Obra> findByTudo(String pesquisa) {
+		HashSet<Obra> obrasNaoRepetidas = new HashSet<>();
 		List<Obra> obrasEncontradas = new ArrayList<>();
 		
-		obrasEncontradas.addAll(findByTitulo(pesquisa));
-		obrasEncontradas.addAll(findByAutor(pesquisa));
-		obrasEncontradas.addAll(findByIfsn(pesquisa));
+		obrasNaoRepetidas.addAll(findByTitulo(pesquisa));
+		obrasNaoRepetidas.addAll(findByIfsn(pesquisa));
+		obrasNaoRepetidas.addAll(findByAutor(pesquisa));
 				
-		obrasEncontradas = removeRepeatedObras(obrasEncontradas);
+		obrasEncontradas.addAll(obrasNaoRepetidas);
 		
-		return obrasEncontradas;
-	}
-	
-	private List<Obra> removeRepeatedObras(List<Obra> obrasEncontradas) {
-		HashSet<Obra> obrasNaoRepetidas = new HashSet<>();
-		List<Obra> obrasUnicas = new ArrayList<>();
-		
-		obrasNaoRepetidas.addAll(obrasEncontradas);
-		
-		obrasUnicas.addAll(obrasNaoRepetidas);
-		
-		return obrasUnicas;
-	}
+		return listOfObrasWithoutSomeDetails(obrasEncontradas);
+	}  
 
 	private List<Obra> allObrasFound() {
-		return obrasListJustWithUsersNameWithoutObrasProfessor(obrasRepository.findAll());
+		return listOfObrasWithoutSomeDetails(obrasRepository.findAll());
 	}
 	
     private boolean isFound(String comparacao, String busca) {
         return (comparacao.toUpperCase().contains(busca.toUpperCase()));      
     }
+    
+    private Professor professorOnlyWithNameAndSiape(Professor professor) {
+    	professor.setId(null);
+    	professor.setUsuario(usuarioOnlyWithName(professor.getUsuario()));
+    	professor.setObras(null);
+    	return professor;
+    }
+    
+    private Usuario usuarioOnlyWithName(Usuario usuario) {
+    	return new Usuario(null, usuario.getNome(), null,null,null);
+    }
 	
-	public Obra obraJustWithUsersNameWithoutObrasProfessor(Obra obra) {
-		obra.getAvaliacoes().forEach(a -> {
-			a.getUsuario().setAutenticacao(null);
-			a.getUsuario().setProfessor(null);
-			a.getUsuario().setAluno(null);
-			a.getUsuario().setAvaliacoes(null);
-			a.getUsuario().setId(null);
-		});
-		obra.getProfessor().setObras(null);
-		
-		return obra;
+	private Avaliacao avaliacaoWithoutUsersDataExceptName(Avaliacao avaliacao) {
+		avaliacao.setUsuario(usuarioOnlyWithName(avaliacao.getUsuario()));
+		avaliacao.setObra(null);
+		return avaliacao;
 	}
 	
-	public List<Obra> obrasListJustWithUsersNameWithoutObrasProfessor(List<Obra> obras) {
-		List<Obra> obrasSemDadosExcetoNome = new ArrayList<>();
-		obras.forEach(o -> obraJustWithUsersNameWithoutObrasProfessor(o));
-		
-		obrasSemDadosExcetoNome.addAll(obras);
-		
-		return obrasSemDadosExcetoNome;
+	private List<Avaliacao> listOfAvaliacoesOnlyWithUsersNameWithoutObra(List<Avaliacao> avaliacoes) {
+		return avaliacoes.stream().map(a -> avaliacaoWithoutUsersDataExceptName(a))
+				.collect(Collectors.toList());
+	}
+	
+	private Autor autorOnlyWithName(Autor autor) {
+		autor.setId(null);
+		autor.setObra(null);
+		return autor;
 	}
 
+	private List<Autor> listOfAutoresOnlyWithName(List<Autor> autor) {
+		return autor.stream().map(a -> autorOnlyWithName(a))
+				.collect(Collectors.toList());
+	}
+	
 }

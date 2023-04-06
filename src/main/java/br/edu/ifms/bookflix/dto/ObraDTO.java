@@ -8,12 +8,12 @@ import br.edu.ifms.bookflix.model.Avaliacao;
 import java.io.Serializable;
 import java.util.List;
 
-import jakarta.validation.constraints.NotEmpty;
+import jakarta.validation.constraints.NotNull;
 
 public class ObraDTO implements Serializable{
 	private static final long serialVersionUID = 1L;
 	private Integer id;
-	@NotEmpty(message="Preenchimento obrigat�rio")
+	@NotNull(message="Preenchimento obrigatório")
 	private String ifsn;
 	private String titulo;
 	private String area;
@@ -39,6 +39,7 @@ public class ObraDTO implements Serializable{
 		this.caminho_arquivo = objeto.getCaminhoArquivo();
 		this.professor = objeto.getProfessor();
 		this.avaliacoes = objeto.getAvaliacoes();
+		this.autores = objeto.getAutores();
 	}
 
 	public Integer getId() {
