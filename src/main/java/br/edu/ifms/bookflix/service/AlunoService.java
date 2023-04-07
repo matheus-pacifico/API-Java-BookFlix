@@ -5,10 +5,10 @@ import br.edu.ifms.bookflix.model.Aluno;
 import br.edu.ifms.bookflix.repository.AlunoRepository;
 
 import br.edu.ifms.bookflix.dto.AlunoDTO;
+
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -23,6 +23,7 @@ public class AlunoService {
 
 	@Autowired
 	private AlunoRepository alunosRepository;
+	private AlunoDTO alunosDTO;
 	
 	public Aluno find(Integer id) {
 		Optional<Aluno> objeto = alunosRepository.findById(id); 
@@ -54,16 +55,11 @@ public class AlunoService {
 	}
 	
 	public Aluno fromDTO(AlunoDTO objetoDTO) {
-		Aluno alunoAuxiliar = new Aluno();
-		alunoAuxiliar.setId(objetoDTO.getId());
-		alunoAuxiliar.setRa(objetoDTO.getRa());
-		alunoAuxiliar.setTurma(objetoDTO.getTurma());
-		alunoAuxiliar.setUsuario(objetoDTO.getUsuario());
-		return alunoAuxiliar;
+		return alunosDTO.fromDTO(objetoDTO);
 	}
 	
-	public Aluno fromNewDTO(AlunoDTO objetoDTO) {
-		return new Aluno(null, objetoDTO.getRa(), objetoDTO.getTurma(), objetoDTO.getUsuario());
+	public Aluno fromNewDTO(AlunoDTO objetoNewDTO) {
+		return alunosDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	private void updateData(Aluno objeto, Aluno novoObjeto) {
@@ -89,21 +85,15 @@ public class AlunoService {
 		return alunosRepository.findById(id);
 	}
 	
-	public List<Aluno> findAlunosByTurma(int turma) {
-		List<Aluno> lista = alunosRepository.findAll();
-		List<Aluno> alunosEncontrados = new ArrayList<>();
-		
-		alunosEncontrados.addAll(lista.stream().filter(t -> t.getTurma() == turma)
-				.collect(Collectors.toList()));
-	
-		return alunosEncontrados;
+	public List<Aluno> findAlunosByTurma(int turma) {		
+		return findAll().stream()
+				.filter(a -> a.getTurma() == turma)
+				.collect(Collectors.toList());
 	}
 	
 	public Optional<Aluno> findByRa(String ra) {
-		Optional<Aluno> alunoEncontrado = alunosRepository.findAll().stream()
+		return findAll().stream()
 				.filter(a -> a.getRa().compareTo(ra) == 0).findFirst();
-		
-		return alunoEncontrado;
 	}
 	
 }

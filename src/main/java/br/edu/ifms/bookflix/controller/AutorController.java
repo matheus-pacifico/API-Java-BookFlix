@@ -68,7 +68,7 @@ public class AutorController {
 	
 	@GetMapping(value = "/mostrar")
 	public ResponseEntity<List<AutorDTO>> findAll() {		
-		List<Autor> lista = autorServices.autoresListWithoutAvaliacoesDaObra(autorServices.findAll());
+		List<Autor> lista = autorServices.findAll();
 		List<AutorDTO> listaDTO = lista.stream().map(objeto -> new AutorDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}	

@@ -5,10 +5,10 @@ import br.edu.ifms.bookflix.model.Usuario;
 import br.edu.ifms.bookflix.repository.UsuarioRepository;
 
 import br.edu.ifms.bookflix.dto.UsuarioDTO;
+
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,6 +22,19 @@ public class UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuariosRepository;
+	private UsuarioDTO usuariosDTO;
+	
+	public Usuario find(Integer id) {
+		Optional<Usuario> objeto = usuariosRepository.findById(id); 
+		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
+				 "Usuário não encontrado! Id: " + id));		
+	}
+	
+	@Transactional
+	public Usuario insert (Usuario obj) {
+		obj.setId(null);
+		return usuariosRepository.save(obj);
+	}
 	
 	public List<Usuario> findAll() {
 		return usuariosRepository.findAll();
@@ -41,12 +54,6 @@ public class UsuarioService {
 	}
 	
 	@Transactional
-	public Usuario insert (Usuario obj) {
-		obj.setId(null);
-		return usuariosRepository.save(obj);
-	}
-	
-	@Transactional
 	public void delete(Integer id) {
 		find(id);
 		try {
@@ -55,6 +62,14 @@ public class UsuarioService {
 		catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}
+	}
+	
+	public Usuario fromDTO(UsuarioDTO objetoDTO) {
+		return usuariosDTO.fromDTO(objetoDTO);
+	}
+	
+	public Usuario fromNewDTO(UsuarioDTO objetoNewDTO) {
+		return usuariosDTO.fromNewDTO(objetoNewDTO);
 	}
 
 	public Usuario update(Usuario objeto) {
@@ -71,39 +86,12 @@ public class UsuarioService {
 		novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
-	public Usuario fromDTO(UsuarioDTO objetoDTO) {
-		Usuario usuarioAuxiliar = new Usuario();
-		usuarioAuxiliar.setId(objetoDTO.getId());
-		usuarioAuxiliar.setNome(objetoDTO.getNome());
-		usuarioAuxiliar.setProfessor(objetoDTO.getProfessor());
-		usuarioAuxiliar.setAluno(objetoDTO.getAluno());
-		usuarioAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());
-		return usuarioAuxiliar;
-	}
-	
-	public Usuario fromNewDTO(UsuarioDTO objetoDTO) {
-		return new Usuario(null , objetoDTO.getNome(), null, null, null);
-	}
-	
-	public Usuario find(Integer id) {
-		Optional<Usuario> objeto = usuariosRepository.findById(id); 
-		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
-				 "Usuário não encontrado! Id: " + id));		
-	}
-	
 	public Usuario usuarioWithoutAvaliacaoDasObras(Usuario usuario) {
-		if(usuario.getProfessor() != null) usuario.getProfessor().getObras().forEach(o -> o.setAvaliacoes(null));
-		
-		return usuario;
+		return usuariosDTO.usuarioWithoutAvaliacaoDasObras(usuario);
 	}
 	
 	public List<Usuario> usuariosListWithoutAvaliacoesDasObras(List<Usuario> usuarios) {
-		List<Usuario> usuariosSemAvaliacoes= new ArrayList<>();
-		usuarios.forEach(u -> usuarioWithoutAvaliacaoDasObras(u));
-		
-		usuariosSemAvaliacoes.addAll(usuarios);
-		
-		return usuariosSemAvaliacoes;
+		return usuariosDTO.usuariosListWithoutAvaliacoesDasObras(usuarios);
 	}
 	
 }

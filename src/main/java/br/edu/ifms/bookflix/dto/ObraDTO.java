@@ -2,15 +2,17 @@ package br.edu.ifms.bookflix.dto;
 
 import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.model.Usuario;
 import br.edu.ifms.bookflix.model.Autor;
 import br.edu.ifms.bookflix.model.Avaliacao;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import jakarta.validation.constraints.NotNull;
 
-public class ObraDTO implements Serializable{
+public class ObraDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	@NotNull(message="Preenchimento obrigatório")
@@ -120,6 +122,78 @@ public class ObraDTO implements Serializable{
 
 	public void setAutores(List<Autor> autores) {
 		this.autores = autores;
+	}
+
+	public Obra fromDTO(ObraDTO objetoDTO) {
+		Obra obraAuxiliar = new Obra();
+		obraAuxiliar.setId(objetoDTO.getId());
+		obraAuxiliar.setIfsn(objetoDTO.getIfsn());
+		obraAuxiliar.setTitulo(objetoDTO.getTitulo());
+		obraAuxiliar.setArea(objetoDTO.getArea());
+		obraAuxiliar.setDescricao(objetoDTO.getDescricao());
+		obraAuxiliar.setNomeArquivo(objetoDTO.getNomeArquivo());
+		obraAuxiliar.setCaminhoArquivo(objetoDTO.getCaminhoArquivo());
+		obraAuxiliar.setProfessor(objetoDTO.getProfessor());
+		obraAuxiliar.setAutores(objetoDTO.getAutores());
+		obraAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());
+		return obraAuxiliar;
+	}
+	
+	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
+		Obra obra = new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
+			objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), 
+			objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
+		obra.setAutores(objetoNewDTO.getAutores());
+		return obra;
+	}
+	
+	public Obra obraWithoutSomeDetails(Obra objeto) {
+		Obra obraAuxiliar = objeto;
+		obraAuxiliar.setId(null);
+		obraAuxiliar.setIfsn(objeto.getIfsn());
+		obraAuxiliar.setTitulo(objeto.getTitulo());
+		obraAuxiliar.setArea(objeto.getArea());
+		obraAuxiliar.setDescricao(objeto.getDescricao());
+        obraAuxiliar.setProfessor(professorOnlyWithNameAndSiape(objeto.getProfessor()));
+		obraAuxiliar.setAutores(listOfAutoresOnlyWithName(objeto.getAutores()));
+		obraAuxiliar.setAvaliacoes(listOfAvaliacoesOnlyWithUsersNameWithoutObra(objeto.getAvaliacoes()));
+		return obraAuxiliar;
+	}
+
+	public List<Obra> listOfObrasWithoutSomeDetails(List<Obra> obras) {
+		return obras.stream().map(o -> obraWithoutSomeDetails(o))
+				.collect(Collectors.toList());
+	}
+	
+	private Professor professorOnlyWithNameAndSiape(Professor professor) {
+    	professor.setId(null);
+    	professor.setUsuario(usuarioOnlyWithName(professor.getUsuario()));
+    	professor.setObras(null);
+    	return professor;
+    }
+    
+    private Usuario usuarioOnlyWithName(Usuario usuario) {
+    	return new Usuario(null, usuario.getNome(), null,null,null);
+    }
+	
+	private Avaliacao avaliacaoWithoutUsersDataExceptName(Avaliacao avaliacao) {
+		avaliacao.setUsuario(usuarioOnlyWithName(avaliacao.getUsuario()));
+		avaliacao.setObra(null);
+		return avaliacao;
+	}
+	
+	private List<Avaliacao> listOfAvaliacoesOnlyWithUsersNameWithoutObra(List<Avaliacao> avaliacoes) {
+		return avaliacoes.stream().map(a -> avaliacaoWithoutUsersDataExceptName(a))
+				.collect(Collectors.toList());
+	}
+	
+	private Autor autorOnlyWithName(Autor autor) {
+		return new Autor(null, autor.getNome(), null);
+	}
+
+	private List<Autor> listOfAutoresOnlyWithName(List<Autor> autor) {
+		return autor.stream().map(a -> autorOnlyWithName(a))
+				.collect(Collectors.toList());
 	}		
 	
 }

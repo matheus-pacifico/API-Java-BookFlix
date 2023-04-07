@@ -9,7 +9,6 @@ import br.edu.ifms.bookflix.dto.AutenticacaoDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +22,7 @@ public class AutenticacaoService {
 
 	@Autowired
 	private AutenticacaoRepository autenticacoesRepository;
+	private AutenticacaoDTO autenticacoesDTO;
 	
 	public Autenticacao find(Integer id) {
 		Optional<Autenticacao> objeto = autenticacoesRepository.findById(id); 
@@ -56,12 +56,11 @@ public class AutenticacaoService {
 	}
 	
 	public Autenticacao fromDTO(AutenticacaoDTO objetoDTO) {
-		return new Autenticacao(objetoDTO.getId(), objetoDTO.getEmail(), objetoDTO.getSenha(), 
-			objetoDTO.getUsuario());
+		return autenticacoesDTO.fromDTO(objetoDTO);
 	}
 	
 	public Autenticacao fromNewDTO(AutenticacaoDTO objetoNewDTO) {
-		return new Autenticacao(null, objetoNewDTO.getEmail(), objetoNewDTO.getSenha(), objetoNewDTO.getUsuario());
+		return autenticacoesDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	private void updateData(Autenticacao objeto, Autenticacao novoObjeto) {
@@ -71,7 +70,7 @@ public class AutenticacaoService {
 	}
 	
 	public List<Autenticacao> findAll() {
-		return autenticacoesListWithoutObras(autenticacoesRepository.findAll());
+		return autenticacoesDTO.autenticacoesListWithoutObras(autenticacoesRepository.findAll());
 	}
 	
 	@Transactional
@@ -88,18 +87,8 @@ public class AutenticacaoService {
 	}
 	
 	public Autenticacao autenticacaoWithoutObra(Autenticacao autenticacao) {
-		if(autenticacao.getUsuario().getProfessor() != null) autenticacao.getUsuario().getProfessor().setObras(null);
-		
-		return autenticacao;
+		return autenticacoesDTO.autenticacaoWithoutObra(autenticacao);
 	}
 	
-	public List<Autenticacao> autenticacoesListWithoutObras(List<Autenticacao> autenticacoes) {
-		List<Autenticacao> autenticacoesSemObra = new ArrayList<>();
-		autenticacoes.forEach(a -> autenticacaoWithoutObra(a));
-		
-		autenticacoesSemObra.addAll(autenticacoes);
-		
-		return autenticacoesSemObra;
-	}
 	
 }

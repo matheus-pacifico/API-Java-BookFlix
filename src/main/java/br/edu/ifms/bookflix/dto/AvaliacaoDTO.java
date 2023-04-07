@@ -5,8 +5,10 @@ import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.model.Usuario;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-public class AvaliacaoDTO implements Serializable{
+public class AvaliacaoDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;	
 	private String comentario;
@@ -64,6 +66,34 @@ public class AvaliacaoDTO implements Serializable{
 
 	public void setObra(Obra obra) {
 		this.obra = obra;
+	}	
+	
+	public Avaliacao fromDTO(AvaliacaoDTO objetoDTO) {
+		return new Avaliacao(objetoDTO.getId(), objetoDTO.getComentario(), objetoDTO.getNota(),
+				objetoDTO.getUsuario(), objetoDTO.getObra());
+	}
+	
+	public Avaliacao fromNewDTO(AvaliacaoDTO objetoNewDTO) {
+		return new Avaliacao(null, objetoNewDTO.getComentario(), objetoNewDTO.getNota(), 
+				objetoNewDTO.getUsuario(), objetoNewDTO.getObra());
+	}
+	
+	public Avaliacao avaliacaoWithoutUsuariosDataExceptName(Avaliacao avaliacao) {
+		avaliacao.getUsuario().setAutenticacao(null);
+		avaliacao.getUsuario().setProfessor(null);
+		avaliacao.getUsuario().setAluno(null);
+		avaliacao.getUsuario().setAvaliacoes(null);
+		avaliacao.getUsuario().setId(null);
+		return avaliacao;
+	}
+	
+	public List<Avaliacao> listOfAvaliacoesWithoutUsuariosDataExceptName(List<Avaliacao> avaliacoes) {
+		List<Avaliacao> avaliacoesSemDadosExcetoNome = new ArrayList<>();
+		avaliacoes.forEach(a -> avaliacaoWithoutUsuariosDataExceptName(a));
+		
+		avaliacoesSemDadosExcetoNome.addAll(avaliacoes);
+		
+		return avaliacoesSemDadosExcetoNome;
 	}
 	
 }

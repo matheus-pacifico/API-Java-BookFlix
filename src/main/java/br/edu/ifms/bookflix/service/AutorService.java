@@ -9,7 +9,6 @@ import br.edu.ifms.bookflix.dto.AutorDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +22,7 @@ public class AutorService {
 	
 	@Autowired
 	private AutorRepository autoresRepository;
+	private AutorDTO autoresDTO;
 	
 	public Autor find(Integer id) {
 		Optional<Autor> objeto = autoresRepository.findById(id); 
@@ -55,11 +55,11 @@ public class AutorService {
 	}	
 	
 	public Autor fromDTO(AutorDTO objetoDTO) {
-		return new Autor(objetoDTO.getId(), objetoDTO.getNome(), objetoDTO.getObra());
+		return autoresDTO.fromDTO(objetoDTO);
 	}
 	
 	public Autor fromNewDTO(AutorDTO objetoNewDTO) {
-		return new Autor(null, objetoNewDTO.getNome(),  objetoNewDTO.getObra());
+		return autoresDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	private void updateData(Autor novoObjeto, Autor objeto) {
@@ -68,7 +68,7 @@ public class AutorService {
 	}
 	
 	public List<Autor> findAll() {
-		return autoresRepository.findAll();
+		return autoresDTO.autoresListWithoutAvaliacoesDaObra(autoresRepository.findAll());
 	}
 	
 	@Transactional
@@ -85,17 +85,7 @@ public class AutorService {
 	}
 	
 	public Autor autorWithoutAvaliacoesDaObra(Autor autor) {
-		autor.getObra().setAvaliacoes(null);
-		return autor;
-	}
-	
-	public List<Autor> autoresListWithoutAvaliacoesDaObra(List<Autor> autores) {
-		List<Autor> autorSemAvaliacoes = new ArrayList<>();
-		autores.forEach(a -> autorWithoutAvaliacoesDaObra(a));
-		
-		autorSemAvaliacoes.addAll(autores);
-		
-		return autorSemAvaliacoes;
+		return autoresDTO.autorWithoutAvaliacoesDaObra(autor);
 	}
 
 }

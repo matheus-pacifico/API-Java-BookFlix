@@ -6,9 +6,10 @@ import br.edu.ifms.bookflix.model.Aluno;
 import br.edu.ifms.bookflix.model.Avaliacao;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
-public class UsuarioDTO implements Serializable{
+public class UsuarioDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	private String nome;
@@ -66,6 +67,35 @@ public class UsuarioDTO implements Serializable{
 
 	public void setAvaliacoes(List<Avaliacao> avaliacoes) {
 		this.avaliacoes = avaliacoes;
+	}
+	
+	public Usuario fromDTO(UsuarioDTO objetoDTO) {
+		Usuario usuarioAuxiliar = new Usuario();
+		usuarioAuxiliar.setId(objetoDTO.getId());
+		usuarioAuxiliar.setNome(objetoDTO.getNome());
+		usuarioAuxiliar.setProfessor(objetoDTO.getProfessor());
+		usuarioAuxiliar.setAluno(objetoDTO.getAluno());
+		usuarioAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());
+		return usuarioAuxiliar;
+	}
+	
+	public Usuario fromNewDTO(UsuarioDTO objetoNewDTO) {
+		return new Usuario(null , objetoNewDTO.getNome(), null, null, null);
+	}
+	
+	public Usuario usuarioWithoutAvaliacaoDasObras(Usuario usuario) {
+		if(usuario.getProfessor() != null) usuario.getProfessor().getObras().forEach(o -> o.setAvaliacoes(null));
+		
+		return usuario;
+	}
+	
+	public List<Usuario> usuariosListWithoutAvaliacoesDasObras(List<Usuario> usuarios) {
+		List<Usuario> usuariosSemAvaliacoes= new ArrayList<>();
+		usuarios.forEach(u -> usuarioWithoutAvaliacaoDasObras(u));
+		
+		usuariosSemAvaliacoes.addAll(usuarios);
+		
+		return usuariosSemAvaliacoes;
 	}	
 
 }

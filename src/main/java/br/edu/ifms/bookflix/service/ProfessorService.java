@@ -23,6 +23,7 @@ public class ProfessorService {
 
 	@Autowired
 	private ProfessorRepository professoresRepository;
+	private ProfessorDTO professoresDTO;
 	
 	public Professor find(Integer id) {
 		Optional<Professor> objeto = professoresRepository.findById(id); 
@@ -71,16 +72,11 @@ public class ProfessorService {
 	}
 	
 	public Professor fromDTO(ProfessorDTO objetoDTO) {
-		Professor professorAuxiliar = new Professor();
-		professorAuxiliar.setId(objetoDTO.getId());
-		professorAuxiliar.setSiape(objetoDTO.getSiape());
-		professorAuxiliar.setUsuario(objetoDTO.getUsuario());
-		professorAuxiliar.setObras(objetoDTO.getObras());
-		return professorAuxiliar;
+		return professoresDTO.fromDTO(objetoDTO);
 	}
 	
-	public Professor fromNewDTO(ProfessorDTO objetoDTO) {
-		return new Professor(null, objetoDTO.getSiape(), objetoDTO.getUsuario());
+	public Professor fromNewDTO(ProfessorDTO objetoNewDTO) {
+		return professoresDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	private void updateData(Professor objeto, Professor novoObjeto) {

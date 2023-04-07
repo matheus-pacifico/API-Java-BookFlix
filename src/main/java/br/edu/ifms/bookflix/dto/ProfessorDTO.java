@@ -60,4 +60,17 @@ public class ProfessorDTO implements Serializable {
 		this.obras = obras;
 	}
 	
+	public Professor fromDTO(ProfessorDTO objetoDTO) {
+		Professor professorAuxiliar = new Professor();
+		professorAuxiliar.setId(objetoDTO.getId());
+		professorAuxiliar.setSiape(objetoDTO.getSiape());
+		professorAuxiliar.setUsuario(objetoDTO.getUsuario());
+		professorAuxiliar.setObras(objetoDTO.getObras());
+		return professorAuxiliar;
+	}
+	
+	public Professor fromNewDTO(ProfessorDTO objetoNewDTO) {
+		return new Professor(null, objetoNewDTO.getSiape(), objetoNewDTO.getUsuario());
+	}
+	
 }

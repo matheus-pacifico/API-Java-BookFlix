@@ -9,7 +9,6 @@ import br.edu.ifms.bookflix.dto.AvaliacaoDTO;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -23,6 +22,7 @@ public class AvaliacaoService {
 
 	@Autowired
 	private AvaliacaoRepository avaliacoesRepository;
+	private AvaliacaoDTO avaliacoesDTO;
 	
 	public Avaliacao find(Integer id) {
 		Optional<Avaliacao> objeto = avaliacoesRepository.findById(id);
@@ -55,7 +55,7 @@ public class AvaliacaoService {
 	}
 	
 	public List<Avaliacao> findAll() {
-		return avaliacoesListWithoutUsuariosDataExceptName(avaliacoesRepository.findAll());
+		return avaliacoesDTO.listOfAvaliacoesWithoutUsuariosDataExceptName(avaliacoesRepository.findAll());
 	}
 	
 	@Transactional
@@ -72,12 +72,11 @@ public class AvaliacaoService {
 	}	
 	
 	public Avaliacao fromDTO(AvaliacaoDTO objetoDTO) {
-		return new Avaliacao(objetoDTO.getId(), objetoDTO.getComentario(), objetoDTO.getNota(),
-				objetoDTO.getUsuario(), objetoDTO.getObra());
+		return avaliacoesDTO.fromDTO(objetoDTO);
 	}
 	
 	public Avaliacao fromNewDTO(AvaliacaoDTO objetoNewDTO) {
-		return new Avaliacao(null, objetoNewDTO.getComentario(), objetoNewDTO.getNota(), objetoNewDTO.getUsuario(), objetoNewDTO.getObra());
+		return avaliacoesDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	private void updateData(Avaliacao novoObjeto, Avaliacao objeto) {
@@ -88,21 +87,7 @@ public class AvaliacaoService {
 	}
 	
 	public Avaliacao avaliacaoWithoutUsuariosDataExceptName(Avaliacao avaliacao) {
-		avaliacao.getUsuario().setAutenticacao(null);
-		avaliacao.getUsuario().setProfessor(null);
-		avaliacao.getUsuario().setAluno(null);
-		avaliacao.getUsuario().setAvaliacoes(null);
-		avaliacao.getUsuario().setId(null);
-		return avaliacao;
+		return avaliacoesDTO.avaliacaoWithoutUsuariosDataExceptName(avaliacao);
 	}
-	
-	public List<Avaliacao> avaliacoesListWithoutUsuariosDataExceptName(List<Avaliacao> avaliacoes) {
-		List<Avaliacao> avaliacoesSemDadosExcetoNome = new ArrayList<>();
-		avaliacoes.forEach(a -> avaliacaoWithoutUsuariosDataExceptName(a));
-		
-		avaliacoesSemDadosExcetoNome.addAll(avaliacoes);
-		
-		return avaliacoesSemDadosExcetoNome;
-	}
-	
+
 }

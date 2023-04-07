@@ -58,6 +58,19 @@ public class AlunoDTO implements Serializable {
 
 	public void setUsuario(Usuario usuario) {
 		this.usuario = usuario;
+	}
+	
+	public Aluno fromDTO(AlunoDTO objetoDTO) {
+		Aluno alunoAuxiliar = new Aluno();
+		alunoAuxiliar.setId(objetoDTO.getId());
+		alunoAuxiliar.setRa(objetoDTO.getRa());
+		alunoAuxiliar.setTurma(objetoDTO.getTurma());
+		alunoAuxiliar.setUsuario(objetoDTO.getUsuario());
+		return alunoAuxiliar;
+	}
+	
+	public Aluno fromNewDTO(AlunoDTO objetoNewDTO) {
+		return new Aluno(null, objetoNewDTO.getRa(), objetoNewDTO.getTurma(), objetoNewDTO.getUsuario());
 	} 
 	
 }

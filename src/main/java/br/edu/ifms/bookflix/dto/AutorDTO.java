@@ -4,12 +4,12 @@ import br.edu.ifms.bookflix.model.Autor;
 import br.edu.ifms.bookflix.model.Obra;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 import jakarta.validation.constraints.NotBlank;
 
-
-
-public class AutorDTO implements Serializable{
+public class AutorDTO implements Serializable {
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	@NotBlank(message="Preenchimento obrigatório")
@@ -48,6 +48,28 @@ public class AutorDTO implements Serializable{
 
 	public void setObra(Obra obra) {
 		this.obra = obra;
+	}	
+	
+	public Autor fromDTO(AutorDTO objetoDTO) {
+		return new Autor(objetoDTO.getId(), objetoDTO.getNome(), objetoDTO.getObra());
+	}
+	
+	public Autor fromNewDTO(AutorDTO objetoNewDTO) {
+		return new Autor(null, objetoNewDTO.getNome(), objetoNewDTO.getObra());
+	}
+	
+	public Autor autorWithoutAvaliacoesDaObra(Autor autor) {
+		autor.getObra().setAvaliacoes(null);
+		return autor;
+	}
+	
+	public List<Autor> autoresListWithoutAvaliacoesDaObra(List<Autor> autores) {
+		List<Autor> autorSemAvaliacoes = new ArrayList<>();
+		autores.forEach(a -> autorWithoutAvaliacoesDaObra(a));
+		
+		autorSemAvaliacoes.addAll(autores);
+		
+		return autorSemAvaliacoes;
 	}
 	
 }
