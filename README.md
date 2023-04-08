@@ -1,2 +1,2 @@
-# Projeto-BookFlix
-Projeto de desenvolvimento de uma API chamada BookFlix
+# API-Java-Bookflix
+Desenvolvimento de uma API em java chamada Bookflix
