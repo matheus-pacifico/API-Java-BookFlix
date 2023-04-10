@@ -6,6 +6,7 @@ import java.util.List;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -16,7 +17,7 @@ import jakarta.persistence.OneToMany;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Obra implements Serializable{
+public class Obra implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -30,16 +31,17 @@ public class Obra implements Serializable{
 	private String descricao;
 	private String nome_arquivo;
 	private String caminho_arquivo;
+	private int ano;
 
 	@JsonIgnore
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="professor_id")
 	private Professor professor;
 	
 	@OneToMany(mappedBy = "obra")
 	private List<Avaliacao> avaliacoes = new ArrayList<Avaliacao>();
 	
-	@OneToMany(mappedBy = "obra")
+	@OneToMany(mappedBy = "obra", fetch = FetchType.EAGER)
 	private List<Autor> autores = new ArrayList<Autor>();
 	
 	public Obra() {
@@ -47,7 +49,7 @@ public class Obra implements Serializable{
 	}
 
 	public Obra(Integer id, String ifsn, String titulo, String area, String descricao, String nome_arquivo,
-			String caminho_arquivo, Professor professor) {
+			String caminho_arquivo, int ano, Professor professor) {
 		super();
 		this.id = id;
 		this.ifsn = ifsn;
@@ -56,6 +58,7 @@ public class Obra implements Serializable{
 		this.descricao = descricao;
 		this.nome_arquivo = nome_arquivo;
 		this.caminho_arquivo = caminho_arquivo;
+		this.ano = ano;
 		this.professor = professor;
 	}
 
@@ -113,6 +116,14 @@ public class Obra implements Serializable{
 
 	public void setCaminhoArquivo(String caminho_arquivo) {
 		this.caminho_arquivo = caminho_arquivo;
+	}
+
+	public int getAno() {
+		return ano;
+	}
+
+	public void setAno(int ano) {
+		this.ano = ano;
 	}
 
 	public Professor getProfessor() {

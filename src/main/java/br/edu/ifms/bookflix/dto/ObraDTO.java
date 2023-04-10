@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import jakarta.validation.constraints.NotNull;
 
 public class ObraDTO implements Serializable {
+	
 	private static final long serialVersionUID = 1L;
 	private Integer id;
 	@NotNull(message="Preenchimento obrigatório")
@@ -22,6 +23,7 @@ public class ObraDTO implements Serializable {
 	private String descricao;
 	private String nome_arquivo;
 	private String caminho_arquivo;
+	private int ano;
 	private Professor professor;
 	private List<Avaliacao> avaliacoes;
 	private List<Autor> autores;
@@ -100,6 +102,14 @@ public class ObraDTO implements Serializable {
 		this.caminho_arquivo = caminho_arquivo;
 	}
 
+	public int getAno() {
+		return ano;
+	}
+
+	public void setAno(int ano) {
+		this.ano = ano;
+	}
+
 	public Professor getProfessor() {
 		return professor;
 	}
@@ -142,7 +152,7 @@ public class ObraDTO implements Serializable {
 	public Obra fromNewDTO(ObraDTO objetoNewDTO) {
 		Obra obra = new Obra(null, objetoNewDTO.getIfsn(), objetoNewDTO.getTitulo(), 
 			objetoNewDTO.getArea(), objetoNewDTO.getDescricao(), 
-			objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getProfessor());
+			objetoNewDTO.getNomeArquivo(), objetoNewDTO.getCaminhoArquivo(), objetoNewDTO.getAno(), objetoNewDTO.getProfessor());
 		obra.setAutores(objetoNewDTO.getAutores());
 		return obra;
 	}
@@ -154,8 +164,9 @@ public class ObraDTO implements Serializable {
 		obraAuxiliar.setTitulo(objeto.getTitulo());
 		obraAuxiliar.setArea(objeto.getArea());
 		obraAuxiliar.setDescricao(objeto.getDescricao());
+		obraAuxiliar.setAno(objeto.getAno());
         obraAuxiliar.setProfessor(professorOnlyWithNameAndSiape(objeto.getProfessor()));
-		obraAuxiliar.setAutores(listOfAutoresOnlyWithName(objeto.getAutores()));
+		obraAuxiliar.setAutores(listOfAutoresOnlyWithName((objeto.getAutores())));
 		obraAuxiliar.setAvaliacoes(listOfAvaliacoesOnlyWithUsersNameWithoutObra(objeto.getAvaliacoes()));
 		return obraAuxiliar;
 	}

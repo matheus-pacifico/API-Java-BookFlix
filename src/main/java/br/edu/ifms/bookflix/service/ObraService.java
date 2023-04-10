@@ -88,6 +88,7 @@ public class ObraService {
         novoObjeto.setDescricao(objeto.getDescricao());
         novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
         novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
+        novoObjeto.setAno(objeto.getAno());
         novoObjeto.setProfessor(objeto.getProfessor());
         novoObjeto.setAutores(objeto.getAutores());
         novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
