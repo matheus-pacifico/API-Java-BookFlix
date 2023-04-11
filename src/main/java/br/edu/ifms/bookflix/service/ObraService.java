@@ -6,14 +6,14 @@ import br.edu.ifms.bookflix.repository.ObraRepository;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
 
+import br.edu.ifms.bookflix.projection.ObraView;
+
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.text.Normalizer;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -69,8 +69,10 @@ public class ObraService {
 		obrasRepository.saveAndFlush(obra);
 	}
 	
-	public Optional<Obra> findById(Integer id) {
-		return obrasRepository.findById(id);
+	public Obra findByIfsn(String ifsn) {
+		Optional<Obra> objeto = obrasRepository.findByIfsn(ifsn); 
+		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
+				 "Obra não encontrada! IFSN: " + ifsn));		
 	}
     
     public Obra fromDTO(ObraDTO objetoDTO) {
@@ -94,60 +96,43 @@ public class ObraService {
         novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
 	}
 	
-	public List<Obra> findByTitulo(String titulo) {
-		return allObrasFound().stream()
-            .filter(obra -> (isFound(obra.getTitulo(), titulo)))
-			.collect(Collectors.toList());
+	public List<ObraView> searchObra(String pesquisa){
+		return obrasRepository.searchObra(unaccentedParam(pesquisa));
 	}
 	
-	public List<Obra> findByIfsn(String ifsn) {
-		return allObrasFound().stream()
-			.filter(obra -> (isFound(obra.getIfsn(), ifsn)))
-			.collect(Collectors.toList());
+	public List<ObraView> searchObraByIfsn(String ifsn) {
+		return obrasRepository.searchObraByIfsn(unaccentedParam(ifsn));
 	}
 	
-	public List<Obra> findByAutor(String autor) {
-		HashSet<Obra> obras = new HashSet<>();
-		List<Obra> obrasEncontradas = new ArrayList<>();
-		
-		allObrasFound().forEach(obra -> obra.getAutores().stream()
-				.filter(a -> (isFound(a.getNome(), autor)))
-				.forEach(o -> obras.add(obra)));
-		
-		obrasEncontradas.addAll(obras);
-		
-		return obrasEncontradas;
+	public List<ObraView> searchObraByTitulo(String titulo) {
+		return obrasRepository.searchObraByTitulo(unaccentedParam(titulo));
 	}
 	
-	public List<Obra> listByArea(String area) {
-		return allObrasFound().stream()
-			.filter(obra -> (isFound(obra.getArea(), area)))
-			.collect(Collectors.toList());
+	public List<ObraView> searchObraByArea(String area) {
+		return obrasRepository.searchObraByArea(unaccentedParam(area));
 	}
 	
-	public List<Obra> findByTudo(String pesquisa) {
-		HashSet<Obra> obrasNaoRepetidas = new HashSet<>();
-		List<Obra> obrasEncontradas = new ArrayList<>();
-		
-		obrasNaoRepetidas.addAll(findByTitulo(pesquisa));
-		obrasNaoRepetidas.addAll(findByIfsn(pesquisa));
-		obrasNaoRepetidas.addAll(findByAutor(pesquisa));
-				
-		obrasEncontradas.addAll(obrasNaoRepetidas);
-		
-		return obrasEncontradas;
-	}  
+	public List<ObraView> searchObraByAno(String ano) {
+		return obrasRepository.searchObraByAno(convertParamToInt(ano));
+	} 
 
 	private List<Obra> allObrasFound() {
 		return obrasDTO.listOfObrasWithoutSomeDetails(obrasRepository.findAll());
 	}
-	
-    private boolean isFound(String comparacao, String busca) {
-        return (comparacao.toUpperCase().contains(busca.toUpperCase()));      
-    }
     
     public Obra obraWithoutSomeDetails(Obra objeto) {
     	return obrasDTO.obraWithoutSomeDetails(objeto);
+    }
+    
+    private String unaccentedParam(String parameter) {
+    	return Normalizer.normalize(parameter, Normalizer.Form.NFD)
+    			.replaceAll("[^\\p{ASCII}]",  "");
+    }
+    
+    private int convertParamToInt(String param) {
+    	String paramWithoutChars = param.replaceAll("[^0-9]", "");
+    	if(paramWithoutChars.length() == 0) return -1;
+    	return Integer.parseInt(paramWithoutChars);
     }
     
 }

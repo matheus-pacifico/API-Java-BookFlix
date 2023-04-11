@@ -41,6 +41,7 @@ public class ObraDTO implements Serializable {
 		this.autores = objeto.getAutores();
 		this.nome_arquivo = objeto.getNomeArquivo();
 		this.caminho_arquivo = objeto.getCaminhoArquivo();
+		this.ano = objeto.getAno();
 		this.professor = objeto.getProfessor();
 		this.avaliacoes = objeto.getAvaliacoes();
 		this.autores = objeto.getAutores();
@@ -143,6 +144,7 @@ public class ObraDTO implements Serializable {
 		obraAuxiliar.setDescricao(objetoDTO.getDescricao());
 		obraAuxiliar.setNomeArquivo(objetoDTO.getNomeArquivo());
 		obraAuxiliar.setCaminhoArquivo(objetoDTO.getCaminhoArquivo());
+		obraAuxiliar.setAno(objetoDTO.getAno());
 		obraAuxiliar.setProfessor(objetoDTO.getProfessor());
 		obraAuxiliar.setAutores(objetoDTO.getAutores());
 		obraAuxiliar.setAvaliacoes(objetoDTO.getAvaliacoes());

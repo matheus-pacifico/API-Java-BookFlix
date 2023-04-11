@@ -6,9 +6,10 @@ import br.edu.ifms.bookflix.service.ObraService;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
 
+import br.edu.ifms.bookflix.projection.ObraView;
+
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -32,7 +33,7 @@ public class ObraController {
 	private ObraService obraServices;
 	
 	@GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Obra> find(@PathVariable Integer id) {		
+	public ResponseEntity<Obra> search(@PathVariable Integer id) {		
 		Obra objeto = obraServices.obraWithoutSomeDetails(obraServices.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
@@ -67,45 +68,38 @@ public class ObraController {
 	}
 	
 	@GetMapping(value = "/mostrar")
-	public ResponseEntity<List<ObraDTO>> findAll() {		
-		List<Obra> lista = obraServices.findAll();
-		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
-	}
-	
-	@GetMapping(value = "/mostrar/titulo/{titulo}")
-	public ResponseEntity<List<ObraDTO>> findByTitle(@PathVariable String titulo) {		
-		List<Obra> lista = obraServices.findByTitulo(titulo);
-		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
-	}
-	
-	@GetMapping(value = "/mostrar/autor/{autor}")
-	public ResponseEntity<List<ObraDTO>> findByAuthor(@PathVariable String autor) {		
-		List<Obra> lista = obraServices.findByAutor(autor);
-		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	public ResponseEntity<List<Obra>> findAll() {
+		return ResponseEntity.ok().body(obraServices.findAll());
 	}
 	
 	@GetMapping(value = "/mostrar/ifsn/{ifsn}")
-	public ResponseEntity<List<ObraDTO>> findByIfsn(@PathVariable String ifsn) {		
-		List<Obra> lista = obraServices.findByIfsn(ifsn);
-		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	public ResponseEntity<Obra> findByIfsn(@PathVariable String ifsn) {
+		return ResponseEntity.ok().body(obraServices.findByIfsn(ifsn));
 	}
 	
-	@GetMapping(value = "/mostrar/free/{free}")
-	public ResponseEntity<List<ObraDTO>> findByAll(@PathVariable String free) {
-		List<Obra> lista = obraServices.findByTudo(free);
-		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/search/q={q}")
+	public ResponseEntity<List<ObraView>> searchObra(@PathVariable String q) {
+		return ResponseEntity.ok().body(obraServices.searchObra(q));
 	}
 	
-	@GetMapping(value = "/mostrar/area/{area}")
-	public ResponseEntity<List<ObraDTO>> listByArea(@PathVariable String area) {
-		List<Obra> lista = obraServices.listByArea(area);
-		List<ObraDTO> listaDTO = lista.stream().map(objeto -> new ObraDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/search/titulo={titulo}")
+	public ResponseEntity<List<ObraView>> searchByTitle(@PathVariable String titulo) {
+		return ResponseEntity.ok().body(obraServices.searchObraByTitulo(titulo));
+	}
+	
+	@GetMapping(value = "/search/ifsn={ifsn}")
+	public ResponseEntity<List<ObraView>> searchByIfsn(@PathVariable String ifsn) {	
+		return ResponseEntity.ok().body(obraServices.searchObraByIfsn(ifsn));
+	}
+	
+	@GetMapping(value = "/search/area={area}")
+	public ResponseEntity<List<ObraView>> searchByArea(@PathVariable String area) {
+		return ResponseEntity.ok().body(obraServices.searchObraByArea(area));
+	}
+	
+	@GetMapping(value = "/search/ano={ano}")
+	public ResponseEntity<List<ObraView>> searchByAno(@PathVariable String ano) {
+		return ResponseEntity.ok().body(obraServices.searchObraByAno(ano));
 	}
 	
 }
