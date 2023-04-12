@@ -74,31 +74,37 @@ public class ObraController {
 	
 	@GetMapping(value = "/mostrar/ifsn/{ifsn}")
 	public ResponseEntity<Obra> findByIfsn(@PathVariable String ifsn) {
+		obraServices.stringParameterValidator(ifsn);
 		return ResponseEntity.ok().body(obraServices.findByIfsn(ifsn));
 	}
 	
 	@GetMapping(value = "/search/q={q}")
 	public ResponseEntity<List<ObraView>> searchObra(@PathVariable String q) {
+		obraServices.stringParameterValidator(q);
 		return ResponseEntity.ok().body(obraServices.searchObra(q));
 	}
 	
 	@GetMapping(value = "/search/titulo={titulo}")
 	public ResponseEntity<List<ObraView>> searchByTitle(@PathVariable String titulo) {
+		obraServices.stringParameterValidator(titulo);
 		return ResponseEntity.ok().body(obraServices.searchObraByTitulo(titulo));
 	}
 	
 	@GetMapping(value = "/search/ifsn={ifsn}")
 	public ResponseEntity<List<ObraView>> searchByIfsn(@PathVariable String ifsn) {	
+		obraServices.stringParameterValidator(ifsn);
 		return ResponseEntity.ok().body(obraServices.searchObraByIfsn(ifsn));
 	}
 	
 	@GetMapping(value = "/search/area={area}")
 	public ResponseEntity<List<ObraView>> searchByArea(@PathVariable String area) {
+		obraServices.stringParameterValidator(area);
 		return ResponseEntity.ok().body(obraServices.searchObraByArea(area));
 	}
 	
 	@GetMapping(value = "/search/ano={ano}")
 	public ResponseEntity<List<ObraView>> searchByAno(@PathVariable String ano) {
+		obraServices.intAnoParamaterValidator(ano);
 		return ResponseEntity.ok().body(obraServices.searchObraByAno(ano));
 	}
 	

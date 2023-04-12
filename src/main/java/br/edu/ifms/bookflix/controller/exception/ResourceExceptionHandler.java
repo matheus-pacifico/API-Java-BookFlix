@@ -1,6 +1,7 @@
 package br.edu.ifms.bookflix.controller.exception;
 
 import jakarta.servlet.http.HttpServletRequest;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -11,13 +12,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
-/* Manipulador de erros 
- * Classe auxiliar que irá interceptar as exceções */
-
 @ControllerAdvice
 public class ResourceExceptionHandler {
-	// o método recebe a exceção q já explodiu
-	// HttpServletRequest request --> informações da requisição
+	
 	@ExceptionHandler(ObjectNotFoundException.class)
 	public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
 
@@ -43,6 +40,13 @@ public class ResourceExceptionHandler {
 			err.addError(x.getField(), x.getDefaultMessage());
 		}
 		return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(err);
+	}
+
+	@ExceptionHandler(IllegalArgumentException.class)
+	public ResponseEntity<StandardError> numberFormat(IllegalArgumentException e, HttpServletRequest request) {
+		StandardError err =  new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+				"Parâmetro informado inválido", e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 
 }

@@ -27,7 +27,7 @@ public class ObraService {
 	private ObraRepository obrasRepository;
 	private ObraDTO obrasDTO = new ObraDTO(); 
 	
-	public Obra find(Integer id) {
+	public Obra find(Integer id) {;
 		Optional<Obra> objeto = obrasRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Obra não encontrada! Id: " + id));		
@@ -129,10 +129,18 @@ public class ObraService {
     			.replaceAll("[^\\p{ASCII}]",  "");
     }
     
+    public void intAnoParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) throw new IllegalArgumentException("O ano é formado apenas por números inteiros");
+    }
+    
     private int convertParamToInt(String param) {
-    	String paramWithoutChars = param.replaceAll("[^0-9]", "");
-    	if(paramWithoutChars.length() == 0) return -1;
-    	return Integer.parseInt(paramWithoutChars);
+    	String paramOnlyWithNumbers = param.replaceAll("[^0-9]", "");
+    	return Integer.parseInt(paramOnlyWithNumbers);
+    }
+    
+    public void stringParameterValidator(String param) {
+    	if(param == null) throw new IllegalArgumentException("O parâmetro de busca não pode ser nulo");
+    	if(param.isBlank()) throw new IllegalArgumentException("O parâmetro de busca não pode estar em branco");
     }
     
 }
