@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -13,9 +14,8 @@ import jakarta.persistence.OneToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-
 @Entity
-public class Usuario implements Serializable{
+public class Usuario implements Serializable {
 
 	private static final long serialVersionUID = 1L;
 	@Id
@@ -25,13 +25,13 @@ public class Usuario implements Serializable{
 	private String nome;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy ="usuario")	
+	@OneToOne(mappedBy ="usuario", fetch = FetchType.LAZY)	
 	private Autenticacao autenticacao;
 	
-	@OneToOne(mappedBy = "usuario")
+	@OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
 	private Professor professor;
 	
-	@OneToOne(mappedBy = "usuario")
+	@OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
 	private Aluno aluno;
 
 	@JsonIgnore

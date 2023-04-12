@@ -12,7 +12,7 @@ import jakarta.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Autenticacao implements Serializable{
+public class Autenticacao implements Serializable {
    
     private static final long serialVersionUID = 1L;
 	@Id

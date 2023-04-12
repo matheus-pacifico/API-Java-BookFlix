@@ -11,7 +11,7 @@ import jakarta.persistence.OneToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Aluno implements Serializable{
+public class Aluno implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	@Id

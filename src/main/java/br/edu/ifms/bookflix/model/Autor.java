@@ -11,7 +11,7 @@ import jakarta.persistence.ManyToOne;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
-public class Autor implements Serializable{
+public class Autor implements Serializable {
 	
 	private static final long serialVersionUID = 1L;
 	@Id

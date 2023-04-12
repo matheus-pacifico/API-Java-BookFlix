@@ -39,10 +39,10 @@ public class Obra implements Serializable {
 	private Professor professor;
 	
 	@OneToMany(mappedBy = "obra")
-	private List<Avaliacao> avaliacoes = new ArrayList<Avaliacao>();
+	private List<Avaliacao> avaliacoes = new ArrayList<>();
 	
 	@OneToMany(mappedBy = "obra", fetch = FetchType.EAGER)
-	private List<Autor> autores = new ArrayList<Autor>();
+	private List<Autor> autores = new ArrayList<>();
 	
 	public Obra() {
 		// TODO Auto-generated constructor stub
