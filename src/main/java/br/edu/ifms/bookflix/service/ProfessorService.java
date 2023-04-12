@@ -23,7 +23,7 @@ public class ProfessorService {
 
 	@Autowired
 	private ProfessorRepository professoresRepository;
-	private ProfessorDTO professoresDTO;
+	private ProfessorDTO professoresDTO = new ProfessorDTO();
 	
 	public Professor find(Integer id) {
 		Optional<Professor> objeto = professoresRepository.findById(id); 

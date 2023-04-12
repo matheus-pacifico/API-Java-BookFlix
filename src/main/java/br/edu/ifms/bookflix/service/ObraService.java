@@ -27,7 +27,7 @@ public class ObraService {
 	private ObraRepository obrasRepository;
 	private ObraDTO obrasDTO = new ObraDTO(); 
 	
-	public Obra find(Integer id) {;
+	public Obra find(Integer id) {
 		Optional<Obra> objeto = obrasRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Obra não encontrada! Id: " + id));		
@@ -40,10 +40,10 @@ public class ObraService {
 		return objeto;	
 	}
 	
-	public Obra update(Obra objeto) {
-		Obra novoObjeto = find(objeto.getId());
-		updateData(objeto, novoObjeto);
-		return obrasRepository.save(novoObjeto);
+	public Obra update(Obra objetoEditado) {
+		Obra objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return obrasRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
@@ -83,19 +83,6 @@ public class ObraService {
     	return obrasDTO.fromNewDTO(objetoNewDTO);
     }
 	
-	private void updateData(Obra objeto, Obra novoObjeto) {
-        novoObjeto.setIfsn(objeto.getIfsn());
-        novoObjeto.setTitulo(objeto.getTitulo());
-        novoObjeto.setArea(objeto.getArea());
-        novoObjeto.setDescricao(objeto.getDescricao());
-        novoObjeto.setNomeArquivo(objeto.getNomeArquivo());
-        novoObjeto.setCaminhoArquivo(objeto.getCaminhoArquivo());
-        novoObjeto.setAno(objeto.getAno());
-        novoObjeto.setProfessor(objeto.getProfessor());
-        novoObjeto.setAutores(objeto.getAutores());
-        novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
-	}
-	
 	public List<ObraView> searchObra(String pesquisa){
 		return obrasRepository.searchObra(unaccentedParam(pesquisa));
 	}
@@ -117,11 +104,11 @@ public class ObraService {
 	} 
 
 	private List<Obra> allObrasFound() {
-		return obrasDTO.listOfObrasWithoutSomeDetails(obrasRepository.findAll());
+		return obrasRepository.findAll();
 	}
     
-    public Obra obraWithoutSomeDetails(Obra objeto) {
-    	return obrasDTO.obraWithoutSomeDetails(objeto);
+    public Obra obraWithoutSomeAtributes(Obra objeto) {
+    	return obrasDTO.obraWithoutSomeAttributes(objeto);
     }
     
     private String unaccentedParam(String parameter) {
@@ -130,7 +117,9 @@ public class ObraService {
     }
     
     public void intAnoParamaterValidator(String param) {
-    	if(!param.matches("[0-9]+")) throw new IllegalArgumentException("O ano é formado apenas por números inteiros");
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O ano é formado apenas por números inteiros");
+    	}
     }
     
     private int convertParamToInt(String param) {
@@ -139,8 +128,24 @@ public class ObraService {
     }
     
     public void stringParameterValidator(String param) {
-    	if(param == null) throw new IllegalArgumentException("O parâmetro de busca não pode ser nulo");
-    	if(param.isBlank()) throw new IllegalArgumentException("O parâmetro de busca não pode estar em branco");
+    	if(param == null) {
+    		throw new IllegalArgumentException("O parâmetro de busca não pode ser nulo");
+    	}
+    	if(param.isBlank()) {
+    		throw new IllegalArgumentException("O parâmetro de busca não pode estar em branco");
+    	}
+    }
+    
+    public void intParamaterValidator(Integer param) {
+    	if(!param.toString().matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateObraId(Integer paramPathId, Integer obraBodyId) {
+    	if(!paramPathId.equals(obraBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id da obra informada no corpo da solicitação");
+    	}
     }
     
 }

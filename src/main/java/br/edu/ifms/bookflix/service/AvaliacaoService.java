@@ -22,7 +22,7 @@ public class AvaliacaoService {
 
 	@Autowired
 	private AvaliacaoRepository avaliacoesRepository;
-	private AvaliacaoDTO avaliacoesDTO;
+	private AvaliacaoDTO avaliacoesDTO = new AvaliacaoDTO();
 	
 	public Avaliacao find(Integer id) {
 		Optional<Avaliacao> objeto = avaliacoesRepository.findById(id);

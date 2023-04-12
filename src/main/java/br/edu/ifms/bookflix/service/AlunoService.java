@@ -23,7 +23,7 @@ public class AlunoService {
 
 	@Autowired
 	private AlunoRepository alunosRepository;
-	private AlunoDTO alunosDTO;
+	private AlunoDTO alunosDTO = new AlunoDTO();
 	
 	public Aluno find(Integer id) {
 		Optional<Aluno> objeto = alunosRepository.findById(id); 

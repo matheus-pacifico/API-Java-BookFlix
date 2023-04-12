@@ -22,7 +22,7 @@ public class UsuarioService {
 
 	@Autowired
 	private UsuarioRepository usuariosRepository;
-	private UsuarioDTO usuariosDTO;
+	private UsuarioDTO usuariosDTO = new UsuarioDTO();
 	
 	public Usuario find(Integer id) {
 		Optional<Usuario> objeto = usuariosRepository.findById(id); 

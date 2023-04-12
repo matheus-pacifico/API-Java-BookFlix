@@ -22,7 +22,7 @@ public class AutenticacaoService {
 
 	@Autowired
 	private AutenticacaoRepository autenticacoesRepository;
-	private AutenticacaoDTO autenticacoesDTO;
+	private AutenticacaoDTO autenticacoesDTO = new AutenticacaoDTO();
 	
 	public Autenticacao find(Integer id) {
 		Optional<Autenticacao> objeto = autenticacoesRepository.findById(id); 

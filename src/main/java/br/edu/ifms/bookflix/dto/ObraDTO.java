@@ -158,24 +158,12 @@ public class ObraDTO implements Serializable {
 		obra.setAutores(objetoNewDTO.getAutores());
 		return obra;
 	}
-	
-	public Obra obraWithoutSomeDetails(Obra objeto) {
-		Obra obraAuxiliar = objeto;
-		obraAuxiliar.setId(null);
-		obraAuxiliar.setIfsn(objeto.getIfsn());
-		obraAuxiliar.setTitulo(objeto.getTitulo());
-		obraAuxiliar.setArea(objeto.getArea());
-		obraAuxiliar.setDescricao(objeto.getDescricao());
-		obraAuxiliar.setAno(objeto.getAno());
-        obraAuxiliar.setProfessor(professorOnlyWithNameAndSiape(objeto.getProfessor()));
-		obraAuxiliar.setAutores(listOfAutoresOnlyWithName((objeto.getAutores())));
-		obraAuxiliar.setAvaliacoes(listOfAvaliacoesOnlyWithUsersNameWithoutObra(objeto.getAvaliacoes()));
-		return obraAuxiliar;
-	}
 
-	public List<Obra> listOfObrasWithoutSomeDetails(List<Obra> obras) {
-		return obras.stream().map(o -> obraWithoutSomeDetails(o))
-				.collect(Collectors.toList());
+	public Obra obraWithoutSomeAttributes(Obra objeto) {
+		objeto.setProfessor(professorOnlyWithNameAndSiape(objeto.getProfessor()));
+		objeto.setAutores(listOfAutoresOnlyWithName((objeto.getAutores())));
+		objeto.setAvaliacoes(listOfAvaliacoesOnlyWithUsersNameWithoutObra(objeto.getAvaliacoes()));
+		return objeto;
 	}
 	
 	private Professor professorOnlyWithNameAndSiape(Professor professor) {

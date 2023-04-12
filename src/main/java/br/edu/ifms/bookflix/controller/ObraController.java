@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -33,8 +34,9 @@ public class ObraController {
 	private ObraService obraServices;
 	
 	@GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Obra> search(@PathVariable Integer id) {		
-		Obra objeto = obraServices.obraWithoutSomeDetails(obraServices.find(id));
+	public ResponseEntity<Obra> search(@PathVariable Integer id) {	
+		obraServices.intParamaterValidator(id);	
+		Obra objeto = obraServices.find(id);
 		return ResponseEntity.ok().body(objeto);
 	}
 
@@ -49,20 +51,24 @@ public class ObraController {
 	
 	@PutMapping(value = "/atualizar/{id}")
 	public ResponseEntity<Void> update(@Valid @RequestBody ObraDTO objetoDTO, @PathVariable Integer id) {
+		obraServices.intParamaterValidator(id);
+		obraServices.intParamaterValidator(objetoDTO.getId());
 		Obra objeto = obraServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		obraServices.validateObraId(id, objetoDTO.getId());
 		objeto = obraServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
 	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable Integer id) {
+		obraServices.intParamaterValidator(id);
 		obraServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
 	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+		obraServices.intParamaterValidator(id);
 		obraServices.delete(id);
 		return ResponseEntity.noContent().build();
 	}
@@ -75,34 +81,34 @@ public class ObraController {
 	@GetMapping(value = "/mostrar/ifsn/{ifsn}")
 	public ResponseEntity<Obra> findByIfsn(@PathVariable String ifsn) {
 		obraServices.stringParameterValidator(ifsn);
-		return ResponseEntity.ok().body(obraServices.findByIfsn(ifsn));
+		return ResponseEntity.ok().body(obraServices.obraWithoutSomeAtributes(obraServices.findByIfsn(ifsn)));
 	}
 	
-	@GetMapping(value = "/search/q={q}")
-	public ResponseEntity<List<ObraView>> searchObra(@PathVariable String q) {
+	@GetMapping(value = "/search")
+	public ResponseEntity<List<ObraView>> searchObra(@RequestParam String q) {
 		obraServices.stringParameterValidator(q);
 		return ResponseEntity.ok().body(obraServices.searchObra(q));
 	}
 	
-	@GetMapping(value = "/search/titulo={titulo}")
+	@GetMapping(value = "/search/titulo/{titulo}")
 	public ResponseEntity<List<ObraView>> searchByTitle(@PathVariable String titulo) {
 		obraServices.stringParameterValidator(titulo);
 		return ResponseEntity.ok().body(obraServices.searchObraByTitulo(titulo));
 	}
 	
-	@GetMapping(value = "/search/ifsn={ifsn}")
+	@GetMapping(value = "/search/ifsn/{ifsn}")
 	public ResponseEntity<List<ObraView>> searchByIfsn(@PathVariable String ifsn) {	
 		obraServices.stringParameterValidator(ifsn);
 		return ResponseEntity.ok().body(obraServices.searchObraByIfsn(ifsn));
 	}
 	
-	@GetMapping(value = "/search/area={area}")
+	@GetMapping(value = "/search/area/{area}")
 	public ResponseEntity<List<ObraView>> searchByArea(@PathVariable String area) {
 		obraServices.stringParameterValidator(area);
 		return ResponseEntity.ok().body(obraServices.searchObraByArea(area));
 	}
 	
-	@GetMapping(value = "/search/ano={ano}")
+	@GetMapping(value = "/search/ano/{ano}")
 	public ResponseEntity<List<ObraView>> searchByAno(@PathVariable String ano) {
 		obraServices.intAnoParamaterValidator(ano);
 		return ResponseEntity.ok().body(obraServices.searchObraByAno(ano));

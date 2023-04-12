@@ -22,7 +22,7 @@ public class AutorService {
 	
 	@Autowired
 	private AutorRepository autoresRepository;
-	private AutorDTO autoresDTO;
+	private AutorDTO autoresDTO = new AutorDTO();
 	
 	public Autor find(Integer id) {
 		Optional<Autor> objeto = autoresRepository.findById(id); 
