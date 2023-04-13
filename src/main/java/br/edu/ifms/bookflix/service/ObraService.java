@@ -136,8 +136,8 @@ public class ObraService {
     	}
     }
     
-    public void intParamaterValidator(Integer param) {
-    	if(!param.toString().matches("[0-9]+")) {
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
     		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
     	}
     }

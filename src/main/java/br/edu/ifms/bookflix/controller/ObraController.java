@@ -34,9 +34,9 @@ public class ObraController {
 	private ObraService obraServices;
 	
 	@GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Obra> search(@PathVariable Integer id) {	
+	public ResponseEntity<Obra> search(@PathVariable String id) {	
 		obraServices.intParamaterValidator(id);	
-		Obra objeto = obraServices.find(id);
+		Obra objeto = obraServices.find(Integer.parseInt(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 
@@ -50,26 +50,26 @@ public class ObraController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody ObraDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody ObraDTO objetoDTO, @PathVariable String id) {
 		obraServices.intParamaterValidator(id);
-		obraServices.intParamaterValidator(objetoDTO.getId());
+		obraServices.intParamaterValidator(objetoDTO.getId().toString());
 		Obra objeto = obraServices.fromDTO(objetoDTO);
-		obraServices.validateObraId(id, objetoDTO.getId());
+		obraServices.validateObraId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = obraServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable Integer id) {
+	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable String id) {
 		obraServices.intParamaterValidator(id);
-		obraServices.delete(id);
+		obraServices.delete(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
 		obraServices.intParamaterValidator(id);
-		obraServices.delete(id);
+		obraServices.delete(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
