@@ -1,6 +1,11 @@
 package br.edu.ifms.bookflix.controller.exception;
 
+import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
+import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
+
 import jakarta.servlet.http.HttpServletRequest;
+
+import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,16 +14,13 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
-import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
-
 @ControllerAdvice
-public class ResourceExceptionHandler {
+public class ControllerExceptionHandler {
 	
 	@ExceptionHandler(ObjectNotFoundException.class)
 	public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.NOT_FOUND.value(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.NOT_FOUND.value(),
 				"Não encontrado", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
@@ -26,7 +28,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(DataIntegrityException.class)
 	public ResponseEntity<StandardError> dataIntegrity(DataIntegrityException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
 				"Integridade de dados", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
@@ -34,7 +36,7 @@ public class ResourceExceptionHandler {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<StandardError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
 
-		ValidationError err = new ValidationError(System.currentTimeMillis(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
+		ValidationError err = new ValidationError(Instant.now().toEpochMilli(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
 				"Erro de validação", e.getMessage(), request.getRequestURI());
 		for (FieldError x : e.getBindingResult().getFieldErrors()) {
 			err.addError(x.getField(), x.getDefaultMessage());
@@ -44,7 +46,8 @@ public class ResourceExceptionHandler {
 
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<StandardError> numberFormat(IllegalArgumentException e, HttpServletRequest request) {
-		StandardError err =  new StandardError(System.currentTimeMillis(), HttpStatus.BAD_REQUEST.value(),
+		
+		StandardError err =  new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
 				"Parâmetro informado inválido", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
