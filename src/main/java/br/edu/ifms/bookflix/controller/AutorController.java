@@ -8,7 +8,6 @@ import br.edu.ifms.bookflix.dto.AutorDTO;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -32,8 +31,9 @@ public class AutorController {
 	private AutorService autorServices;
 	
     @GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Autor> find(@PathVariable Integer id) {		
-		Autor objeto = autorServices.autorWithoutAvaliacoesDaObra(autorServices.find(id));
+	public ResponseEntity<Autor> find(@PathVariable String id) {
+		autorServices.intParamaterValidator(id);		
+		Autor objeto = autorServices.autorWithoutAvaliacoesDaObra(autorServices.find(Integer.parseInt(id)));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
@@ -47,30 +47,32 @@ public class AutorController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AutorDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody AutorDTO objetoDTO, @PathVariable String id) {
+		autorServices.intParamaterValidator(id);
+		autorServices.intParamaterValidator(objetoDTO.getId().toString());
 		Autor objeto = autorServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		autorServices.validateAutorId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = autorServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 		
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Autor objeto, @PathVariable Integer id) {
-		autorServices.delete(id);
+	public ResponseEntity<Void> delete(@RequestBody Autor objeto, @PathVariable String id) {
+		autorServices.intParamaterValidator(id);
+		autorServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-		autorServices.delete(id);
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
+		autorServices.intParamaterValidator(id);
+		autorServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
-	public ResponseEntity<List<AutorDTO>> findAll() {		
-		List<Autor> lista = autorServices.findAll();
-		List<AutorDTO> listaDTO = lista.stream().map(objeto -> new AutorDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/exibir")
+	public ResponseEntity<List<Autor>> findAll() {
+		return ResponseEntity.ok().body(autorServices.findAll());
 	}	
 
 }

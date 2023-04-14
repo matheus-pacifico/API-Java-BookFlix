@@ -8,7 +8,6 @@ import br.edu.ifms.bookflix.dto.ProfessorDTO;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -32,8 +31,9 @@ public class ProfessorController {
 	private ProfessorService professorServices;
 	
 	@GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Professor> find(@PathVariable Integer id) {		
-		Professor objeto = professorServices.find(id);
+	public ResponseEntity<Professor> find(@PathVariable String id) {
+		professorServices.intParamaterValidator(id);		
+		Professor objeto = professorServices.find(Integer.parseInt(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 		
@@ -47,30 +47,32 @@ public class ProfessorController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody ProfessorDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody ProfessorDTO objetoDTO, @PathVariable String id) {
+		professorServices.intParamaterValidator(id);
+		professorServices.intParamaterValidator(objetoDTO.getId().toString());
 		Professor objeto = professorServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		professorServices.validateProfessorId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = professorServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Professor objeto, @PathVariable Integer id) {
-		professorServices.deleteById(id);
+	public ResponseEntity<Void> delete(@RequestBody Professor objeto, @PathVariable String id) {
+		professorServices.intParamaterValidator(id);
+		professorServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-		professorServices.deleteById(id);
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
+		professorServices.intParamaterValidator(id);
+		professorServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
-	public ResponseEntity<List<ProfessorDTO>> findAll() {		
-		List<Professor> lista = professorServices.findAll();
-		List<ProfessorDTO> listaDTO = lista.stream().map(objeto -> new ProfessorDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/exibir")
+	public ResponseEntity<List<Professor>> findAll() {
+		return ResponseEntity.ok().body(professorServices.findAll());
 	}	
 
 }

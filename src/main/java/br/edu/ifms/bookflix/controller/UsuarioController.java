@@ -8,7 +8,6 @@ import br.edu.ifms.bookflix.dto.UsuarioDTO;
 
 import java.net.URI; 
 import java.util.List; 
-import java.util.stream.Collectors;
   
 import jakarta.validation.Valid;
 
@@ -32,8 +31,9 @@ public class UsuarioController {
     private UsuarioService usuarioServices;
   
     @GetMapping(value = "/mostrar/{id}")
-    public ResponseEntity<Usuario> find(@PathVariable Integer id) { 
-    	Usuario objeto = usuarioServices.usuarioWithoutAvaliacaoDasObras(usuarioServices.find(id)); 
+    public ResponseEntity<Usuario> find(@PathVariable String id) { 
+    	usuarioServices.intParamaterValidator(id);
+    	Usuario objeto = usuarioServices.usuarioWithoutAvaliacaoDasObras(usuarioServices.find(Integer.parseInt(id))); 
     	return ResponseEntity.ok().body(objeto); 
     }
    
@@ -47,30 +47,32 @@ public class UsuarioController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody UsuarioDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody UsuarioDTO objetoDTO, @PathVariable String id) {
+		usuarioServices.intParamaterValidator(id);
+		usuarioServices.intParamaterValidator(objetoDTO.getId().toString());
 		Usuario objeto = usuarioServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		usuarioServices.validateUsuarioId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = usuarioServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Usuario objeto, @PathVariable Integer id) {
-		usuarioServices.deleteById(id);
+	public ResponseEntity<Void> delete(@RequestBody Usuario objeto, @PathVariable String id) {
+		usuarioServices.intParamaterValidator(id);
+		usuarioServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-		usuarioServices.deleteById(id);
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
+		usuarioServices.intParamaterValidator(id);
+		usuarioServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
-	public ResponseEntity<List<UsuarioDTO>> findAll() {		
-		List<Usuario> lista = usuarioServices.usuariosListWithoutAvaliacoesDasObras(usuarioServices.findAll());
-		List<UsuarioDTO> listaDTO = lista.stream().map(objeto -> new UsuarioDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/exibir")
+	public ResponseEntity<List<Usuario>> findAll() {
+		return ResponseEntity.ok().body(usuarioServices.findAll());
 	}
 	
 }

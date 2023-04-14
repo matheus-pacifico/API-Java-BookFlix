@@ -1,12 +1,12 @@
 package br.edu.ifms.bookflix.service;
 
 import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.model.Obra;
 
 import br.edu.ifms.bookflix.repository.ProfessorRepository;
 
 import br.edu.ifms.bookflix.dto.ProfessorDTO;
 
-import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
@@ -37,21 +37,18 @@ public class ProfessorService {
 		return professoresRepository.save(objeto);
 	}
 
-	public Professor update(Professor objeto) {
-		Professor novoObjeto = find(objeto.getId());
-		updateData(objeto, novoObjeto);
-		return professoresRepository.save(novoObjeto);
+	public Professor update(Professor objetoEditado) {
+		Professor objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return professoresRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
-	public void delete(Integer id) {
-		find(id);
-		try {
-			professoresRepository.deleteById(id);	
+	public void delete(Integer id, Professor objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("O professor a ser removido é diferente da professor cadastrado no banco de dados");
 		}
-		catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
-		}
+		deleteById(id);
 	}
 	
 	public List<Professor> findAll() {
@@ -60,7 +57,13 @@ public class ProfessorService {
 	
 	@Transactional
 	public void deleteById(Integer id) {
-		professoresRepository.deleteById(id);
+		find(id);
+		try {
+			professoresRepository.deleteById(id);	
+		}
+		catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
 	}
 	
 	public void save(Professor professor) {
@@ -79,13 +82,21 @@ public class ProfessorService {
 		return professoresDTO.fromNewDTO(objetoNewDTO);
 	}
 	
-	private void updateData(Professor objeto, Professor novoObjeto) {
-		novoObjeto.setSiape(objeto.getSiape());
-	}
-	
 	public List<Obra> listObrasPostedByProfessor(Integer id){
 		Professor professor = find(id);
 		return professor.getObras();
 	}
+        
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateProfessorId(Integer paramPathId, Integer professorBodyId) {
+    	if(!paramPathId.equals(professorBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id do professor informado no corpo da solicitação");
+    	}
+    }
 	
 }

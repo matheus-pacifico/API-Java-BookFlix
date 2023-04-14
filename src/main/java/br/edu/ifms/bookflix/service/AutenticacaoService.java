@@ -33,26 +33,40 @@ public class AutenticacaoService {
 	@Transactional
 	public Autenticacao insert (Autenticacao objeto) {
 		objeto.setId(null);
-		autenticacoesRepository.save(objeto);
-		return objeto;
+		return autenticacoesRepository.save(objeto);
 		
 	}
 	
-	public Autenticacao update(Autenticacao objeto) {
-		Autenticacao novoObjeto = find(objeto.getId());
-		updateData(objeto, novoObjeto);
-		return autenticacoesRepository.save(novoObjeto);
+	public Autenticacao update(Autenticacao objetoEditado) {
+		Autenticacao objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return autenticacoesRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
-	public void delete(Integer id) {
+	public void delete(Integer id, Autenticacao objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("A autenticação a ser removida é diferente da autenticação cadastrada no banco de dados");
+		}
+		deleteById(id);
+	}
+	
+	public List<Autenticacao> findAll() {
+		return autenticacoesRepository.findAll();
+	}
+	
+	@Transactional
+	public void deleteById(Integer id) {
 		find(id);
 		try {
 			autenticacoesRepository.deleteById(id);	
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}
+	}
+	
+	public void save(Autenticacao autenticacao) {
+		autenticacoesRepository.saveAndFlush(autenticacao);
 	}
 	
 	public Autenticacao fromDTO(AutenticacaoDTO objetoDTO) {
@@ -63,32 +77,21 @@ public class AutenticacaoService {
 		return autenticacoesDTO.fromNewDTO(objetoNewDTO);
 	}
 	
-	private void updateData(Autenticacao objeto, Autenticacao novoObjeto) {
-		novoObjeto.setEmail(objeto.getEmail());
-		novoObjeto.setSenha(objeto.getSenha());
-		novoObjeto.setUsuario(objeto.getUsuario());
-	}
-	
-	public List<Autenticacao> findAll() {
-		return autenticacoesDTO.autenticacoesListWithoutObras(autenticacoesRepository.findAll());
-	}
-	
-	@Transactional
-	public void deleteById(Integer id) {
-		autenticacoesRepository.deleteById(id);
-	}
-	
-	public void save(Autenticacao autenticacao) {
-		autenticacoesRepository.saveAndFlush(autenticacao);
-	}
-	
-	public Optional<Autenticacao> findById(Integer id) {
-		return autenticacoesRepository.findById(id);
-	}
-	
 	public Autenticacao autenticacaoWithoutObra(Autenticacao autenticacao) {
 		return autenticacoesDTO.autenticacaoWithoutObra(autenticacao);
 	}
+    
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateAvaliacaoId(Integer paramPathId, Integer obraBodyId) {
+    	if(!paramPathId.equals(obraBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id da avaliação informada no corpo da solicitação");
+    	}
+    }
 	
 	
 }

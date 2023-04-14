@@ -36,8 +36,7 @@ public class ObraService {
 	@Transactional
 	public Obra insert (Obra objeto) {
 		objeto.setId(null);
-		obrasRepository.save(objeto);
-		return objeto;	
+		return obrasRepository.save(objeto);	
 	}
 	
 	public Obra update(Obra objetoEditado) {
@@ -47,22 +46,25 @@ public class ObraService {
 	}
 	
 	@Transactional
-	public void delete(Integer id) {
-		find(id);
-		try {
-			obrasRepository.deleteById(id);	
-		} catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+	public void delete(Integer id, Obra objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("A obra a ser removida é diferente da obra cadastrada no banco de dados");
 		}
+		deleteById(id);
 	}
 	
 	public List<Obra> findAll() {
-		return allObrasFound();
+		return obrasRepository.findAll(); 
 	}
 	
 	@Transactional
 	public void deleteById(Integer id) {
-		obrasRepository.deleteById(id);
+		find(id);
+		try {
+			obrasRepository.deleteById(id);
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
 	}
 	
 	public void save(Obra obra) {
@@ -101,10 +103,6 @@ public class ObraService {
 	
 	public List<ObraView> searchObraByAno(String ano) {
 		return obrasRepository.searchObraByAno(convertParamToInt(ano));
-	} 
-
-	private List<Obra> allObrasFound() {
-		return obrasRepository.findAll();
 	}
     
     public Obra obraWithoutSomeAtributes(Obra objeto) {
@@ -122,9 +120,8 @@ public class ObraService {
     	}
     }
     
-    private int convertParamToInt(String param) {
-    	String paramOnlyWithNumbers = param.replaceAll("[^0-9]", "");
-    	return Integer.parseInt(paramOnlyWithNumbers);
+    public int convertParamToInt(String param) {
+    	return Integer.parseInt(param);
     }
     
     public void stringParameterValidator(String param) {

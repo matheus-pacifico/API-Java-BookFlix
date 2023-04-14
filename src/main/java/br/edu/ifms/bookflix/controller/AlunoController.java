@@ -8,7 +8,6 @@ import br.edu.ifms.bookflix.service.AlunoService;
   
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -32,8 +31,9 @@ public class AlunoController {
     private AlunoService alunoServices;
   
     @GetMapping(value = "/mostrar/{id}")
-    public ResponseEntity<Aluno> find(@PathVariable Integer id) { 
-	    Aluno objeto = alunoServices.find(id); 
+    public ResponseEntity<Aluno> find(@PathVariable String id) {
+    	alunoServices.intParamaterValidator(id);
+	    Aluno objeto = alunoServices.find(Integer.parseInt(id)); 
 	    return ResponseEntity.ok().body(objeto); 
     }
    
@@ -47,30 +47,32 @@ public class AlunoController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AlunoDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody AlunoDTO objetoDTO, @PathVariable String id) {
+		alunoServices.intParamaterValidator(id);
+		alunoServices.intParamaterValidator(objetoDTO.getId().toString());
 		Aluno objeto = alunoServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		alunoServices.validateAlunoId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = alunoServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Aluno objeto, @PathVariable Integer id) {
-		alunoServices.deleteById(id);
+	public ResponseEntity<Void> delete(@RequestBody Aluno objeto, @PathVariable String id) {
+		alunoServices.intParamaterValidator(id);
+		alunoServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-		alunoServices.deleteById(id);
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
+		alunoServices.intParamaterValidator(id);
+		alunoServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
-	public ResponseEntity<List<AlunoDTO>> findAll() {		
-		List<Aluno> lista = alunoServices.findAll();
-		List<AlunoDTO> listaDTO = lista.stream().map(objeto -> new AlunoDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/exibir")
+	public ResponseEntity<List<Aluno>> findAll() {
+		return ResponseEntity.ok().body(alunoServices.findAll());
 	}
   
 }

@@ -33,26 +33,39 @@ public class AutorService {
 	@Transactional
 	public Autor insert (Autor objeto) {
 		objeto.setId(null);
-		autoresRepository.save(objeto);
-		return objeto;
+		return autoresRepository.save(objeto);
 	}
 	
-	public Autor update(Autor objeto) {
-		Autor novoObjeto = find(objeto.getId());
-		updateData(novoObjeto, objeto);
-		return autoresRepository.save(novoObjeto);
+	public Autor update(Autor objetoEditado) {
+		Autor objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return autoresRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
-	public void delete(Integer id) {
+	public void delete(Integer id, Autor objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("O autor a ser removido é diferente do autor cadastrado no banco de dados");
+		}
+		deleteById(id);		
+	}
+	
+	public List<Autor> findAll() {
+		return autoresRepository.findAll();
+	}
+	
+	public void deleteById(Integer id) {
 		find(id);
 		try {
 			autoresRepository.deleteById(id);	
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
-		}
-	}	
+		}		
+	}
+	
+	public void save(Autor avaliacao) {
+		autoresRepository.saveAndFlush(avaliacao);
+	}
 	
 	public Autor fromDTO(AutorDTO objetoDTO) {
 		return autoresDTO.fromDTO(objetoDTO);
@@ -62,30 +75,20 @@ public class AutorService {
 		return autoresDTO.fromNewDTO(objetoNewDTO);
 	}
 	
-	private void updateData(Autor novoObjeto, Autor objeto) {
-		novoObjeto.setNome(objeto.getNome());
-		novoObjeto.setObra(objeto.getObra());
-	}
-	
-	public List<Autor> findAll() {
-		return autoresDTO.autoresListWithoutAvaliacoesDaObra(autoresRepository.findAll());
-	}
-	
-	@Transactional
-	public void deleteById(Integer id) {
-		autoresRepository.deleteById(id);
-	}
-	
-	public void save(Autor avaliacao) {
-		autoresRepository.saveAndFlush(avaliacao);
-	}
-	
-	public Optional<Autor> findById(Integer id) {
-		return autoresRepository.findById(id);
-	}
-	
 	public Autor autorWithoutAvaliacoesDaObra(Autor autor) {
 		return autoresDTO.autorWithoutAvaliacoesDaObra(autor);
 	}
+    
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateAutorId(Integer paramPathId, Integer autorBodyId) {
+    	if(!paramPathId.equals(autorBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id do autor informado no corpo da solicitação");
+    	}
+    }
 
 }

@@ -4,8 +4,6 @@ import br.edu.ifms.bookflix.model.Autenticacao;
 import br.edu.ifms.bookflix.model.Usuario;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -79,15 +77,6 @@ public class AutenticacaoDTO implements Serializable {
 		if(autenticacao.getUsuario().getProfessor() != null) autenticacao.getUsuario().getProfessor().setObras(null);
 		
 		return autenticacao;
-	}
-	
-	public List<Autenticacao> autenticacoesListWithoutObras(List<Autenticacao> autenticacoes) {
-		List<Autenticacao> autenticacoesSemObra = new ArrayList<>();
-		autenticacoes.forEach(a -> autenticacaoWithoutObra(a));
-		
-		autenticacoesSemObra.addAll(autenticacoes);
-		
-		return autenticacoesSemObra;
 	}
 	
 }

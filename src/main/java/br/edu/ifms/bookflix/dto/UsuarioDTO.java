@@ -6,7 +6,6 @@ import br.edu.ifms.bookflix.model.Aluno;
 import br.edu.ifms.bookflix.model.Avaliacao;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UsuarioDTO implements Serializable {
@@ -88,14 +87,5 @@ public class UsuarioDTO implements Serializable {
 		
 		return usuario;
 	}
-	
-	public List<Usuario> usuariosListWithoutAvaliacoesDasObras(List<Usuario> usuarios) {
-		List<Usuario> usuariosSemAvaliacoes= new ArrayList<>();
-		usuarios.forEach(u -> usuarioWithoutAvaliacaoDasObras(u));
-		
-		usuariosSemAvaliacoes.addAll(usuarios);
-		
-		return usuariosSemAvaliacoes;
-	}	
 
 }

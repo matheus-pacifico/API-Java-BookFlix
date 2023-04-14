@@ -35,6 +35,20 @@ public class UsuarioService {
 		obj.setId(null);
 		return usuariosRepository.save(obj);
 	}
+
+	public Usuario update(Usuario objetoEditado) {
+		Usuario objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return usuariosRepository.save(objetoAtualizado);
+	}
+	
+	@Transactional
+	public void delete(Integer id, Usuario objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("O usuário a ser removido é diferente do usuário cadastrado no banco de dados");
+		}
+		deleteById(id);
+	}
 	
 	public List<Usuario> findAll() {
 		return usuariosRepository.findAll();
@@ -42,7 +56,13 @@ public class UsuarioService {
 	
 	@Transactional
 	public void deleteById(Integer id) {
-		usuariosRepository.deleteById(id);
+		find(id);
+		try {
+			usuariosRepository.deleteById(id);	
+		}
+		catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
 	}
 	
 	public void save(Usuario usuario) {
@@ -53,17 +73,6 @@ public class UsuarioService {
 		return usuariosRepository.findById(id);
 	}
 	
-	@Transactional
-	public void delete(Integer id) {
-		find(id);
-		try {
-			usuariosRepository.deleteById(id);	
-		}
-		catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
-		}
-	}
-	
 	public Usuario fromDTO(UsuarioDTO objetoDTO) {
 		return usuariosDTO.fromDTO(objetoDTO);
 	}
@@ -71,27 +80,21 @@ public class UsuarioService {
 	public Usuario fromNewDTO(UsuarioDTO objetoNewDTO) {
 		return usuariosDTO.fromNewDTO(objetoNewDTO);
 	}
-
-	public Usuario update(Usuario objeto) {
-		Usuario novoObjeto = find(objeto.getId());
-		updateData(objeto, novoObjeto);
-		return usuariosRepository.save(novoObjeto);
-	}
-	
-	private void updateData(Usuario objeto, Usuario novoObjeto) {
-		novoObjeto.setAutenticacao(objeto.getAutenticacao());
-		novoObjeto.setNome(objeto.getNome());
-		novoObjeto.setProfessor(objeto.getProfessor());
-		novoObjeto.setAluno(objeto.getAluno());
-		novoObjeto.setAvaliacoes(objeto.getAvaliacoes());
-	}
 	
 	public Usuario usuarioWithoutAvaliacaoDasObras(Usuario usuario) {
 		return usuariosDTO.usuarioWithoutAvaliacaoDasObras(usuario);
 	}
-	
-	public List<Usuario> usuariosListWithoutAvaliacoesDasObras(List<Usuario> usuarios) {
-		return usuariosDTO.usuariosListWithoutAvaliacoesDasObras(usuarios);
-	}
+    
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateUsuarioId(Integer paramPathId, Integer usuarioBodyId) {
+    	if(!paramPathId.equals(usuarioBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id do usuário informado no corpo da solicitação");
+    	}
+    }
 	
 }

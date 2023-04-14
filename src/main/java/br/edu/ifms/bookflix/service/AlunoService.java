@@ -37,21 +37,36 @@ public class AlunoService {
 		return alunosRepository.save(objeto);
 	}
 
-	public Aluno update(Aluno objeto) {
-		Aluno novoObjeto = find(objeto.getId());
-		updateData(objeto, novoObjeto);
-		return alunosRepository.save(novoObjeto);
+	public Aluno update(Aluno objetoEditado) {
+		Aluno objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return alunosRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
-	public void delete(Integer id) {
+	public void delete(Integer id, Aluno objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("O aluno a ser removido é diferente do aluno cadastrado no banco de dados");
+		}
+		deleteById(id);
+	}
+		
+	public List<Aluno> findAll() {
+		return alunosRepository.findAll();
+	}
+	
+	@Transactional
+	public void deleteById(Integer id) {
 		find(id);
 		try {
 			alunosRepository.deleteById(id);	
-		}
-		catch (DataIntegrityViolationException e) {
+		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}
+	}
+	
+	public void save(Aluno aluno) {
+		alunosRepository.saveAndFlush(aluno);
 	}
 	
 	public Aluno fromDTO(AlunoDTO objetoDTO) {
@@ -60,29 +75,6 @@ public class AlunoService {
 	
 	public Aluno fromNewDTO(AlunoDTO objetoNewDTO) {
 		return alunosDTO.fromNewDTO(objetoNewDTO);
-	}
-	
-	private void updateData(Aluno objeto, Aluno novoObjeto) {
-		novoObjeto.setRa(objeto.getRa());
-		novoObjeto.setTurma(objeto.getTurma());
-		novoObjeto.setUsuario(objeto.getUsuario());
-	}
-	
-	public List<Aluno> findAll() {
-		return alunosRepository.findAll();
-	}
-	
-	@Transactional
-	public void deleteById(Integer id) {
-		alunosRepository.deleteById(id);
-	}
-	
-	public void save(Aluno aluno) {
-		alunosRepository.saveAndFlush(aluno);
-	}
-	
-	public Optional<Aluno> findById(Integer id) {
-		return alunosRepository.findById(id);
 	}
 	
 	public List<Aluno> findAlunosByTurma(int turma) {		
@@ -95,5 +87,17 @@ public class AlunoService {
 		return findAll().stream()
 				.filter(a -> a.getRa().compareTo(ra) == 0).findFirst();
 	}
+    
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateAlunoId(Integer paramPathId, Integer alunoBodyId) {
+    	if(!paramPathId.equals(alunoBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id do aluno informado no corpo da solicitação");
+    	}
+    }
 	
 }

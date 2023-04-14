@@ -8,7 +8,6 @@ import br.edu.ifms.bookflix.dto.AutenticacaoDTO;
 
 import java.net.URI;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import jakarta.validation.Valid;
 
@@ -32,8 +31,9 @@ public class AutenticacaoController {
 	private AutenticacaoService autenticacaoServices;
 	
     @GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Autenticacao> find(@PathVariable Integer id) {		
-		Autenticacao objeto = autenticacaoServices.autenticacaoWithoutObra(autenticacaoServices.find(id));
+	public ResponseEntity<Autenticacao> find(@PathVariable String id) {
+    	autenticacaoServices.intParamaterValidator(id);
+		Autenticacao objeto = autenticacaoServices.autenticacaoWithoutObra(autenticacaoServices.find(Integer.parseInt(id)));
 		return ResponseEntity.ok().body(objeto);
 	}
 
@@ -47,30 +47,32 @@ public class AutenticacaoController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AutenticacaoDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody AutenticacaoDTO objetoDTO, @PathVariable String id) {
+		autenticacaoServices.intParamaterValidator(id);
+		autenticacaoServices.intParamaterValidator(objetoDTO.getId().toString());
 		Autenticacao objeto = autenticacaoServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		autenticacaoServices.validateAvaliacaoId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = autenticacaoServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable Integer id) {
-		autenticacaoServices.delete(id);
+	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable String id) {
+		autenticacaoServices.intParamaterValidator(id);
+		autenticacaoServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-		autenticacaoServices.delete(id);
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
+		autenticacaoServices.intParamaterValidator(id);
+		autenticacaoServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
-	public ResponseEntity<List<AutenticacaoDTO>> findAll() {		
-		List<Autenticacao> lista = autenticacaoServices.findAll();
-		List<AutenticacaoDTO> listaDTO = lista.stream().map(objeto -> new AutenticacaoDTO(objeto)).collect(Collectors.toList());
-		return ResponseEntity.ok().body(listaDTO);
+	@GetMapping(value = "/exibir")
+	public ResponseEntity<List<Autenticacao>> findAll() {
+		return ResponseEntity.ok().body(autenticacaoServices.findAll());
 	}
 	
 }

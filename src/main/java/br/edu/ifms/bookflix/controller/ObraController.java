@@ -34,8 +34,8 @@ public class ObraController {
 	private ObraService obraServices;
 	
 	@GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Obra> search(@PathVariable String id) {	
-		obraServices.intParamaterValidator(id);	
+	public ResponseEntity<Obra> search(@PathVariable String id) {
+		obraServices.intParamaterValidator(id);
 		Obra objeto = obraServices.find(Integer.parseInt(id));
 		return ResponseEntity.ok().body(objeto);
 	}
@@ -62,18 +62,18 @@ public class ObraController {
 	@DeleteMapping(value = "/remover/{id}")
 	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable String id) {
 		obraServices.intParamaterValidator(id);
-		obraServices.delete(Integer.parseInt(id));
+		obraServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
 	public ResponseEntity<Void> deleteById(@PathVariable String id) {
 		obraServices.intParamaterValidator(id);
-		obraServices.delete(Integer.parseInt(id));
+		obraServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
+	@GetMapping(value = "/exibir")
 	public ResponseEntity<List<Obra>> findAll() {
 		return ResponseEntity.ok().body(obraServices.findAll());
 	}
@@ -87,31 +87,51 @@ public class ObraController {
 	@GetMapping(value = "/search")
 	public ResponseEntity<List<ObraView>> searchObra(@RequestParam String q) {
 		obraServices.stringParameterValidator(q);
-		return ResponseEntity.ok().body(obraServices.searchObra(q));
+		List<ObraView> obrasFound = obraServices.searchObra(q);
+		if(obrasFound.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().body(obrasFound);
 	}
 	
 	@GetMapping(value = "/search/titulo/{titulo}")
-	public ResponseEntity<List<ObraView>> searchByTitle(@PathVariable String titulo) {
+	public ResponseEntity<List<ObraView>> searchByTitulo(@PathVariable String titulo) {
 		obraServices.stringParameterValidator(titulo);
-		return ResponseEntity.ok().body(obraServices.searchObraByTitulo(titulo));
+		List<ObraView> obrasFound = obraServices.searchObraByTitulo(titulo);
+		if(obrasFound.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().body(obrasFound);
 	}
 	
 	@GetMapping(value = "/search/ifsn/{ifsn}")
 	public ResponseEntity<List<ObraView>> searchByIfsn(@PathVariable String ifsn) {	
 		obraServices.stringParameterValidator(ifsn);
-		return ResponseEntity.ok().body(obraServices.searchObraByIfsn(ifsn));
+		List<ObraView> obrasFound = obraServices.searchObraByIfsn(ifsn);
+		if(obrasFound.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().body(obrasFound);
 	}
 	
 	@GetMapping(value = "/search/area/{area}")
 	public ResponseEntity<List<ObraView>> searchByArea(@PathVariable String area) {
 		obraServices.stringParameterValidator(area);
-		return ResponseEntity.ok().body(obraServices.searchObraByArea(area));
+		List<ObraView> obrasFound = obraServices.searchObraByArea(area);
+		if(obrasFound.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().body(obrasFound);
 	}
 	
 	@GetMapping(value = "/search/ano/{ano}")
 	public ResponseEntity<List<ObraView>> searchByAno(@PathVariable String ano) {
 		obraServices.intAnoParamaterValidator(ano);
-		return ResponseEntity.ok().body(obraServices.searchObraByAno(ano));
+		List<ObraView> obrasFound = obraServices.searchObraByAno(ano);
+		if(obrasFound.isEmpty()) {
+			return ResponseEntity.notFound().build();
+		}
+		return ResponseEntity.ok().body(obrasFound);
 	}
 	
 }

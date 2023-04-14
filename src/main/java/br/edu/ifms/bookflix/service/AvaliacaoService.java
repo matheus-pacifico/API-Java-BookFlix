@@ -33,25 +33,22 @@ public class AvaliacaoService {
 	@Transactional
 	public Avaliacao insert (Avaliacao objeto) {
 		objeto.setId(null);
-		avaliacoesRepository.save(objeto);
-		return objeto;
+		return avaliacoesRepository.save(objeto);
 	}
 	
-	public Avaliacao update(Avaliacao objeto) {
-		Avaliacao novoObjeto = find(objeto.getId());
-		updateData(novoObjeto, objeto);
-		return avaliacoesRepository.save(novoObjeto);
+	public Avaliacao update(Avaliacao objetoEditado) {
+		Avaliacao objetoAtualizado = find(objetoEditado.getId());
+		objetoAtualizado = objetoEditado;
+		return avaliacoesRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
-	public void delete(Integer id) {
-		find(id);
-		try {
-			avaliacoesRepository.deleteById(id);	
+	public void delete(Integer id, Avaliacao objeto) {
+		if(!objeto.equals(find(id))) {
+			throw new IllegalArgumentException("A avaliação a ser removida é diferente da avaliação cadastrada no banco de dados");
 		}
-		catch (DataIntegrityViolationException e) {
-			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
-		}
+		deleteById(id);
+		
 	}
 	
 	public List<Avaliacao> findAll() {
@@ -60,16 +57,17 @@ public class AvaliacaoService {
 	
 	@Transactional
 	public void deleteById(Integer id) {
-		avaliacoesRepository.deleteById(id);
+		find(id);
+		try {
+			avaliacoesRepository.deleteById(id);	
+		} catch (DataIntegrityViolationException e) {
+			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
+		}
 	}
 	
 	public void save(Avaliacao avaliacao) {
 		avaliacoesRepository.saveAndFlush(avaliacao);
 	}
-	
-	public Optional<Avaliacao> findById(Integer id) {
-		return avaliacoesRepository.findById(id);
-	}	
 	
 	public Avaliacao fromDTO(AvaliacaoDTO objetoDTO) {
 		return avaliacoesDTO.fromDTO(objetoDTO);
@@ -79,15 +77,20 @@ public class AvaliacaoService {
 		return avaliacoesDTO.fromNewDTO(objetoNewDTO);
 	}
 	
-	private void updateData(Avaliacao novoObjeto, Avaliacao objeto) {
-		novoObjeto.setComentario(objeto.getComentario());
-		novoObjeto.setNota(objeto.getNota());
-		novoObjeto.setUsuario(objeto.getUsuario());
-		novoObjeto.setObra(objeto.getObra());
-	}
-	
 	public Avaliacao avaliacaoWithoutUsuariosDataExceptName(Avaliacao avaliacao) {
 		return avaliacoesDTO.avaliacaoWithoutUsuariosDataExceptName(avaliacao);
 	}
+    
+    public void intParamaterValidator(String param) {
+    	if(!param.matches("[0-9]+")) {
+    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
+    	}
+    }
+    
+    public void validateAvaliacaoId(Integer paramPathId, Integer avaliacaoBodyId) {
+    	if(!paramPathId.equals(avaliacaoBodyId)) {
+    		throw new IllegalArgumentException("O id da URL é diferente do id da avaliação informada no corpo da solicitação");
+    	}
+    }
 
 }

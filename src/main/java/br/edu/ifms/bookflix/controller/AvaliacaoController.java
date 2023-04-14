@@ -32,8 +32,9 @@ public class AvaliacaoController {
 	private AvaliacaoService avaliacaoServices;
 	
     @GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Avaliacao> find(@PathVariable Integer id) {		
-		Avaliacao objeto = avaliacaoServices.avaliacaoWithoutUsuariosDataExceptName(avaliacaoServices.find(id));
+	public ResponseEntity<Avaliacao> find(@PathVariable String id) {
+		avaliacaoServices.intParamaterValidator(id);
+		Avaliacao objeto = avaliacaoServices.avaliacaoWithoutUsuariosDataExceptName(avaliacaoServices.find(Integer.parseInt(id)));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
@@ -47,26 +48,30 @@ public class AvaliacaoController {
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AvaliacaoDTO objetoDTO, @PathVariable Integer id) {
+	public ResponseEntity<Void> update(@Valid @RequestBody AvaliacaoDTO objetoDTO, @PathVariable String id) {
+		avaliacaoServices.intParamaterValidator(id);
+		avaliacaoServices.intParamaterValidator(objetoDTO.getId().toString());
 		Avaliacao objeto = avaliacaoServices.fromDTO(objetoDTO);
-		objeto.setId(id);
+		avaliacaoServices.validateAvaliacaoId(Integer.parseInt(id), objetoDTO.getId());
 		objeto = avaliacaoServices.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 		
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto,@PathVariable Integer id) {
-		avaliacaoServices.delete(id);
+	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto, @PathVariable String id) {
+		avaliacaoServices.intParamaterValidator(id);
+		avaliacaoServices.delete(Integer.parseInt(id), objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
-		avaliacaoServices.delete(id);
+	public ResponseEntity<Void> deleteById(@PathVariable String id) {
+		avaliacaoServices.intParamaterValidator(id);
+		avaliacaoServices.deleteById(Integer.parseInt(id));
 		return ResponseEntity.noContent().build();
 	}
 	
-	@GetMapping(value = "/mostrar")
+	@GetMapping(value = "/exibir")
 	public ResponseEntity<List<AvaliacaoDTO>> findAll() {		
 		List<Avaliacao> lista = avaliacaoServices.findAll();
 		List<AvaliacaoDTO> listaDTO = lista.stream().map(objeto -> new AvaliacaoDTO(objeto)).collect(Collectors.toList());
