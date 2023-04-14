@@ -17,6 +17,9 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,24 +88,29 @@ public class ObraService {
     	return obrasDTO.fromNewDTO(objetoNewDTO);
     }
 	
-	public List<ObraView> searchObra(String pesquisa){
-		return obrasRepository.searchObra(unaccentedParam(pesquisa));
+	public Page<ObraView> searchObra(String pesquisa, int page){
+		Pageable pageable = PageRequest.of(page, 10);
+		return obrasRepository.searchObra(unaccentedParam(pesquisa), pageable);
 	}
 	
-	public List<ObraView> searchObraByIfsn(String ifsn) {
-		return obrasRepository.searchObraByIfsn(unaccentedParam(ifsn));
+	public Page<ObraView> searchObraByIfsn(String ifsn, int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+		return obrasRepository.searchObraByIfsn(unaccentedParam(ifsn), pageable);
 	}
 	
-	public List<ObraView> searchObraByTitulo(String titulo) {
-		return obrasRepository.searchObraByTitulo(unaccentedParam(titulo));
+	public Page<ObraView> searchObraByTitulo(String titulo, int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+		return obrasRepository.searchObraByTitulo(unaccentedParam(titulo), pageable);
 	}
 	
-	public List<ObraView> searchObraByArea(String area) {
-		return obrasRepository.searchObraByArea(unaccentedParam(area));
+	public Page<ObraView> searchObraByArea(String area, int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+		return obrasRepository.searchObraByArea(unaccentedParam(area), pageable);
 	}
 	
-	public List<ObraView> searchObraByAno(String ano) {
-		return obrasRepository.searchObraByAno(convertParamToInt(ano));
+	public Page<ObraView> searchObraByAno(String ano, int page) {
+		Pageable pageable = PageRequest.of(page, 10);
+		return obrasRepository.searchObraByAno(convertParamToInt(ano), pageable);
 	}
     
     public Obra obraWithoutSomeAtributes(Obra objeto) {

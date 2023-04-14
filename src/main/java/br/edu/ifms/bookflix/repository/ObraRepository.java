@@ -4,9 +4,10 @@ import br.edu.ifms.bookflix.model.Obra;
 
 import br.edu.ifms.bookflix.projection.ObraView;
 
-import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -20,18 +21,18 @@ public interface ObraRepository extends JpaRepository<Obra, Integer>{
 	@Query(value = "SELECT O FROM Obra O WHERE unaccent(O.ifsn) ILIKE %:q% OR unaccent(O.titulo) ILIKE %:q% "
 			+ "OR unaccent(O.area) ILIKE %:q% OR unaccent(O.descricao) ILIKE %:q%"
 	)
-	List<ObraView> searchObra(@Param("q") String pesquisa);
+	Page<ObraView> searchObra(@Param("q") String pesquisa, Pageable pageable);
 
 	@Query(value = "SELECT O FROM Obra O WHERE unaccent(O.ifsn) ILIKE %:ifsn%")
-	List<ObraView> searchObraByIfsn(@Param("ifsn") String ifsn);
+	Page<ObraView> searchObraByIfsn(@Param("ifsn") String ifsn, Pageable pageable);
 	
 	@Query(value = "SELECT O FROM Obra O WHERE unaccent(O.titulo) ILIKE %:titulo%")
-	List<ObraView> searchObraByTitulo(@Param("titulo") String titulo);
+	Page<ObraView> searchObraByTitulo(@Param("titulo") String titulo, Pageable pageable);
 		
 	@Query(value = "SELECT O FROM Obra O WHERE unaccent(O.area) ILIKE %:area%")
-	List<ObraView> searchObraByArea(@Param("area") String area);
+	Page<ObraView> searchObraByArea(@Param("area") String area, Pageable pageable);
 	
 	@Query(value = "SELECT O FROM Obra O WHERE O.ano = :ano")
-	List<ObraView> searchObraByAno(@Param("ano") int ano);
+	Page<ObraView> searchObraByAno(@Param("ano") int ano, Pageable pageable);
 	
 }
