@@ -35,4 +35,7 @@ public interface ObraRepository extends JpaRepository<Obra, Integer>{
 	@Query(value = "SELECT O FROM Obra O WHERE O.ano = :ano")
 	Page<ObraView> searchObraByAno(@Param("ano") int ano, Pageable pageable);
 	
+	@Query(value = "SELECT O.caminho_arquivo FROM Obra O WHERE O.ifsn = :ifsn")
+	String getCaminhoArquivoByIfsn(@Param("ifsn") String ifsn);
+	
 }

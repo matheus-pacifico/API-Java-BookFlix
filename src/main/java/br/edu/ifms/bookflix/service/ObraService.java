@@ -153,4 +153,8 @@ public class ObraService {
     	}
     }
     
+    public String getObraFilePath(String ifsn) {
+    	return obrasRepository.getCaminhoArquivoByIfsn(ifsn);
+    }
+    
 }

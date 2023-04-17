@@ -2,6 +2,7 @@ package br.edu.ifms.bookflix.controller.exception;
 
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
+import br.edu.ifms.bookflix.service.exception.FileNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
 
@@ -17,7 +18,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 @ControllerAdvice
-public class ControllerExceptionHandler {
+public class ExceptionController {
 	
 	@ExceptionHandler(ObjectNotFoundException.class)
 	public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
@@ -49,7 +50,7 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<StandardError> illegalArgument(IllegalArgumentException e, HttpServletRequest request) {
 		
-		StandardError err =  new StandardError(Instant.now().toEpochMilli(), 
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
 				"Parâmetro informado inválido", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
@@ -57,7 +58,7 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(URISyntaxException.class)
 	public ResponseEntity<StandardError> uriSyntax(URISyntaxException e, HttpServletRequest request) {
 
-		StandardError err =  new StandardError(Instant.now().toEpochMilli(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(),
 				"URI Syntax Exception", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
@@ -65,9 +66,17 @@ public class ControllerExceptionHandler {
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<StandardError> maxUploadSize(MaxUploadSizeExceededException e, HttpServletRequest request) {
 
-		StandardError err =  new StandardError(Instant.now().toEpochMilli(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(),
 				"Tamanho do arquivo", "O tamanho máximo do arquivo é de 10MB", request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
+	@ExceptionHandler(FileNotFoundException.class)
+	public ResponseEntity<StandardError> fileNotFound(FileNotFoundException e, HttpServletRequest request) {
+		
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+				"Arquivo não Encontrado", e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
 
 }
