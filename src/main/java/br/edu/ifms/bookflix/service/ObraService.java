@@ -157,4 +157,8 @@ public class ObraService {
     	return obrasRepository.getCaminhoArquivoByIfsn(ifsn);
     }
     
+    public String getPathToDeleteObraFile(String ifsn, String originalFileName) {
+    	return obrasRepository.getPathToDeleteObraFile(ifsn, originalFileName);
+    }
+    
 }

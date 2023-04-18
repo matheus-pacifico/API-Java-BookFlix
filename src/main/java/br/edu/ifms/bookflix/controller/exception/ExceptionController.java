@@ -51,7 +51,7 @@ public class ExceptionController {
 	public ResponseEntity<StandardError> illegalArgument(IllegalArgumentException e, HttpServletRequest request) {
 		
 		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
-				"Parâmetro informado inválido", e.getMessage(), request.getRequestURI());
+				"Parâmetro inválido", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
 
@@ -77,6 +77,14 @@ public class ExceptionController {
 		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
 				"Arquivo não Encontrado", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
+	}
+	
+	@ExceptionHandler(Exception.class)
+	public ResponseEntity<StandardError> unkownError(Exception e, HttpServletRequest request) {
+		
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+				"Um erro desconhecido ocorreu", e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
 
 }

@@ -1,5 +1,9 @@
 package br.edu.ifms.bookflix.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +46,16 @@ public class ArquivoService {
 		if(extensao.equals(".pdf")) return "application/pdf";
 		if(extensao.equals(".doc")) return "application/msword"; 
 		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+	}
+	
+	public void deleteFile(String ifsn, String originalFileName) throws IOException {
+		String filePath = obraServices.getPathToDeleteObraFile(ifsn, originalFileName);
+		if(filePath.equals(null)) {
+			throw new IllegalArgumentException("Não foi possível verificar o arquivo a ser excluído");
+		}
+		Path file = Paths.get(filePath);
+		//Desativado para não ocorrer problemas com a plataforma de hospedagem da API.
+		/*Files.delete(file);*/
 	}
 	
 }

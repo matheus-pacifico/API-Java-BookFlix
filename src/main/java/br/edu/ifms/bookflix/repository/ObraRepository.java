@@ -38,4 +38,7 @@ public interface ObraRepository extends JpaRepository<Obra, Integer>{
 	@Query(value = "SELECT O.caminho_arquivo FROM Obra O WHERE O.ifsn = :ifsn")
 	String getCaminhoArquivoByIfsn(@Param("ifsn") String ifsn);
 	
+	@Query(value = "SELECT O.caminho_arquivo FROM Obra O WHERE O.ifsn = :ifsn AND O.nome_arquivo = :ofn")
+	String getPathToDeleteObraFile(@Param("ifsn") String ifsn, @Param("ofn") String originalFileName);
+	
 }

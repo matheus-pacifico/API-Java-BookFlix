@@ -3,6 +3,7 @@ package br.edu.ifms.bookflix.controller;
 import br.edu.ifms.bookflix.service.ArquivoService;
 import br.edu.ifms.bookflix.service.exception.FileNotFoundException;
 
+import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -11,6 +12,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -43,7 +45,7 @@ public class ArquivoController {
 		}
 		return ResponseEntity.created(uri).build();
 	}
-
+	
 	@CrossOrigin(origins = "")
 	@GetMapping(value = "/download/{ifsn}")
 	ResponseEntity<Resource> downloadArquivo(@PathVariable String ifsn) {
@@ -58,8 +60,18 @@ public class ArquivoController {
 						+ file.getFilename().substring(16) + "\"")
 				.body(file);*/
 		//Método desativado para não ocorrer problemas com a plataforma de hospedagem da API. Quando reativar 
-		//o método, deixar apenas o código dentro do /**/ da linha 50 à 59. E retirar o @CrossOrigin.
+		//o método, deixar apenas o código dentro do /**/ da linha 52 à 61. E retirar o @CrossOrigin.
 		return ResponseEntity.ok().body(null);
+	}
+
+	@DeleteMapping(value = "/delete/{ifsn}/{originalFileName}")
+	ResponseEntity<?> deleteArquivo(@PathVariable String ifsn, @PathVariable String originalFileName) {
+		try {
+			arquivoServices.deleteFile(ifsn, originalFileName);
+			return ResponseEntity.ok().build();
+		} catch (IOException e) {
+			return ResponseEntity.internalServerError().body("Erro ao excluir o arquivo");
+		}
 	}
 
 }
