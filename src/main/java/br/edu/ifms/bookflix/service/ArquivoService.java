@@ -1,6 +1,7 @@
 package br.edu.ifms.bookflix.service;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -11,11 +12,18 @@ import org.springframework.core.io.FileSystemResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
+import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.DbxClientV2;
+
 @Service
 public class ArquivoService {
 	
 	@Autowired
 	private ObraService obraServices;
+	@Autowired
+	private DbxClientV2 cloudFileManager;
+	private String uri;
+	private String newFileName;
 	
 	public void validateArquivo(boolean fileIsEmpty, String fileName) {
 		if(fileIsEmpty) throw new IllegalArgumentException("O arquivo está vazio");
@@ -24,6 +32,8 @@ public class ArquivoService {
 		if(!extensao.equals(".pdf") && !extensao.equals(".doc") && !extensao.equals(".docx")) {
 			throw new IllegalArgumentException("O arquivo tem que ser do tipo pdf, doc ou docx");
 		}
+		
+		setNewFileName(extensao);
 	}
 	
 	public String getExtensaoFrom(String fileName) {
@@ -32,8 +42,8 @@ public class ArquivoService {
 		return fileName.substring(fromDotIndex).toLowerCase();
 	}
 	
-	public String getNewFileName(String fileName) {
-		return UUID.randomUUID().toString().replace("-", "").substring(0, 16) + getExtensaoFrom(fileName);
+	private void setNewFileName(String extensao) {
+		newFileName = UUID.randomUUID().toString().replace("-", "").substring(0, 16) + extensao;
 	}
 	
 	public Resource getArquivo(String ifsn) {
@@ -54,8 +64,16 @@ public class ArquivoService {
 			throw new IllegalArgumentException("Não foi possível verificar o arquivo a ser excluído");
 		}
 		Path file = Paths.get(filePath);
-		//Desativado para não ocorrer problemas com a plataforma de hospedagem da API.
-		/*Files.delete(file);*/
+		Files.delete(file);
+	}
+	
+	public void upload(InputStream inputStream) throws IOException, DbxException {
+		uri = '/' + newFileName;
+		cloudFileManager.files().upload(uri).uploadAndFinish(inputStream);
+	}
+		
+	public String getURI() {
+		return uri;
 	}
 	
 }
