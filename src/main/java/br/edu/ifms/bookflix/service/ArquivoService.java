@@ -1,5 +1,7 @@
 package br.edu.ifms.bookflix.service;
 
+import br.edu.ifms.bookflix.service.exception.FileNotFoundException;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
@@ -8,8 +10,6 @@ import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.FileSystemResource;
-import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 
 import com.dropbox.core.DbxException;
@@ -23,38 +23,48 @@ public class ArquivoService {
 	@Autowired
 	private DbxClientV2 cloudFileManager;
 	private String uri;
-	private String newFileName;
+	private String extensao;
 	
 	public void validateArquivo(boolean fileIsEmpty, String fileName) {
 		if(fileIsEmpty) throw new IllegalArgumentException("O arquivo está vazio");
-		
-		String extensao = getExtensaoFrom(fileName);
+		setExtensaoFrom(fileName);
 		if(!extensao.equals(".pdf") && !extensao.equals(".doc") && !extensao.equals(".docx")) {
 			throw new IllegalArgumentException("O arquivo tem que ser do tipo pdf, doc ou docx");
 		}
-		
-		setNewFileName(extensao);
 	}
 	
-	public String getExtensaoFrom(String fileName) {
+	private void setExtensaoFrom(String fileName) {
 		int fromDotIndex = fileName.lastIndexOf('.');
 		fromDotIndex = fromDotIndex == -1 ? fileName.length() : fromDotIndex;
-		return fileName.substring(fromDotIndex).toLowerCase();
+		extensao = fileName.substring(fromDotIndex).toLowerCase();
 	}
 	
-	private void setNewFileName(String extensao) {
-		newFileName = UUID.randomUUID().toString().replace("-", "").substring(0, 16) + extensao;
+	public String getExtensao() {
+		return extensao;
 	}
 	
-	public Resource getArquivo(String ifsn) {
+	public void upload(InputStream inputStream) throws IOException, DbxException {
+		String newFileName = UUID.randomUUID().toString().replace("-", "").substring(0, 16) + extensao;
+		uri = '/' + newFileName;
+		cloudFileManager.files().upload(uri).uploadAndFinish(inputStream);
+	}
+		
+	public String getURI() {
+		return uri;
+	}
+	
+	public InputStream getFile(String ifsn) throws DbxException {
 		String filePath = obraServices.getObraFilePath(ifsn);
-		return new FileSystemResource(filePath);
+		if(filePath.equals(null)) {
+			throw new FileNotFoundException("O arquivo da obra de IFSN: " + ifsn + ", não foi encontrado");
+		}
+		setExtensaoFrom(filePath);
+		return cloudFileManager.files().download(filePath).getInputStream();	
 	}
 	
-	public String getFileType(String fileName) {
-		String extensao = getExtensaoFrom(fileName);
+	public String getFileType() {
 		if(extensao.equals(".pdf")) return "application/pdf";
-		if(extensao.equals(".doc")) return "application/msword"; 
+		if(extensao.equals(".doc")) return "application/msword";
 		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 	}
 	
@@ -65,15 +75,6 @@ public class ArquivoService {
 		}
 		Path file = Paths.get(filePath);
 		Files.delete(file);
-	}
-	
-	public void upload(InputStream inputStream) throws IOException, DbxException {
-		uri = '/' + newFileName;
-		cloudFileManager.files().upload(uri).uploadAndFinish(inputStream);
-	}
-		
-	public String getURI() {
-		return uri;
 	}
 	
 }

@@ -1,13 +1,13 @@
 package br.edu.ifms.bookflix.controller;
 
 import br.edu.ifms.bookflix.service.ArquivoService;
-import br.edu.ifms.bookflix.service.exception.FileNotFoundException;
 
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -28,41 +28,39 @@ import com.dropbox.core.DbxException;
 public class ArquivoController {
 
 	@Autowired
-	private ArquivoService arquivoServices;
+	private ArquivoService arquivoService;
 
 	@PostMapping(value = "/upload")
-	ResponseEntity<?> uploadArquivo(@RequestParam MultipartFile file) throws URISyntaxException {
-		arquivoServices.validateArquivo(file.isEmpty(), file.getOriginalFilename());
+	public ResponseEntity<?> uploadArquivo(@RequestParam MultipartFile file) throws URISyntaxException {
+		arquivoService.validateArquivo(file.isEmpty(), file.getOriginalFilename());
 
 		try {
-			arquivoServices.upload(file.getInputStream());
+			arquivoService.upload(file.getInputStream());
 		} catch(IOException e) {
 			return ResponseEntity.internalServerError().body("Erro no processamento do arquivo");
 		} catch(DbxException e) {
+			e.printStackTrace();
 			return ResponseEntity.internalServerError().body("Erro ao salvar o arquivo");
 		}
-		URI uri = new URI(arquivoServices.getURI());
+		URI uri = new URI(arquivoService.getURI());
 		return ResponseEntity.created(uri).build();
 	}
 
 	@GetMapping(value = "/download/{ifsn}")
-	ResponseEntity<Resource> downloadArquivo(@PathVariable String ifsn) {
-		Resource file = arquivoServices.getArquivo(ifsn);
-		if(!file.exists()) {
-			throw new FileNotFoundException("O arquivo da obra de IFSN: " + ifsn + " não foi encontrado");
-		}
-
-		String fileType = arquivoServices.getFileType(file.getFilename());
+	public ResponseEntity<Resource> downloadArquivo(@PathVariable String ifsn) throws DbxException, IOException {
+		byte[] byteArray = arquivoService.getFile(ifsn).readAllBytes();
+		ByteArrayResource file = new ByteArrayResource(byteArray);
+		String fileType = arquivoService.getFileType();
 		return ResponseEntity.ok().contentType(MediaType.parseMediaType(fileType))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + ifsn 
-						+ file.getFilename().substring(16) + "\"")
+						+ arquivoService.getExtensao() + "\"")
 				.body(file);
 	}
 
 	@DeleteMapping(value = "/delete/{ifsn}/{originalFileName}")
-	ResponseEntity<?> deleteArquivo(@PathVariable String ifsn, @PathVariable String originalFileName) {
+	public ResponseEntity<?> deleteArquivo(@PathVariable String ifsn, @PathVariable String originalFileName) {
 		try {
-			arquivoServices.deleteFile(ifsn, originalFileName);
+			arquivoService.deleteFile(ifsn, originalFileName);
 			return ResponseEntity.ok().build();
 		} catch (IOException e) {
 			return ResponseEntity.internalServerError().body("Erro ao excluir o arquivo");
