@@ -18,8 +18,9 @@ public interface ObraRepository extends JpaRepository<Obra, Integer>{
 	
 	Optional<Obra> findByIfsn(String ifsn);
 	
-	@Query(value = "SELECT O FROM Obra O WHERE unaccent(O.ifsn) ILIKE %:q% OR unaccent(O.titulo) ILIKE %:q% "
-			+ "OR unaccent(O.area) ILIKE %:q% OR unaccent(O.descricao) ILIKE %:q%"
+	@Query(value = "SELECT O FROM Obra O LEFT JOIN O.autores A WHERE unaccent(O.ifsn) ILIKE %:q% "
+			+ "OR unaccent(O.titulo) ILIKE %:q% OR unaccent(O.area) ILIKE %:q% OR unaccent(O.descricao) ILIKE %:q% "
+			+ "OR unaccent(A.nome) ILIKE %:q%"
 	)
 	Page<ObraView> searchObra(@Param("q") String pesquisa, Pageable pageable);
 
