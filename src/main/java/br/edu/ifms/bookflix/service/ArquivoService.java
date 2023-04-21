@@ -4,9 +4,6 @@ import br.edu.ifms.bookflix.service.exception.FileNotFoundException;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,6 +11,7 @@ import org.springframework.stereotype.Service;
 
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
+import com.dropbox.core.v2.files.DeleteErrorException;
 
 @Service
 public class ArquivoService {
@@ -55,7 +53,7 @@ public class ArquivoService {
 	
 	public InputStream getFile(String ifsn) throws DbxException {
 		String filePath = obraServices.getObraFilePath(ifsn);
-		if(filePath.equals(null)) {
+		if(filePath == null) {
 			throw new FileNotFoundException("O arquivo da obra de IFSN: " + ifsn + ", não foi encontrado");
 		}
 		setExtensaoFrom(filePath);
@@ -68,13 +66,12 @@ public class ArquivoService {
 		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
 	}
 	
-	public void deleteFile(String ifsn, String originalFileName) throws IOException {
+	public void deleteFile(String ifsn, String originalFileName) throws DeleteErrorException, DbxException {
 		String filePath = obraServices.getPathToDeleteObraFile(ifsn, originalFileName);
-		if(filePath.equals(null)) {
+		if(filePath == null) {
 			throw new IllegalArgumentException("Não foi possível verificar o arquivo a ser excluído");
 		}
-		Path file = Paths.get(filePath);
-		Files.delete(file);
+		cloudFileManager.files().deleteV2(filePath);
 	}
 	
 }

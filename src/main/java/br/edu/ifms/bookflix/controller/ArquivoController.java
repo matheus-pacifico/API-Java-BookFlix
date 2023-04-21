@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.dropbox.core.DbxException;
+import com.dropbox.core.v2.files.DeleteErrorException;
 
 @RestController
 @RequestMapping(value = "/api/v1/obra/arquivo")
@@ -39,7 +40,6 @@ public class ArquivoController {
 		} catch(IOException e) {
 			return ResponseEntity.internalServerError().body("Erro no processamento do arquivo");
 		} catch(DbxException e) {
-			e.printStackTrace();
 			return ResponseEntity.internalServerError().body("Erro ao salvar o arquivo");
 		}
 		URI uri = new URI(arquivoService.getURI());
@@ -58,11 +58,11 @@ public class ArquivoController {
 	}
 
 	@DeleteMapping(value = "/delete/{ifsn}/{originalFileName}")
-	public ResponseEntity<?> deleteArquivo(@PathVariable String ifsn, @PathVariable String originalFileName) {
+	public ResponseEntity<?> deleteArquivo(@PathVariable String ifsn, @PathVariable String originalFileName) throws DbxException {
 		try {
 			arquivoService.deleteFile(ifsn, originalFileName);
 			return ResponseEntity.ok().build();
-		} catch (IOException e) {
+		} catch (DeleteErrorException e) {
 			return ResponseEntity.internalServerError().body("Erro ao excluir o arquivo");
 		}
 	}
