@@ -1,7 +1,6 @@
 package br.edu.ifms.bookflix.repository;
 
 import br.edu.ifms.bookflix.model.Obra;
-
 import br.edu.ifms.bookflix.projection.ObraView;
 
 import java.util.Optional;
@@ -18,9 +17,11 @@ public interface ObraRepository extends JpaRepository<Obra, Integer>{
 	
 	Optional<Obra> findByIfsn(String ifsn);
 	
-	@Query(value = "SELECT O FROM Obra O LEFT JOIN O.autores A WHERE unaccent(O.ifsn) ILIKE %:q% "
+	@Query(value = "SELECT O FROM Obra O JOIN FETCH Autor A WHERE unaccent(O.ifsn) ILIKE %:q% "
 			+ "OR unaccent(O.titulo) ILIKE %:q% OR unaccent(O.area) ILIKE %:q% OR unaccent(O.descricao) ILIKE %:q% "
-			+ "OR unaccent(A.nome) ILIKE %:q%"
+			+ "OR unaccent(A.nome) ILIKE %:q% "
+			+ "ORDER BY CASE WHEN unaccent(O.titulo) ILIKE %:q% THEN 0 WHEN unaccent(O.descricao) ILIKE %:q% THEN 1 "
+			+ "WHEN unaccent(O.area) ILIKE %:q% THEN 2 ELSE 3 END"
 	)
 	Page<ObraView> searchObra(@Param("q") String pesquisa, Pageable pageable);
 
