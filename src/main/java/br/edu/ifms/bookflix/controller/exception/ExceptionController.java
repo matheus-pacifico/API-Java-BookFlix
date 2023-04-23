@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.time.Instant;
 
+import org.apache.catalina.connector.ClientAbortException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.FieldError;
@@ -92,7 +93,9 @@ public class ExceptionController {
 
 	@ExceptionHandler(IOException.class)
 	public ResponseEntity<StandardError> fileError(IOException e, HttpServletRequest request) {
-		
+		if(e instanceof ClientAbortException) {
+			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
+		}
 		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
 				"Ocorreu um erro com o arquivo", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);

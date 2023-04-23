@@ -9,9 +9,11 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.DbxClientV2;
 import com.dropbox.core.v2.files.DeleteErrorException;
+import com.dropbox.core.v2.files.FileMetadata;
 
 @Service
 public class ArquivoService {
@@ -51,19 +53,13 @@ public class ArquivoService {
 		return uri;
 	}
 	
-	public InputStream getFile(String ifsn) throws DbxException {
+	public DbxDownloader<FileMetadata> getFile(String ifsn) throws DbxException {
 		String filePath = obraServices.getObraFilePath(ifsn);
 		if(filePath == null) {
 			throw new FileNotFoundException("O arquivo da obra de IFSN: " + ifsn + ", não foi encontrado");
 		}
 		setExtensaoFrom(filePath);
-		return cloudFileManager.files().download(filePath).getInputStream();	
-	}
-	
-	public String getFileType() {
-		if(extensao.equals(".pdf")) return "application/pdf";
-		if(extensao.equals(".doc")) return "application/msword";
-		return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
+		return cloudFileManager.files().download(filePath);	
 	}
 	
 	public void deleteFile(String ifsn, String originalFileName) throws DeleteErrorException, DbxException {

@@ -7,7 +7,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
@@ -21,8 +21,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
+import com.dropbox.core.DbxDownloader;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.v2.files.DeleteErrorException;
+import com.dropbox.core.v2.files.FileMetadata;
 
 @RestController
 @RequestMapping(value = "/api/v1/obra/arquivo")
@@ -37,23 +39,25 @@ public class ArquivoController {
 
 		try {
 			arquivoService.upload(file.getInputStream());
+			URI uri = new URI(arquivoService.getURI());
+			return ResponseEntity.created(uri).build();
 		} catch(IOException e) {
 			return ResponseEntity.internalServerError().body("Erro no processamento do arquivo");
 		} catch(DbxException e) {
 			return ResponseEntity.internalServerError().body("Erro ao salvar o arquivo");
 		}
-		URI uri = new URI(arquivoService.getURI());
-		return ResponseEntity.created(uri).build();
 	}
 
 	@GetMapping(value = "/download/{ifsn}")
-	public ResponseEntity<Resource> downloadArquivo(@PathVariable String ifsn) throws DbxException, IOException {
-		byte[] byteArray = arquivoService.getFile(ifsn).readAllBytes();
-		ByteArrayResource file = new ByteArrayResource(byteArray);
-		String fileType = arquivoService.getFileType();
-		return ResponseEntity.ok().contentType(MediaType.parseMediaType(fileType))
+	public ResponseEntity<Resource> downloadArquivo(@PathVariable String ifsn) throws DbxException {
+		DbxDownloader<FileMetadata> fileMetaData = arquivoService.getFile(ifsn);
+		long fileLength = fileMetaData.getResult().getSize();
+		Resource file = new InputStreamResource(fileMetaData.getInputStream());
+		return ResponseEntity.ok()
+				.contentType(MediaType.parseMediaType(fileMetaData.getContentType()))
 				.header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"" + ifsn 
 						+ arquivoService.getExtensao() + "\"")
+				.contentLength(fileLength)
 				.body(file);
 	}
 
