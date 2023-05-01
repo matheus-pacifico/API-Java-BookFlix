@@ -17,6 +17,7 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.multipart.MaxUploadSizeExceededException;
 
 import com.dropbox.core.DbxException;
@@ -27,7 +28,7 @@ public class ExceptionController {
 	@ExceptionHandler(ObjectNotFoundException.class)
 	public ResponseEntity<StandardError> objectNotFound(ObjectNotFoundException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(Instant.now().toEpochMilli(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.NOT_FOUND.value(),
 				"Não encontrado", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
@@ -35,7 +36,7 @@ public class ExceptionController {
 	@ExceptionHandler(DataIntegrityException.class)
 	public ResponseEntity<StandardError> dataIntegrity(DataIntegrityException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(Instant.now().toEpochMilli(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
 				"Integridade de dados", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
@@ -43,7 +44,7 @@ public class ExceptionController {
 	@ExceptionHandler(MethodArgumentNotValidException.class)
 	public ResponseEntity<StandardError> validation(MethodArgumentNotValidException e, HttpServletRequest request) {
 
-		ValidationError err = new ValidationError(Instant.now().toEpochMilli(),
+		ValidationError err = new ValidationError(Instant.now().toEpochMilli(), HttpStatus.UNPROCESSABLE_ENTITY.value(),
 				"Erro de validação", e.getMessage(), request.getRequestURI());
 		for (FieldError x : e.getBindingResult().getFieldErrors()) {
 			err.addError(x.getField(), x.getDefaultMessage());
@@ -54,7 +55,7 @@ public class ExceptionController {
 	@ExceptionHandler(IllegalArgumentException.class)
 	public ResponseEntity<StandardError> illegalArgument(IllegalArgumentException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
 				"Parâmetro inválido", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
@@ -62,7 +63,7 @@ public class ExceptionController {
 	@ExceptionHandler(URISyntaxException.class)
 	public ResponseEntity<StandardError> uriSyntax(URISyntaxException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(Instant.now().toEpochMilli(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"URI Syntax Exception", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
@@ -70,7 +71,7 @@ public class ExceptionController {
 	@ExceptionHandler(MaxUploadSizeExceededException.class)
 	public ResponseEntity<StandardError> maxUploadSize(MaxUploadSizeExceededException e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(Instant.now().toEpochMilli(),
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
 				"Tamanho do arquivo", "O tamanho máximo do arquivo é de 10MB", request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
 	}
@@ -78,7 +79,7 @@ public class ExceptionController {
 	@ExceptionHandler(FileNotFoundException.class)
 	public ResponseEntity<StandardError> fileNotFound(FileNotFoundException e, HttpServletRequest request) {
 		
-		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.NOT_FOUND.value(),
 				"Arquivo não Encontrado", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(err);
 	}
@@ -86,7 +87,7 @@ public class ExceptionController {
 	@ExceptionHandler(DbxException.class)
 	public ResponseEntity<StandardError> cloudError(DbxException e, HttpServletRequest request) {
 		
-		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Ocorreu um erro ao acessar o armazenamento em nuvem", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
@@ -96,7 +97,7 @@ public class ExceptionController {
 		if(e instanceof ClientAbortException) {
 			return ResponseEntity.status(HttpStatus.NO_CONTENT).build();
 		}
-		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Ocorreu um erro com o arquivo", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
@@ -104,7 +105,7 @@ public class ExceptionController {
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<StandardError> unkownError(Exception e, HttpServletRequest request) {
 
-		StandardError err = new StandardError(Instant.now().toEpochMilli(), 
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.INTERNAL_SERVER_ERROR.value(),
 				"Um erro desconhecido ocorreu", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
