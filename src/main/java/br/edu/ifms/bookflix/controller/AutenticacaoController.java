@@ -1,10 +1,8 @@
 package br.edu.ifms.bookflix.controller;
 
-import br.edu.ifms.bookflix.model.Autenticacao;
-
-import br.edu.ifms.bookflix.service.AutenticacaoService;
-
 import br.edu.ifms.bookflix.dto.AutenticacaoDTO;
+import br.edu.ifms.bookflix.model.Autenticacao;
+import br.edu.ifms.bookflix.service.AutenticacaoService;
 
 import java.net.URI;
 import java.util.List;
@@ -28,51 +26,46 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class AutenticacaoController {
 	
 	@Autowired
-	private AutenticacaoService autenticacaoServices;
+	private AutenticacaoService autenticacaoService;
 	
     @GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Autenticacao> find(@PathVariable String id) {
-    	autenticacaoServices.intParamaterValidator(id);
-		Autenticacao objeto = autenticacaoServices.autenticacaoWithoutObra(autenticacaoServices.find(Integer.parseInt(id)));
+	public ResponseEntity<Autenticacao> find(@PathVariable Integer id) {
+		Autenticacao objeto = autenticacaoService.autenticacaoWithoutObra(autenticacaoService.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 
     @PostMapping(value = "/adicionar")
 	public ResponseEntity<Void> insert(@Valid @RequestBody AutenticacaoDTO objetoNewDTO) {
-		Autenticacao objeto = autenticacaoServices.fromNewDTO(objetoNewDTO);
-		objeto = autenticacaoServices.insert(objeto);
+		Autenticacao objeto = autenticacaoService.fromNewDTO(objetoNewDTO);
+		objeto = autenticacaoService.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AutenticacaoDTO objetoDTO, @PathVariable String id) {
-		autenticacaoServices.intParamaterValidator(id);
-		autenticacaoServices.intParamaterValidator(objetoDTO.getId().toString());
-		Autenticacao objeto = autenticacaoServices.fromDTO(objetoDTO);
-		autenticacaoServices.validateAvaliacaoId(Integer.parseInt(id), objetoDTO.getId());
-		objeto = autenticacaoServices.update(objeto);
+	public ResponseEntity<Void> update(@Valid @RequestBody AutenticacaoDTO objetoDTO, @PathVariable Integer id) {
+		autenticacaoService.validateAvaliacaoId(id, objetoDTO.getId());
+		Autenticacao objeto = autenticacaoService.fromDTO(objetoDTO);
+		objeto = autenticacaoService.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable String id) {
-		autenticacaoServices.intParamaterValidator(id);
-		autenticacaoServices.delete(Integer.parseInt(id), objeto);
+	public ResponseEntity<Void> delete(@RequestBody Autenticacao objeto, @PathVariable Integer id) {
+		autenticacaoService.delete(id, objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable String id) {
-		autenticacaoServices.intParamaterValidator(id);
-		autenticacaoServices.deleteById(Integer.parseInt(id));
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+		autenticacaoService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping(value = "/exibir")
 	public ResponseEntity<List<Autenticacao>> findAll() {
-		return ResponseEntity.ok().body(autenticacaoServices.findAll());
+		return ResponseEntity.ok().body(autenticacaoService.findAll());
 	}
 	
 }

@@ -1,11 +1,8 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Autenticacao;
-
-import br.edu.ifms.bookflix.repository.AutenticacaoRepository;
-
 import br.edu.ifms.bookflix.dto.AutenticacaoDTO;
-
+import br.edu.ifms.bookflix.model.Autenticacao;
+import br.edu.ifms.bookflix.repository.AutenticacaoRepository;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
@@ -21,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AutenticacaoService {
 
 	@Autowired
-	private AutenticacaoRepository autenticacoesRepository;
-	private AutenticacaoDTO autenticacoesDTO = new AutenticacaoDTO();
+	private AutenticacaoRepository autenticacaoRepository;
+	private final AutenticacaoDTO autenticacaoDTO = new AutenticacaoDTO();
 	
 	public Autenticacao find(Integer id) {
-		Optional<Autenticacao> objeto = autenticacoesRepository.findById(id); 
+		Optional<Autenticacao> objeto = autenticacaoRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Autenticação não encontrada! Id: " + id));		
 	}
@@ -33,14 +30,14 @@ public class AutenticacaoService {
 	@Transactional
 	public Autenticacao insert (Autenticacao objeto) {
 		objeto.setId(null);
-		return autenticacoesRepository.save(objeto);
+		return autenticacaoRepository.save(objeto);
 		
 	}
 	
 	public Autenticacao update(Autenticacao objetoEditado) {
 		Autenticacao objetoAtualizado = find(objetoEditado.getId());
 		objetoAtualizado = objetoEditado;
-		return autenticacoesRepository.save(objetoAtualizado);
+		return autenticacaoRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
@@ -52,46 +49,39 @@ public class AutenticacaoService {
 	}
 	
 	public List<Autenticacao> findAll() {
-		return autenticacoesRepository.findAll();
+		return autenticacaoRepository.findAll();
 	}
 	
 	@Transactional
 	public void deleteById(Integer id) {
 		find(id);
 		try {
-			autenticacoesRepository.deleteById(id);	
+			autenticacaoRepository.deleteById(id);	
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}
 	}
 	
 	public void save(Autenticacao autenticacao) {
-		autenticacoesRepository.saveAndFlush(autenticacao);
+		autenticacaoRepository.saveAndFlush(autenticacao);
 	}
 	
 	public Autenticacao fromDTO(AutenticacaoDTO objetoDTO) {
-		return autenticacoesDTO.fromDTO(objetoDTO);
+		return autenticacaoDTO.fromDTO(objetoDTO);
 	}
 	
 	public Autenticacao fromNewDTO(AutenticacaoDTO objetoNewDTO) {
-		return autenticacoesDTO.fromNewDTO(objetoNewDTO);
+		return autenticacaoDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	public Autenticacao autenticacaoWithoutObra(Autenticacao autenticacao) {
-		return autenticacoesDTO.autenticacaoWithoutObra(autenticacao);
+		return autenticacaoDTO.autenticacaoWithoutObra(autenticacao);
 	}
-    
-    public void intParamaterValidator(String param) {
-    	if(!param.matches("[0-9]+")) {
-    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
-    	}
-    }
     
     public void validateAvaliacaoId(Integer paramPathId, Integer obraBodyId) {
     	if(!paramPathId.equals(obraBodyId)) {
     		throw new IllegalArgumentException("O id da URL é diferente do id da avaliação informada no corpo da solicitação");
     	}
     }
-	
 	
 }

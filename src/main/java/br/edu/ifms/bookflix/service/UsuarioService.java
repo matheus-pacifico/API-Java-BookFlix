@@ -1,11 +1,8 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Usuario;
-
-import br.edu.ifms.bookflix.repository.UsuarioRepository;
-
 import br.edu.ifms.bookflix.dto.UsuarioDTO;
-
+import br.edu.ifms.bookflix.model.Usuario;
+import br.edu.ifms.bookflix.repository.UsuarioRepository;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
@@ -21,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class UsuarioService {
 
 	@Autowired
-	private UsuarioRepository usuariosRepository;
-	private UsuarioDTO usuariosDTO = new UsuarioDTO();
+	private UsuarioRepository usuarioRepository;
+	private final UsuarioDTO usuarioDTO = new UsuarioDTO();
 	
 	public Usuario find(Integer id) {
-		Optional<Usuario> objeto = usuariosRepository.findById(id); 
+		Optional<Usuario> objeto = usuarioRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Usuário não encontrado! Id: " + id));		
 	}
@@ -33,13 +30,13 @@ public class UsuarioService {
 	@Transactional
 	public Usuario insert (Usuario obj) {
 		obj.setId(null);
-		return usuariosRepository.save(obj);
+		return usuarioRepository.save(obj);
 	}
 
 	public Usuario update(Usuario objetoEditado) {
 		Usuario objetoAtualizado = find(objetoEditado.getId());
 		objetoAtualizado = objetoEditado;
-		return usuariosRepository.save(objetoAtualizado);
+		return usuarioRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
@@ -51,14 +48,14 @@ public class UsuarioService {
 	}
 	
 	public List<Usuario> findAll() {
-		return usuariosRepository.findAll();
+		return usuarioRepository.findAll();
 	}
 	
 	@Transactional
 	public void deleteById(Integer id) {
 		find(id);
 		try {
-			usuariosRepository.deleteById(id);	
+			usuarioRepository.deleteById(id);	
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
@@ -66,31 +63,25 @@ public class UsuarioService {
 	}
 	
 	public void save(Usuario usuario) {
-		usuariosRepository.saveAndFlush(usuario);
+		usuarioRepository.saveAndFlush(usuario);
 	}
 	
 	public Optional<Usuario> findById(Integer id) {
-		return usuariosRepository.findById(id);
+		return usuarioRepository.findById(id);
 	}
 	
 	public Usuario fromDTO(UsuarioDTO objetoDTO) {
-		return usuariosDTO.fromDTO(objetoDTO);
+		return usuarioDTO.fromDTO(objetoDTO);
 	}
 	
 	public Usuario fromNewDTO(UsuarioDTO objetoNewDTO) {
-		return usuariosDTO.fromNewDTO(objetoNewDTO);
+		return usuarioDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	public Usuario usuarioWithoutAvaliacaoDasObras(Usuario usuario) {
-		return usuariosDTO.usuarioWithoutAvaliacaoDasObras(usuario);
+		return usuarioDTO.usuarioWithoutAvaliacaoDasObras(usuario);
 	}
-    
-    public void intParamaterValidator(String param) {
-    	if(!param.matches("[0-9]+")) {
-    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
-    	}
-    }
-    
+        
     public void validateUsuarioId(Integer paramPathId, Integer usuarioBodyId) {
     	if(!paramPathId.equals(usuarioBodyId)) {
     		throw new IllegalArgumentException("O id da URL é diferente do id do usuário informado no corpo da solicitação");

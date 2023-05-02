@@ -1,10 +1,8 @@
 package br.edu.ifms.bookflix.controller;
 
-import br.edu.ifms.bookflix.model.Autor;
-
-import br.edu.ifms.bookflix.service.AutorService;
-
 import br.edu.ifms.bookflix.dto.AutorDTO;
+import br.edu.ifms.bookflix.model.Autor;
+import br.edu.ifms.bookflix.service.AutorService;
 
 import java.net.URI;
 import java.util.List;
@@ -28,51 +26,46 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class AutorController {
 	
 	@Autowired
-	private AutorService autorServices;
+	private AutorService autorService;
 	
     @GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Autor> find(@PathVariable String id) {
-		autorServices.intParamaterValidator(id);		
-		Autor objeto = autorServices.autorWithoutAvaliacoesDaObra(autorServices.find(Integer.parseInt(id)));
+	public ResponseEntity<Autor> find(@PathVariable Integer id) {	
+		Autor objeto = autorService.autorWithoutAvaliacoesDaObra(autorService.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
     @PostMapping(value = "/adicionar")
 	public ResponseEntity<Void> insert(@Valid @RequestBody AutorDTO objetoNewDTO) {
-		Autor objeto = autorServices.fromNewDTO(objetoNewDTO);
-		objeto = autorServices.insert(objeto);
+		Autor objeto = autorService.fromNewDTO(objetoNewDTO);
+		objeto = autorService.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AutorDTO objetoDTO, @PathVariable String id) {
-		autorServices.intParamaterValidator(id);
-		autorServices.intParamaterValidator(objetoDTO.getId().toString());
-		Autor objeto = autorServices.fromDTO(objetoDTO);
-		autorServices.validateAutorId(Integer.parseInt(id), objetoDTO.getId());
-		objeto = autorServices.update(objeto);
+	public ResponseEntity<Void> update(@Valid @RequestBody AutorDTO objetoDTO, @PathVariable Integer id) {
+		autorService.validateAutorId(id, objetoDTO.getId());
+		Autor objeto = autorService.fromDTO(objetoDTO);
+		objeto = autorService.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 		
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Autor objeto, @PathVariable String id) {
-		autorServices.intParamaterValidator(id);
-		autorServices.delete(Integer.parseInt(id), objeto);
+	public ResponseEntity<Void> delete(@RequestBody Autor objeto, @PathVariable Integer id) {
+		autorService.delete(id, objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable String id) {
-		autorServices.intParamaterValidator(id);
-		autorServices.deleteById(Integer.parseInt(id));
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+		autorService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping(value = "/exibir")
 	public ResponseEntity<List<Autor>> findAll() {
-		return ResponseEntity.ok().body(autorServices.findAll());
+		return ResponseEntity.ok().body(autorService.findAll());
 	}	
 
 }

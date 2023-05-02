@@ -1,11 +1,8 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Autor;
-
-import br.edu.ifms.bookflix.repository.AutorRepository;
-
 import br.edu.ifms.bookflix.dto.AutorDTO;
-
+import br.edu.ifms.bookflix.model.Autor;
+import br.edu.ifms.bookflix.repository.AutorRepository;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
@@ -21,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AutorService {
 	
 	@Autowired
-	private AutorRepository autoresRepository;
-	private AutorDTO autoresDTO = new AutorDTO();
+	private AutorRepository autorRepository;
+	private final AutorDTO autorDTO = new AutorDTO();
 	
 	public Autor find(Integer id) {
-		Optional<Autor> objeto = autoresRepository.findById(id); 
+		Optional<Autor> objeto = autorRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Autor não encontrado! Id: " + id));		
 	}
@@ -33,13 +30,13 @@ public class AutorService {
 	@Transactional
 	public Autor insert (Autor objeto) {
 		objeto.setId(null);
-		return autoresRepository.save(objeto);
+		return autorRepository.save(objeto);
 	}
 	
 	public Autor update(Autor objetoEditado) {
 		Autor objetoAtualizado = find(objetoEditado.getId());
 		objetoAtualizado = objetoEditado;
-		return autoresRepository.save(objetoAtualizado);
+		return autorRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
@@ -51,39 +48,33 @@ public class AutorService {
 	}
 	
 	public List<Autor> findAll() {
-		return autoresRepository.findAll();
+		return autorRepository.findAll();
 	}
 	
 	public void deleteById(Integer id) {
 		find(id);
 		try {
-			autoresRepository.deleteById(id);	
+			autorRepository.deleteById(id);	
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}		
 	}
 	
 	public void save(Autor avaliacao) {
-		autoresRepository.saveAndFlush(avaliacao);
+		autorRepository.saveAndFlush(avaliacao);
 	}
 	
 	public Autor fromDTO(AutorDTO objetoDTO) {
-		return autoresDTO.fromDTO(objetoDTO);
+		return autorDTO.fromDTO(objetoDTO);
 	}
 	
 	public Autor fromNewDTO(AutorDTO objetoNewDTO) {
-		return autoresDTO.fromNewDTO(objetoNewDTO);
+		return autorDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	public Autor autorWithoutAvaliacoesDaObra(Autor autor) {
-		return autoresDTO.autorWithoutAvaliacoesDaObra(autor);
+		return autorDTO.autorWithoutAvaliacoesDaObra(autor);
 	}
-    
-    public void intParamaterValidator(String param) {
-    	if(!param.matches("[0-9]+")) {
-    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
-    	}
-    }
     
     public void validateAutorId(Integer paramPathId, Integer autorBodyId) {
     	if(!paramPathId.equals(autorBodyId)) {

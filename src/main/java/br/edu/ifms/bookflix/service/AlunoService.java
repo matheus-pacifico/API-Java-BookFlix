@@ -1,17 +1,13 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Aluno;
-
-import br.edu.ifms.bookflix.repository.AlunoRepository;
-
 import br.edu.ifms.bookflix.dto.AlunoDTO;
-
+import br.edu.ifms.bookflix.model.Aluno;
+import br.edu.ifms.bookflix.repository.AlunoRepository;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -22,11 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class AlunoService {
 
 	@Autowired
-	private AlunoRepository alunosRepository;
-	private AlunoDTO alunosDTO = new AlunoDTO();
+	private AlunoRepository alunoRepository;
+	private final AlunoDTO alunoDTO = new AlunoDTO();
 	
 	public Aluno find(Integer id) {
-		Optional<Aluno> objeto = alunosRepository.findById(id); 
+		Optional<Aluno> objeto = alunoRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Aluno não encontrado! Id: " + id));		
 	}
@@ -34,13 +30,13 @@ public class AlunoService {
 	@Transactional
 	public Aluno insert (Aluno objeto) {
 		objeto.setId(null);
-		return alunosRepository.save(objeto);
+		return alunoRepository.save(objeto);
 	}
 
 	public Aluno update(Aluno objetoEditado) {
 		Aluno objetoAtualizado = find(objetoEditado.getId());
 		objetoAtualizado = objetoEditado;
-		return alunosRepository.save(objetoAtualizado);
+		return alunoRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
@@ -52,47 +48,40 @@ public class AlunoService {
 	}
 		
 	public List<Aluno> findAll() {
-		return alunosRepository.findAll();
+		return alunoRepository.findAll();
 	}
 	
 	@Transactional
 	public void deleteById(Integer id) {
 		find(id);
 		try {
-			alunosRepository.deleteById(id);	
+			alunoRepository.deleteById(id);	
 		} catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
 		}
 	}
 	
 	public void save(Aluno aluno) {
-		alunosRepository.saveAndFlush(aluno);
+		alunoRepository.saveAndFlush(aluno);
 	}
 	
 	public Aluno fromDTO(AlunoDTO objetoDTO) {
-		return alunosDTO.fromDTO(objetoDTO);
+		return alunoDTO.fromDTO(objetoDTO);
 	}
 	
 	public Aluno fromNewDTO(AlunoDTO objetoNewDTO) {
-		return alunosDTO.fromNewDTO(objetoNewDTO);
+		return alunoDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	public List<Aluno> findAlunosByTurma(int turma) {		
-		return findAll().stream()
-				.filter(a -> a.getTurma() == turma)
-				.collect(Collectors.toList());
+		return alunoRepository.findAlunosByTurma(turma);
 	}
 	
-	public Optional<Aluno> findByRa(String ra) {
-		return findAll().stream()
-				.filter(a -> a.getRa().compareTo(ra) == 0).findFirst();
+	public Aluno findByRa(String ra) {
+		Optional<Aluno> objeto = alunoRepository.findByRa(ra); 
+		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
+				 "Aluno não encontrado! RA: " + ra));	
 	}
-    
-    public void intParamaterValidator(String param) {
-    	if(!param.matches("[0-9]+")) {
-    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
-    	}
-    }
     
     public void validateAlunoId(Integer paramPathId, Integer alunoBodyId) {
     	if(!paramPathId.equals(alunoBodyId)) {

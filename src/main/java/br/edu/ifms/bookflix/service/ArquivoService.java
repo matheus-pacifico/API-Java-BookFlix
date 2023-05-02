@@ -19,7 +19,7 @@ import com.dropbox.core.v2.files.FileMetadata;
 public class ArquivoService {
 	
 	@Autowired
-	private ObraService obraServices;
+	private ObraService obraService;
 	@Autowired
 	private DbxClientV2 cloudFileManager;
 	private String uri;
@@ -54,7 +54,7 @@ public class ArquivoService {
 	}
 	
 	public DbxDownloader<FileMetadata> getFile(String ifsn) throws DbxException {
-		String filePath = obraServices.getObraFilePath(ifsn);
+		String filePath = obraService.getObraFilePath(ifsn);
 		if(filePath == null) {
 			throw new FileNotFoundException("O arquivo da obra de IFSN: " + ifsn + ", não foi encontrado");
 		}
@@ -63,7 +63,7 @@ public class ArquivoService {
 	}
 	
 	public void deleteFile(String ifsn, String originalFileName) throws DeleteErrorException, DbxException {
-		String filePath = obraServices.getPathToDeleteObraFile(ifsn, originalFileName);
+		String filePath = obraService.getPathToDeleteObraFile(ifsn, originalFileName);
 		if(filePath == null) {
 			throw new IllegalArgumentException("Não foi possível verificar o arquivo a ser excluído");
 		}

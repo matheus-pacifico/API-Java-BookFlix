@@ -1,10 +1,8 @@
 package br.edu.ifms.bookflix.controller;
 
-import br.edu.ifms.bookflix.model.Avaliacao;
-
-import br.edu.ifms.bookflix.service.AvaliacaoService;
-
 import br.edu.ifms.bookflix.dto.AvaliacaoDTO;
+import br.edu.ifms.bookflix.model.Avaliacao;
+import br.edu.ifms.bookflix.service.AvaliacaoService;
 
 import java.net.URI;
 import java.util.List;
@@ -29,51 +27,46 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 public class AvaliacaoController {
 	
 	@Autowired
-	private AvaliacaoService avaliacaoServices;
+	private AvaliacaoService avaliacaoService;
 	
     @GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Avaliacao> find(@PathVariable String id) {
-		avaliacaoServices.intParamaterValidator(id);
-		Avaliacao objeto = avaliacaoServices.avaliacaoWithoutUsuariosDataExceptName(avaliacaoServices.find(Integer.parseInt(id)));
+	public ResponseEntity<Avaliacao> find(@PathVariable Integer id) {
+		Avaliacao objeto = avaliacaoService.avaliacaoWithoutUsuariosDataExceptName(avaliacaoService.find(id));
 		return ResponseEntity.ok().body(objeto);
 	}
 	
     @PostMapping(value = "/adicionar")
 	public ResponseEntity<Void> insert(@Valid @RequestBody AvaliacaoDTO objetoNewDTO) {
-		Avaliacao objeto = avaliacaoServices.fromNewDTO(objetoNewDTO);
-		objeto = avaliacaoServices.insert(objeto);
+		Avaliacao objeto = avaliacaoService.fromNewDTO(objetoNewDTO);
+		objeto = avaliacaoService.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 			.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody AvaliacaoDTO objetoDTO, @PathVariable String id) {
-		avaliacaoServices.intParamaterValidator(id);
-		avaliacaoServices.intParamaterValidator(objetoDTO.getId().toString());
-		Avaliacao objeto = avaliacaoServices.fromDTO(objetoDTO);
-		avaliacaoServices.validateAvaliacaoId(Integer.parseInt(id), objetoDTO.getId());
-		objeto = avaliacaoServices.update(objeto);
+	public ResponseEntity<Void> update(@Valid @RequestBody AvaliacaoDTO objetoDTO, @PathVariable Integer id) {
+		avaliacaoService.validateAvaliacaoId(id, objetoDTO.getId());
+		Avaliacao objeto = avaliacaoService.fromDTO(objetoDTO);
+		objeto = avaliacaoService.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 		
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto, @PathVariable String id) {
-		avaliacaoServices.intParamaterValidator(id);
-		avaliacaoServices.delete(Integer.parseInt(id), objeto);
+	public ResponseEntity<Void> delete(@RequestBody Avaliacao objeto, @PathVariable Integer id) {
+		avaliacaoService.delete(id, objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable String id) {
-		avaliacaoServices.intParamaterValidator(id);
-		avaliacaoServices.deleteById(Integer.parseInt(id));
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+		avaliacaoService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping(value = "/exibir")
 	public ResponseEntity<List<AvaliacaoDTO>> findAll() {		
-		List<Avaliacao> lista = avaliacaoServices.findAll();
+		List<Avaliacao> lista = avaliacaoService.findAll();
 		List<AvaliacaoDTO> listaDTO = lista.stream().map(objeto -> new AvaliacaoDTO(objeto)).collect(Collectors.toList());
 		return ResponseEntity.ok().body(listaDTO);
 	}	

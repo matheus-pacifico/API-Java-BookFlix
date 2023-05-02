@@ -1,10 +1,11 @@
 package br.edu.ifms.bookflix.controller.exception;
 
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
-import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 import br.edu.ifms.bookflix.service.exception.FileNotFoundException;
+import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolationException;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -101,7 +102,23 @@ public class ExceptionController {
 				"Ocorreu um erro com o arquivo", e.getMessage(), request.getRequestURI());
 		return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(err);
 	}
-
+	
+	@ExceptionHandler(MethodArgumentTypeMismatchException.class)
+	public ResponseEntity<StandardError> wrongArgumentType(MethodArgumentTypeMismatchException e, HttpServletRequest request) {
+		
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
+				"O tipo do parâmetro informado está incorreto", e.getMessage(), request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
+	@ExceptionHandler(ConstraintViolationException.class)
+	public ResponseEntity<StandardError> blankArgument(ConstraintViolationException e, HttpServletRequest request) {
+		
+		StandardError err = new StandardError(Instant.now().toEpochMilli(), HttpStatus.BAD_REQUEST.value(),
+				"Parâmetro inválido", "O parâmetro não pode ser nulo, estar em branco ou estar vazio", request.getRequestURI());
+		return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+	}
+	
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<StandardError> unkownError(Exception e, HttpServletRequest request) {
 

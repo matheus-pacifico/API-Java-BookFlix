@@ -1,12 +1,9 @@
 package br.edu.ifms.bookflix.service;
 
-import br.edu.ifms.bookflix.model.Professor;
-import br.edu.ifms.bookflix.model.Obra;
-
-import br.edu.ifms.bookflix.repository.ProfessorRepository;
-
 import br.edu.ifms.bookflix.dto.ProfessorDTO;
-
+import br.edu.ifms.bookflix.model.Obra;
+import br.edu.ifms.bookflix.model.Professor;
+import br.edu.ifms.bookflix.repository.ProfessorRepository;
 import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
@@ -22,11 +19,11 @@ import org.springframework.transaction.annotation.Transactional;
 public class ProfessorService {
 
 	@Autowired
-	private ProfessorRepository professoresRepository;
-	private ProfessorDTO professoresDTO = new ProfessorDTO();
+	private ProfessorRepository professorRepository;
+	private final ProfessorDTO professorDTO = new ProfessorDTO();
 	
 	public Professor find(Integer id) {
-		Optional<Professor> objeto = professoresRepository.findById(id); 
+		Optional<Professor> objeto = professorRepository.findById(id); 
 		return objeto.orElseThrow(() -> new ObjectNotFoundException( 
 				 "Professor não encontrado! Id: " + id));		
 	}
@@ -34,13 +31,13 @@ public class ProfessorService {
 	@Transactional
 	public Professor insert (Professor objeto) {
 		objeto.setId(null);
-		return professoresRepository.save(objeto);
+		return professorRepository.save(objeto);
 	}
 
 	public Professor update(Professor objetoEditado) {
 		Professor objetoAtualizado = find(objetoEditado.getId());
 		objetoAtualizado = objetoEditado;
-		return professoresRepository.save(objetoAtualizado);
+		return professorRepository.save(objetoAtualizado);
 	}
 	
 	@Transactional
@@ -52,14 +49,14 @@ public class ProfessorService {
 	}
 	
 	public List<Professor> findAll() {
-		return professoresRepository.findAll();
+		return professorRepository.findAll();
 	}
 	
 	@Transactional
 	public void deleteById(Integer id) {
 		find(id);
 		try {
-			professoresRepository.deleteById(id);	
+			professorRepository.deleteById(id);	
 		}
 		catch (DataIntegrityViolationException e) {
 			throw new DataIntegrityException("Não é possível remover. Verifique a integridade referencial.");
@@ -67,31 +64,25 @@ public class ProfessorService {
 	}
 	
 	public void save(Professor professor) {
-		professoresRepository.saveAndFlush(professor);
+		professorRepository.saveAndFlush(professor);
 	}
 	
 	public Optional<Professor> findById(Integer id) {
-		return professoresRepository.findById(id);
+		return professorRepository.findById(id);
 	}
 	
 	public Professor fromDTO(ProfessorDTO objetoDTO) {
-		return professoresDTO.fromDTO(objetoDTO);
+		return professorDTO.fromDTO(objetoDTO);
 	}
 	
 	public Professor fromNewDTO(ProfessorDTO objetoNewDTO) {
-		return professoresDTO.fromNewDTO(objetoNewDTO);
+		return professorDTO.fromNewDTO(objetoNewDTO);
 	}
 	
 	public List<Obra> listObrasPostedByProfessor(Integer id){
 		Professor professor = find(id);
 		return professor.getObras();
 	}
-        
-    public void intParamaterValidator(String param) {
-    	if(!param.matches("[0-9]+")) {
-    		throw new IllegalArgumentException("O parâmetro tem que ser um número inteiro");
-    	}
-    }
     
     public void validateProfessorId(Integer paramPathId, Integer professorBodyId) {
     	if(!paramPathId.equals(professorBodyId)) {

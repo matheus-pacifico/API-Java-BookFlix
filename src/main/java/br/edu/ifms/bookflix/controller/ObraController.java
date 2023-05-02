@@ -1,21 +1,20 @@
 package br.edu.ifms.bookflix.controller;
 
-import br.edu.ifms.bookflix.model.Obra;
-
-import br.edu.ifms.bookflix.service.ObraService;
-
 import br.edu.ifms.bookflix.dto.ObraDTO;
-
+import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.projection.ObraView;
+import br.edu.ifms.bookflix.service.ObraService;
 
 import java.net.URI;
 import java.util.List;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -29,67 +28,61 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 @RestController
 @RequestMapping(value = "/api/v1/obra")
+@Validated
 public class ObraController {
 	
 	@Autowired
-	private ObraService obraServices;
+	private ObraService obraService;
 	
 	@GetMapping(value = "/mostrar/{id}")
-	public ResponseEntity<Obra> search(@PathVariable String id) {
-		obraServices.intParamaterValidator(id);
-		Obra objeto = obraServices.find(Integer.parseInt(id));
+	public ResponseEntity<Obra> search(@PathVariable Integer id) {
+		Obra objeto = obraService.find(id);
 		return ResponseEntity.ok().body(objeto);
 	}
 
 	@PostMapping(value = "/adicionar")
     public ResponseEntity<Void> insert(@Valid @RequestBody ObraDTO objetoNewDTO) {
-		Obra objeto = obraServices.fromNewDTO(objetoNewDTO);
-		objeto = obraServices.insert(objeto);
+		Obra objeto = obraService.fromNewDTO(objetoNewDTO);
+		objeto = obraService.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
 				.path("/{id}").buildAndExpand(objeto.getId()).toUri();
 		return ResponseEntity.created(uri).build();
 	}
 	
 	@PutMapping(value = "/atualizar/{id}")
-	public ResponseEntity<Void> update(@Valid @RequestBody ObraDTO objetoDTO, @PathVariable String id) {
-		obraServices.intParamaterValidator(id);
-		obraServices.intParamaterValidator(objetoDTO.getId().toString());
-		Obra objeto = obraServices.fromDTO(objetoDTO);
-		obraServices.validateObraId(Integer.parseInt(id), objetoDTO.getId());
-		objeto = obraServices.update(objeto);
+	public ResponseEntity<Void> update(@Valid @RequestBody ObraDTO objetoDTO, @PathVariable Integer id) {
+		obraService.validateObraId(id, objetoDTO.getId());
+		Obra objeto = obraService.fromDTO(objetoDTO);
+		objeto = obraService.update(objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/remover/{id}")
-	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable String id) {
-		obraServices.intParamaterValidator(id);
-		obraServices.delete(Integer.parseInt(id), objeto);
+	public ResponseEntity<Void> delete(@RequestBody Obra objeto, @PathVariable Integer id) {
+		obraService.delete(id, objeto);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@DeleteMapping(value = "/deletar/{id}")
-	public ResponseEntity<Void> deleteById(@PathVariable String id) {
-		obraServices.intParamaterValidator(id);
-		obraServices.deleteById(Integer.parseInt(id));
+	public ResponseEntity<Void> deleteById(@PathVariable Integer id) {
+		obraService.deleteById(id);
 		return ResponseEntity.noContent().build();
 	}
 	
 	@GetMapping(value = "/exibir")
 	public ResponseEntity<List<Obra>> findAll() {
-		return ResponseEntity.ok().body(obraServices.findAll());
+		return ResponseEntity.ok().body(obraService.findAll());
 	}
 	
 	@GetMapping(value = "/mostrar/ifsn/{ifsn}")
-	public ResponseEntity<Obra> findByIfsn(@PathVariable String ifsn) {
-		obraServices.stringParameterValidator(ifsn);
-		return ResponseEntity.ok().body(obraServices.obraWithoutSomeAtributes(obraServices.findByIfsn(ifsn)));
+	public ResponseEntity<Obra> findByIfsn(@NotBlank @PathVariable String ifsn) {
+		return ResponseEntity.ok().body(obraService.obraWithoutSomeAtributes(obraService.findByIfsn(ifsn)));
 	}
 	
 	@GetMapping(value = "/search")
-	public ResponseEntity<Page<ObraView>> searchObra(@RequestParam String q,
+	public ResponseEntity<Page<ObraView>> searchObra(@NotBlank @RequestParam String q,
 													 @RequestParam(defaultValue = "0") int page) {
-		obraServices.stringParameterValidator(q);
-		Page<ObraView> obrasFound = obraServices.searchObra(q, page);
+		Page<ObraView> obrasFound = obraService.searchObra(q, page);
 		if(obrasFound.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -97,10 +90,9 @@ public class ObraController {
 	}
 	
 	@GetMapping(value = "/search/titulo/{titulo}")
-	public ResponseEntity<Page<ObraView>> searchByTitulo(@PathVariable String titulo,
+	public ResponseEntity<Page<ObraView>> searchByTitulo(@NotBlank @PathVariable String titulo,
 			 											 @RequestParam(defaultValue = "0") int page) {
-		obraServices.stringParameterValidator(titulo);
-		Page<ObraView> obrasFound = obraServices.searchObraByTitulo(titulo, page);
+		Page<ObraView> obrasFound = obraService.searchObraByTitulo(titulo, page);
 		if(obrasFound.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -108,10 +100,9 @@ public class ObraController {
 	}
 	
 	@GetMapping(value = "/search/ifsn/{ifsn}")
-	public ResponseEntity<Page<ObraView>> searchByIfsn(@PathVariable String ifsn,
-			 										   @RequestParam(defaultValue = "0") int page) {	
-		obraServices.stringParameterValidator(ifsn);
-		Page<ObraView> obrasFound = obraServices.searchObraByIfsn(ifsn, page);
+	public ResponseEntity<Page<ObraView>> searchByIfsn(@NotBlank @PathVariable String ifsn,
+			 										   @RequestParam(defaultValue = "0") int page) {
+		Page<ObraView> obrasFound = obraService.searchObraByIfsn(ifsn, page);
 		if(obrasFound.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -119,10 +110,9 @@ public class ObraController {
 	}
 	
 	@GetMapping(value = "/search/area/{area}")
-	public ResponseEntity<Page<ObraView>> searchByArea(@PathVariable String area,
+	public ResponseEntity<Page<ObraView>> searchByArea(@NotBlank @PathVariable String area,
 			 										   @RequestParam(defaultValue = "0") int page) {
-		obraServices.stringParameterValidator(area);
-		Page<ObraView> obrasFound = obraServices.searchObraByArea(area, page);
+		Page<ObraView> obrasFound = obraService.searchObraByArea(area, page);
 		if(obrasFound.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
@@ -130,10 +120,9 @@ public class ObraController {
 	}
 	
 	@GetMapping(value = "/search/ano/{ano}")
-	public ResponseEntity<Page<ObraView>> searchByAno(@PathVariable String ano,
+	public ResponseEntity<Page<ObraView>> searchByAno(@PathVariable int ano,
 													  @RequestParam(defaultValue = "0") int page) {
-		obraServices.intAnoParamaterValidator(ano);
-		Page<ObraView> obrasFound = obraServices.searchObraByAno(ano, page);
+		Page<ObraView> obrasFound = obraService.searchObraByAno(ano, page);
 		if(obrasFound.isEmpty()) {
 			return ResponseEntity.notFound().build();
 		}
