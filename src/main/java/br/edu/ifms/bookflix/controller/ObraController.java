@@ -41,7 +41,7 @@ public class ObraController {
 	}
 
 	@PostMapping(value = "/adicionar")
-    public ResponseEntity<Void> insert(@Valid @RequestBody ObraDTO objetoNewDTO) {
+	public ResponseEntity<Void> insert(@Valid @RequestBody ObraDTO objetoNewDTO) {
 		Obra objeto = obraService.fromNewDTO(objetoNewDTO);
 		objeto = obraService.insert(objeto);
 		URI uri = ServletUriComponentsBuilder.fromCurrentRequest()
@@ -83,9 +83,6 @@ public class ObraController {
 	public ResponseEntity<Page<ObraView>> searchObra(@NotBlank @RequestParam String q,
 													 @RequestParam(defaultValue = "0") int page) {
 		Page<ObraView> obrasFound = obraService.searchObra(q, page);
-		if(obrasFound.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok().body(obrasFound);
 	}
 	
@@ -93,9 +90,6 @@ public class ObraController {
 	public ResponseEntity<Page<ObraView>> searchByTitulo(@NotBlank @PathVariable String titulo,
 			 											 @RequestParam(defaultValue = "0") int page) {
 		Page<ObraView> obrasFound = obraService.searchObraByTitulo(titulo, page);
-		if(obrasFound.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok().body(obrasFound);
 	}
 	
@@ -103,9 +97,6 @@ public class ObraController {
 	public ResponseEntity<Page<ObraView>> searchByIfsn(@NotBlank @PathVariable String ifsn,
 			 										   @RequestParam(defaultValue = "0") int page) {
 		Page<ObraView> obrasFound = obraService.searchObraByIfsn(ifsn, page);
-		if(obrasFound.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok().body(obrasFound);
 	}
 	
@@ -113,9 +104,6 @@ public class ObraController {
 	public ResponseEntity<Page<ObraView>> searchByArea(@NotBlank @PathVariable String area,
 			 										   @RequestParam(defaultValue = "0") int page) {
 		Page<ObraView> obrasFound = obraService.searchObraByArea(area, page);
-		if(obrasFound.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok().body(obrasFound);
 	}
 	
@@ -123,9 +111,6 @@ public class ObraController {
 	public ResponseEntity<Page<ObraView>> searchByAno(@PathVariable int ano,
 													  @RequestParam(defaultValue = "0") int page) {
 		Page<ObraView> obrasFound = obraService.searchObraByAno(ano, page);
-		if(obrasFound.isEmpty()) {
-			return ResponseEntity.notFound().build();
-		}
 		return ResponseEntity.ok().body(obrasFound);
 	}
 	
