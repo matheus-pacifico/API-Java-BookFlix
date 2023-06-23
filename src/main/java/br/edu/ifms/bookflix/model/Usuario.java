@@ -25,13 +25,13 @@ public class Usuario implements Serializable {
 	private String nome;
 	
 	@JsonIgnore
-	@OneToOne(mappedBy ="usuario", fetch = FetchType.LAZY)	
+	@OneToOne(mappedBy ="usuario")	
 	private Autenticacao autenticacao;
 	
-	@OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "usuario")
 	private Professor professor;
 	
-	@OneToOne(mappedBy = "usuario", fetch = FetchType.LAZY)
+	@OneToOne(mappedBy = "usuario")
 	private Aluno aluno;
 
 	@JsonIgnore

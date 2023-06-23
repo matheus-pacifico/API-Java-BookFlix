@@ -34,14 +34,14 @@ public class Obra implements Serializable {
 	private int ano;
 
 	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
+	@ManyToOne
 	@JoinColumn(name="professor_id")
 	private Professor professor;
 	
 	@OneToMany(mappedBy = "obra")
 	private List<Avaliacao> avaliacoes = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "obra", fetch = FetchType.EAGER)
+	@OneToMany(mappedBy = "obra")
 	private List<Autor> autores = new ArrayList<>();
 	
 	public Obra() {
