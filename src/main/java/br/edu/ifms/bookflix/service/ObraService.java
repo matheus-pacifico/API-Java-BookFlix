@@ -1,6 +1,7 @@
 package br.edu.ifms.bookflix.service;
 
 import br.edu.ifms.bookflix.dto.ObraDTO;
+import br.edu.ifms.bookflix.model.Autor;
 import br.edu.ifms.bookflix.model.Obra;
 import br.edu.ifms.bookflix.projection.ObraView;
 import br.edu.ifms.bookflix.repository.ObraRepository;
@@ -8,6 +9,7 @@ import br.edu.ifms.bookflix.service.exception.DataIntegrityException;
 import br.edu.ifms.bookflix.service.exception.ObjectNotFoundException;
 
 import java.text.Normalizer;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -25,6 +27,8 @@ public class ObraService {
 	@Autowired
 	private ObraRepository obraRepository;
 	private final ObraDTO obraDTO = new ObraDTO();
+	@Autowired
+	private AutorService autorService;
 	
 	public Obra find(Integer id) {
 		Optional<Obra> objeto = obraRepository.findById(id); 
@@ -35,7 +39,14 @@ public class ObraService {
 	@Transactional
 	public Obra insert (Obra objeto) {
 		objeto.setId(null);
-		return obraRepository.save(objeto);	
+		Obra savedObra = obraRepository.save(objeto);
+		if(objeto.getAutores() != null && !objeto.getAutores().isEmpty()) {
+			for (Autor autor : objeto.getAutores()) {
+				autor.setObra(savedObra);
+			}
+			saveAutores(objeto.getAutores());
+		}
+		return savedObra;
 	}
 	
 	public Obra update(Obra objetoEditado) {
@@ -130,6 +141,14 @@ public class ObraService {
     
     public String getPathToDeleteObraFile(String ifsn, String originalFileName) {
     	return obraRepository.getPathToDeleteObraFile(ifsn, originalFileName);
+    }
+    
+    private List<Autor> saveAutores(List<Autor> autores) {
+		List<Autor> savedAutores = new ArrayList<>();
+		for (Autor autor : autores) {
+			savedAutores.add(autorService.insert(autor));
+		}
+		return savedAutores;
     }
     
 }

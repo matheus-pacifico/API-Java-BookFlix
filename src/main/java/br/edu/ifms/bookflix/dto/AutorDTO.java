@@ -57,7 +57,9 @@ public class AutorDTO implements Serializable {
 	}
 	
 	public Autor autorWithoutAvaliacoesDaObra(Autor autor) {
-		autor.getObra().setAvaliacoes(null);
+		if(autor.getObra() != null) {
+			autor.getObra().setAvaliacoes(null);
+		}
 		return autor;
 	}
 	
