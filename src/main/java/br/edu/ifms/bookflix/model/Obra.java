@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -38,10 +39,10 @@ public class Obra implements Serializable {
 	@JoinColumn(name="professor_id")
 	private Professor professor;
 	
-	@OneToMany(mappedBy = "obra")
+	@OneToMany(mappedBy = "obra", cascade = CascadeType.REMOVE)
 	private List<Avaliacao> avaliacoes = new ArrayList<>();
 	
-	@OneToMany(mappedBy = "obra")
+	@OneToMany(mappedBy = "obra", cascade = CascadeType.REMOVE)
 	private List<Autor> autores = new ArrayList<>();
 	
 	public Obra() {
